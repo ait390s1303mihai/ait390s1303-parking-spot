@@ -4,8 +4,8 @@ import java.io.IOException;
 import javax.servlet.http.*;
 
 /**
- * Test comment modification
- * @author Mihai B
+ * Test comment modification 
+ * @author Mihai B 9/23
  *
  */
 @SuppressWarnings("serial")
