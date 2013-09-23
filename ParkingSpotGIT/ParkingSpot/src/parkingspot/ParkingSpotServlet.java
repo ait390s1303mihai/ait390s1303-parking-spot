@@ -4,7 +4,7 @@ import java.io.IOException;
 import javax.servlet.http.*;
 
 /**
- * Test
+ * Test comment modification
  * @author Mihai B
  *
  */
