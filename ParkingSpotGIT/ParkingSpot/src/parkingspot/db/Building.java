@@ -2,7 +2,7 @@ package parkingspot.db;
 
 /**
  * 
- *	ENTITY KIND: "Building"
+ *	ENTITY KIND: "Building" <br>
  *	PARENT: Campus
  *	KEY: A building Id
  *	FEATURES:
@@ -19,31 +19,31 @@ package parkingspot.db;
 
 public class Building {
 
-	private static int idCount = 1;
-	private int id;
-	private String name;
-	private String location;
-	
-	public Building(){
-		id = idCount++;
-		name = "";
-		location = "";
-	}
-	
-	public int getId() {
-		return id;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getLocation() {
-		return location;
-	}
-	public void setLocation(String location) {
-		this.location = location;
-	}
-	
+//	private static int idCount = 1;
+//	private int id;
+//	private String name;
+//	private String location;
+//	
+//	public Building(){
+//		id = idCount++;
+//		name = "";
+//		location = "";
+//	}
+//	
+//	public int getId() {
+//		return id;
+//	}
+//	public String getName() {
+//		return name;
+//	}
+//	public void setName(String name) {
+//		this.name = name;
+//	}
+//	public String getLocation() {
+//		return location;
+//	}
+//	public void setLocation(String location) {
+//		this.location = location;
+//	}
+//	
 }

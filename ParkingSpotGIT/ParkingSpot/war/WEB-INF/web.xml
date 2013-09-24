@@ -14,7 +14,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>AddCampusServlet</servlet-name>
-		<servlet-class>parkingspaces.AddCampusServlet</servlet-class>
+		<servlet-class>parkingspot.AddCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AddCampusServlet</servlet-name>
@@ -23,7 +23,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	
 	<servlet>
 		<servlet-name>DeleteCampusServlet</servlet-name>
-		<servlet-class>parkingspaces.DeleteCampusServlet</servlet-class>
+		<servlet-class>parkingspot.DeleteCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteCampusServlet</servlet-name>
@@ -32,7 +32,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	
 	<servlet>
 		<servlet-name>EditCampusServlet</servlet-name>
-		<servlet-class>parkingspaces.EditCampusServlet</servlet-class>
+		<servlet-class>parkingspot.EditCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>EditCampusServlet</servlet-name>
