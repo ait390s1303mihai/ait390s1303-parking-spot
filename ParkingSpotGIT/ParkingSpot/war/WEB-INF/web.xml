@@ -12,7 +12,34 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>ParkingSpot</servlet-name>
 		<url-pattern>/parkingspot</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>AddCampusServlet</servlet-name>
+		<servlet-class>parkingspaces.AddCampusServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddCampusServlet</servlet-name>
+		<url-pattern>/addCampus</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DeleteCampusServlet</servlet-name>
+		<servlet-class>parkingspaces.DeleteCampusServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteCampusServlet</servlet-name>
+		<url-pattern>/deleteCampus</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>EditCampusServlet</servlet-name>
+		<servlet-class>parkingspaces.EditCampusServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EditCampusServlet</servlet-name>
+		<url-pattern>/editCampus</url-pattern>
+	</servlet-mapping>
+
 	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
+		<welcome-file>allCampus.jsp</welcome-file>
 	</welcome-file-list>
-</web-app>
+	</web-app>
