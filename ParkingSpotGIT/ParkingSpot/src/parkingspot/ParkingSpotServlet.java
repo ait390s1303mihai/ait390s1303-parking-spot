@@ -6,7 +6,7 @@ import javax.servlet.http.*;
 /**
  * Test comment modification 
  * @author Mihai B 
- * updated in class
+ * updated in class again
  *
  */
 @SuppressWarnings("serial")
