@@ -1,3 +1,7 @@
+/**
+ * Copyright 2013 -
+ * Licensed under the Academic Free License version 3.0
+ */
 package parkingspot;
 
 import java.io.IOException;

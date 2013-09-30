@@ -1,4 +1,10 @@
+/**
+ * Copyright 2013 -
+ * Licensed under the Academic Free License version 3.0
+ */
+
 package parkingspot;
+
 
 import java.io.IOException;
 import javax.servlet.http.*;
@@ -14,6 +20,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
+/**
+ * 
+ * @author 
+ * 
+ */
 @SuppressWarnings("serial")
 public class AddCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
