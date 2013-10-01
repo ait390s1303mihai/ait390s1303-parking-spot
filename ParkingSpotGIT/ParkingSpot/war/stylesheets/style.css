@@ -1,0 +1,127 @@
+/**
+ * @author Alexander Leone
+ * 
+ */
+ 
+ /**
+ * Reset The HTML Elements to one standard for all browsers
+ * 
+ */
+ html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+ 
+ /**
+ * Start the Custom File
+ * 
+ */ 
+ html, body{
+ 	background-color: #65B244;
+ 	font-family: Arial, sans-serif;
+ }
+h1, h2, h3, h4, h5, h6{
+	color: #2B2900;
+	margin: 10px;
+}
+h1{
+	font-size:35px
+}
+h2{
+	font-size:30px
+}
+h3{
+	font-size:25px
+}
+h4{
+	font-size:20px
+} 
+h5{
+	font-size:15px
+}
+h6{
+	font-size:10px
+}
+p{
+	margin:10px;
+	padding:5px;
+}
+td{
+	margin:10px;
+}
+ 
+ /*
+1200px grid system ~ Core CSS.
+12 Columns ~ Margin left: 10px ~ Margin right: 10px
+*/
+.grid_1 {width: 80px;}
+.grid_2 {width: 180px;}
+.grid_3 {width: 280px;}
+.grid_4 {width: 380px;}
+.grid_5 {width: 480px;}
+.grid_6 {width: 580px;}
+.grid_7 {width: 680px;}
+.grid_8 {width: 780px;}
+.grid_9 {width: 880px;}
+.grid_10 {width: 980px;}
+.grid_11 {width: 1080px;}
+.grid_12 {width: 1180px;}
+.column {margin: 0 10px 0 10px;
+         overflow: hidden;
+         float: left;
+         display: inline;}
+.row {width: 1200px;
+         margin: 0 auto;
+         overflow: hidden;}
+.row .row {margin: 0 -10px 0 -10px;
+         width: auto;
+         display: inline-block;}
+         
+ 
+ 
