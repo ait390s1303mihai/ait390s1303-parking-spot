@@ -14,8 +14,9 @@
 
 <html>
   <head>
-	<!-- Insert Andrew's CSS File Here -->
 	<title>Delete Campus</title>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 	<script type="text/javascript">
 		var sure = false;
 		sure = window.confirm("Are you sure you want to delete?");

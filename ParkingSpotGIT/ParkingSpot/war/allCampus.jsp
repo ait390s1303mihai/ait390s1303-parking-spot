@@ -14,8 +14,10 @@
 
 <html>
   <head>
-	<!-- Insert inline CSS here -->
+
 	<title>All Campuses</title>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
   </head>
   <body>
 <%
@@ -29,36 +31,44 @@
   		List<Entity> campus = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(20));
   		if (campus.isEmpty()) {
 %>
-			<p>There are no campuses currently in the system</p>
+			<h1>There are no campuses currently in the system</h1>
 <%
 		}
 		else {		
 %>
-			<h1>Campuses:</h1>
-			<table cellpadding="7">
+			<h1>All Campuses Available</h1>
+			
+			
 <%
 			for (Entity c : campus) {
 				pageContext.setAttribute("campusName", c.getProperty("campusName"));
-%>
-				<tr>
-					<td>
+%>	
+				<div class="column grid_8">
+					<div class="column grid_3"> 
 						${fn:escapeXml(campusName)}
-					</td>
-					<td>
+					</div>
+					<div class="column grid_1">
 						<a href="editCampus.jsp?campusName=${fn:escapeXml(campusName)}">Edit</a>
-					</td>
-					<td>
+					</div>
+					<div class="column grid_1">
 						<a href="deleteCampus.jsp?campusName=${fn:escapeXml(campusName)}">Delete</a>
-					</td>
-				</tr>
+					</div>
+					<hr class="grid_8 padding-top" />
+				</div>
+				
+					
 <%		
 			}
-%>
-			</table>
-			<br/>
-<%
+
 		}
-%>
-		<a href="/addCampus.jsp">Add a Campus</a>
+%>		
+		<br />
+		<div class="column grid_8">
+			<h4>Want to add another?</h4>
+			<div class="column grid_2">
+				<a href="/addCampus.jsp">Add a Campus</a>
+			</div>
+		</div>
+		
   </body>
 </html>

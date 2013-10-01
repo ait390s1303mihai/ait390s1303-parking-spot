@@ -14,8 +14,9 @@
 
 <html>
   <head>
-	<!-- Insert Andrew's CSS File Here -->
 	<title>Add a Campus</title>
+	<!-- CSS -->
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
   </head>
   <body>
 <%
