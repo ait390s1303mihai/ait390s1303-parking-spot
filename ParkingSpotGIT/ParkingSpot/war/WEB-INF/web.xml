@@ -18,7 +18,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AddCampusServlet</servlet-name>
-		<url-pattern>/addCampus</url-pattern>
+		<url-pattern>/admin/addCampusCommand</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -27,16 +27,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteCampusServlet</servlet-name>
-		<url-pattern>/deleteCampus</url-pattern>
+		<url-pattern>/admin/deleteCampusCommand</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>EditCampusServlet</servlet-name>
-		<servlet-class>parkingspot.EditCampusServlet</servlet-class>
+		<servlet-name>UpdateCampusServlet</servlet-name>
+		<servlet-class>parkingspot.UpdateCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>EditCampusServlet</servlet-name>
-		<url-pattern>/editCampus</url-pattern>
+		<servlet-name>UpdateCampusServlet</servlet-name>
+		<url-pattern>/admin/updateCampusCommand</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
