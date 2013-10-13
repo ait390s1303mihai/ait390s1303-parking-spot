@@ -1,5 +1,12 @@
 package parkingspot.db.jdo;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
+import com.google.appengine.api.datastore.Key;
+
 /**
  * 
  *	ENTITY KIND: "Permit"
@@ -17,7 +24,29 @@ package parkingspot.db.jdo;
  *  
  */ 
 
+@PersistenceCapable
 public class PermitJdo {
+	
+	@Persistent
+	private String name;
+	
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
+	
+	public PermitJdo(String name){
+		this.name = name;
+	}
+	
+	public Key getKey(){
+		return key;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	
 	
 	
 }
