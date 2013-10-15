@@ -1,0 +1,68 @@
+@CHARSET "ISO-8859-1";
+
+/*  
+   Copyright 2013 - 
+   Licensed under the Academic Free License version 3.0
+   http://opensource.org/licenses/AFL-3.0
+
+   Authors: Alexander Leone, Mihai Boicu, ... 
+   
+   Version 0.1 - Fall 2013
+*/
+
+body {
+	width:700px;
+ 	padding:3px;
+ 	border:3px solid #006600;
+ 	margin:0px auto; 
+ 	background-color:#E9FFE9;
+ 	text-align:center;
+}
+
+h1 {
+	width: 690px;
+	padding: 5px;
+	margin: 0px;
+	background-color: #006600;
+	color: #E9FFE9;
+	text-align: center;
+	margin-bottom: 3px;
+}
+
+table, th, td, tfoot {
+	border: 1px solid #006600;
+	border-collapse:collapse;
+	text-align: left;
+	padding: 2px;
+}
+
+table {
+	width: 700px;
+	margin: 0px;
+	margin-bottom: 3px;
+}
+
+th {
+	color: #E9FFE9;
+	background-color: #003300;
+}
+
+td {
+	color: #006600;
+	background-color: white;
+}
+
+.footer {
+	color: #006600;
+	background-color: #CCFFCC;
+}
+
+a:link {color:#006600;}      /* unvisited link */
+a:visited {color:#006600;}  /* visited link */
+a:hover {color:#339933;}  /* mouse over link */
+a:active {color:#006600;}  /* selected link */ 
+
+/* ADMIN PARKING SPOT */
+.adminOperationsList {
+	width:80px;
+}

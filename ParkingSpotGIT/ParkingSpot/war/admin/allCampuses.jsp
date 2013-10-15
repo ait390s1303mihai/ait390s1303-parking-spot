@@ -1,8 +1,8 @@
 <%@page import="com.google.appengine.api.datastore.Entity"%>
 <%@page import="parkingspot.db.Campus"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ page import="java.util.List"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@page contentType="text/html;charset=UTF-8" language="java"%>
+<%@page import="java.util.List"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!--  
    Copyright 2013 - 
@@ -19,52 +19,51 @@
 
 <title>All Campuses</title>
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+<link rel="stylesheet" type="text/css"
+	href="/stylesheets/parkingspot.css">
 </head>
 <body>
 	<%
 		List<Entity> allCampuses = Campus.getFirstCampuses(100);
 		if (allCampuses.isEmpty()) {
 	%>
-	<h1>There are no campuses currently in the system</h1>
+	<h1>No Campus Defined</h1>
 	<%
 		} else {
 	%>
-	<h1>All Campuses Available:</h1>
+	<h1>ALL CAMPUSES</h1>
+	<table>
+		<tr>
+			<th class="adminOperationsList">Operations</th>
+			<th>Campus Name</th>
+		</tr>
+		<%
+			for (Entity campus : allCampuses) {
+					String campusName = Campus.getName(campus);
+					String campusID = Campus.getStringID(campus);
+		%>
 
+		<tr>
+			<td class="adminOperationsList"><a href="/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a>
+				<a href="/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a></td>
+			<td><%=campusName%></td>
+		</tr>
 
-	<%
-		for (Entity campus : allCampuses) {
-				String campusName = Campus.getName(campus);
-				String campusID = Campus.getStringID(campus);
-	%>
+		<%
+			}
 
-	<div class="column grid_8">
-		<div class="column grid_3">
-			<%=campusName%>
-		</div>
-		<div class="column grid_1">
-			<a href="/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a>
-		</div>
-		<div class="column grid_1">
-			<a href="/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a>
-		</div>
-		<hr class="grid_8 padding-top" />
-	</div>
+			}
+		%>
 
-
-	<%
-		}
-
-		}
-	%>
-	<br />
-	<div class="column grid_8">
-		<h4>Want to add another?</h4>
-		<div class="column grid_2">
-			<a href="/admin/addCampus.jsp">Add a Campus</a>
-		</div>
-	</div>
+	<tfoot>
+	<tr>
+		<td colspan="2" class="footer">
+			<a href="/admin/addCampus.jsp">Add a New Campus</a>
+		</td>
+	</tr>
+	</tfoot>
+	
+	</table>
 
 </body>
 </html>
