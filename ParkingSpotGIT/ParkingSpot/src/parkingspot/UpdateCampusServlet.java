@@ -5,9 +5,7 @@
  * 
  * Authors: Mihai Boicu, ...
  */
-
 package parkingspot;
-
 
 import java.io.IOException;
 
@@ -17,20 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.db.Campus;
-import com.google.appengine.api.datastore.Entity;
 
-/**
- * Answer to the HTTP Servlet to add a campus. 
- * Redirect to the full editing page for the campus.
- * If error (e.g. duplicated name) show error page.
- */
+//TODO comments
 @SuppressWarnings("serial")
-public class AddCampusServlet extends HttpServlet {
+// NOTE: It is passing the new value the campus was renamed to
+// It is going through the catch every time
+public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String campusName = req.getParameter("campusName");
-		//TODO check if the campus name is already used
-		//TODO if used return an error
-	    Entity campus = Campus.createCampus(campusName);
-	    resp.sendRedirect("/admin/editCampus.jsp?campus=" + Campus.getStringID(campus));
+		Campus.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
+				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
+
+		resp.sendRedirect("/admin/allCampuses.jsp");
 	}
 }
