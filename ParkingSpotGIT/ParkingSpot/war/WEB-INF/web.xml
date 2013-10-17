@@ -6,37 +6,37 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet>
 		<servlet-name>ParkingSpot</servlet-name>
-		<servlet-class>parkingspot.ParkingSpotServlet</servlet-class>
+		<servlet-class>parkingspot.gae.servlet.ParkingSpotServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ParkingSpot</servlet-name>
-		<url-pattern>/parkingspot</url-pattern>
+		<url-pattern>/gae/parkingspot</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>AddCampusServlet</servlet-name>
-		<servlet-class>parkingspot.AddCampusServlet</servlet-class>
+		<servlet-class>parkingspot.gae.servlet.AddCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AddCampusServlet</servlet-name>
-		<url-pattern>/admin/addCampusCommand</url-pattern>
+		<url-pattern>/gae/admin/addCampusCommand</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>DeleteCampusServlet</servlet-name>
-		<servlet-class>parkingspot.DeleteCampusServlet</servlet-class>
+		<servlet-class>parkingspot.gae.servlet.DeleteCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteCampusServlet</servlet-name>
-		<url-pattern>/admin/deleteCampusCommand</url-pattern>
+		<url-pattern>/gae/admin/deleteCampusCommand</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>UpdateCampusServlet</servlet-name>
-		<servlet-class>parkingspot.UpdateCampusServlet</servlet-class>
+		<servlet-class>parkingspot.gae.servlet.UpdateCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UpdateCampusServlet</servlet-name>
-		<url-pattern>/admin/updateCampusCommand</url-pattern>
+		<url-pattern>/gae/admin/updateCampusCommand</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

@@ -2,7 +2,7 @@
  * Copyright 2013 -
  * Licensed under the Academic Free License version 3.0
  */
-package parkingspot;
+package parkingspot.gae.servlet;
 
 import java.io.IOException;
 import javax.servlet.http.*;

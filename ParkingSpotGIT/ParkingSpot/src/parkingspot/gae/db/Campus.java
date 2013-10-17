@@ -6,7 +6,7 @@
  * Authors: Mihai Boicu, ...
  */
 
-package parkingspot.db;
+package parkingspot.gae.db;
 
 import java.util.List;
 

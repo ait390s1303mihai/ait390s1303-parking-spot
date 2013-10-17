@@ -1,4 +1,4 @@
-package parkingspot.db.jdo;
+package parkingspot.jdo.db;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;

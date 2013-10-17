@@ -5,28 +5,26 @@
  * 
  * Authors: Mihai Boicu, ...
  */
-package parkingspot;
+package parkingspot.gae.servlet;
 
 import java.io.IOException;
 
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
-//import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.db.Campus;
+import parkingspot.gae.db.Campus;
 
-//TOOD comments
-
+//TODO comments
 @SuppressWarnings("serial")
-public class DeleteCampusServlet extends HttpServlet {
-
+// NOTE: It is passing the new value the campus was renamed to
+// It is going through the catch every time
+public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Campus.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
+				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
 
-		Campus.deleteCampusCommand(req.getParameter("campusID"));
-        	
-        //Return to main admin page
-        resp.sendRedirect("/admin/allCampuses.jsp");
+		resp.sendRedirect("/admin/allCampuses.jsp");
 	}
 }

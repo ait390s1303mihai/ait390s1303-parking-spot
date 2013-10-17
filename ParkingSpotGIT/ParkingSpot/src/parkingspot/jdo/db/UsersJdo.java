@@ -1,7 +1,7 @@
-package parkingspot.db.jdo;
+package parkingspot.jdo.db;
 
-import parkingspot.db.jdo.BuildingJdo;
-import parkingspot.db.jdo.PermitJdo;
+import parkingspot.jdo.db.BuildingJdo;
+import parkingspot.jdo.db.PermitJdo;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;

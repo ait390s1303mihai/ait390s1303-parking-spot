@@ -1,4 +1,4 @@
-package parkingspot.db.jdo;
+package parkingspot.jdo.db;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;

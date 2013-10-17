@@ -6,7 +6,7 @@
  * Authors: Mihai Boicu, ...
  */
 
-package parkingspot;
+package parkingspot.gae.servlet;
 
 
 import java.io.IOException;
@@ -16,7 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.db.Campus;
+import parkingspot.gae.db.Campus;
+
 import com.google.appengine.api.datastore.Entity;
 
 /**

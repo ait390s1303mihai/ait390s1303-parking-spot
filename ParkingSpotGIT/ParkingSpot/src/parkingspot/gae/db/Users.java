@@ -1,4 +1,4 @@
-package parkingspot.db;
+package parkingspot.gae.db;
 
 /**
  * 
