@@ -9,6 +9,9 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -50,8 +53,28 @@ public class CampusJdo {
 		this.location = location;
 	}
 	
+	public static CampusJdo createCampus(String campusName) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+
+        CampusJdo campus = new CampusJdo(campusName, "", "");
+
+        try {
+            pm.makePersistent(campus);
+        } finally {
+            pm.close();
+        }
+		
+		
+		return campus;
+	}
+
+	
 	public Key getKey(){
 		return key;
+	}
+	
+	public String getStringID() {
+		return Long.toString(getKey().getId());
 	}
 	
 	public String getName(){

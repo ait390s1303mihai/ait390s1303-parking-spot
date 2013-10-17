@@ -38,6 +38,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>UpdateCampusServlet</servlet-name>
 		<url-pattern>/gae/admin/updateCampusCommand</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>AddCampusJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.AddCampusServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddCampusJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/addCampusCommand</url-pattern>
+	</servlet-mapping>	
+	
+	
 
 	<welcome-file-list>
 		<welcome-file>allCampus.jsp</welcome-file>

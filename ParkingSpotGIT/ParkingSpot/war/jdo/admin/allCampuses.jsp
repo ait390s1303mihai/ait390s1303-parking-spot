@@ -1,8 +1,10 @@
-<%@page import="com.google.appengine.api.datastore.Entity"%>
-<%@page import="parkingspot.gae.db.Campus"%>
-<%@page contentType="text/html;charset=UTF-8" language="java"%>
-<%@page import="java.util.List"%>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@page import="parkingspot.jdo.db.CampusJdo"%>
+<%@page import="javax.jdo.Query"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="java.util.List"%>
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 
 <!--  
    Copyright 2013 - 
@@ -24,7 +26,7 @@
 </head>
 <body>
 	<%
-		List<Entity> allCampuses = Campus.getFirstCampuses(100);
+		List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
 		if (allCampuses.isEmpty()) {
 	%>
 	<h1>No Campus Defined</h1>
@@ -38,9 +40,9 @@
 			<th>Campus Name</th>
 		</tr>
 		<%
-			for (Entity campus : allCampuses) {
-					String campusName = Campus.getName(campus);
-					String campusID = Campus.getStringID(campus);
+			for (CampusJdo campus : allCampuses) {
+					String campusName = campus.getName();
+					String campusID = campus.getStringID();
 		%>
 
 		<tr>
@@ -59,10 +61,10 @@
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form action="/gae/admin/addCampusCommand" method="get">
-						New Campus: <input type="text" name="campusName" size="50"/> <input type="submit"
-							value="Add" />
-					</form> 
+					<form action="/jdo/admin/addCampusCommand" method="get">
+						New Campus: <input type="text" name="campusName" size="50" /> <input
+							type="submit" value="Add" />
+					</form>
 				</td>
 			</tr>
 		</tfoot>
