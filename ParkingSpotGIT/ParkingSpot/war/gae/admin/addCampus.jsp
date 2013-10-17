@@ -20,11 +20,11 @@
 <body>
 
 	<h1>Add a Campus</h1>
-	<form action="/admin/addCampusCommand" method="get">
+	<form action="/gae/admin/addCampusCommand" method="get">
 		Name:<input type="text" name="campusName" /> <input type="submit"
 			value="Add" />
 	</form>
 
-	<a href="/admin/allCampuses.jsp">Cancel and view all campuses</a>
+	<a href="/gae/admin/allCampuses.jsp">Cancel and view all campuses</a>
 </body>
 </html>

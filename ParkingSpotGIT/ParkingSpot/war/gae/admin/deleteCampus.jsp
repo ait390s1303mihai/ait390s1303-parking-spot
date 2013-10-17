@@ -1,17 +1,7 @@
-<%@page import="parkingspot.db.Campus"%>
+<%@page import="parkingspot.gae.db.Campus"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
-<%@ page import="com.google.appengine.api.users.User"%>
-<%@ page import="com.google.appengine.api.users.UserService"%>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@ page
-	import="com.google.appengine.api.datastore.DatastoreServiceFactory"%>
-<%@ page import="com.google.appengine.api.datastore.DatastoreService"%>
-<%@ page import="com.google.appengine.api.datastore.Query"%>
 <%@ page import="com.google.appengine.api.datastore.Entity"%>
-<%@ page import="com.google.appengine.api.datastore.FetchOptions"%>
-<%@ page import="com.google.appengine.api.datastore.Key"%>
-<%@ page import="com.google.appengine.api.datastore.KeyFactory"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!--  
@@ -55,11 +45,11 @@
 		Do you want to delete the campus <i><%=campusName%> </i> ?
 	</p>
 
-	<form action="/admin/deleteCampusCommand" method="get">
+	<form action="/gae/admin/deleteCampusCommand" method="get">
 		<input type="hidden" value="<%=campusID%>" name="campusID" /> <br>
 		<input type="submit" value="Delete" />
 	</form>
-	<form action="/admin/allCampuses.jsp">
+	<form action="/gae/admin/allCampuses.jsp">
 		<input type="button" value="Cancel">
 	</form>
 

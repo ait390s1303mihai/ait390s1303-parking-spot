@@ -1,5 +1,5 @@
 <%@page import="com.google.appengine.api.datastore.Entity"%>
-<%@page import="parkingspot.db.Campus"%>
+<%@page import="parkingspot.gae.db.Campus"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -37,7 +37,7 @@
 		}
 	%>
 	<h1>Edit Campus</h1>
-	<form action="/admin/updateCampusCommand" method="get">
+	<form action="/gae/admin/updateCampusCommand" method="get">
 		<input type="hidden" value="<%=campusID%>" name="campusID" />
 		<table border="1">
 			<tr>
@@ -59,6 +59,6 @@
 
 		<input type="submit" value="Save" />
 	</form>
-	<a href="/admin/allCampuses.jsp">Cancel and view all campuses</a>
+	<a href="/gae/admin/allCampuses.jsp">Cancel and view all campuses</a>
 </body>
 </html>

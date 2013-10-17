@@ -27,6 +27,6 @@ public class DeleteCampusServlet extends HttpServlet {
 		Campus.deleteCampusCommand(req.getParameter("campusID"));
         	
         //Return to main admin page
-        resp.sendRedirect("/admin/allCampuses.jsp");
+        resp.sendRedirect("/gae/admin/allCampuses.jsp");
 	}
 }

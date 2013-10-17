@@ -1,5 +1,5 @@
 <%@page import="com.google.appengine.api.datastore.Entity"%>
-<%@page import="parkingspot.db.Campus"%>
+<%@page import="parkingspot.gae.db.Campus"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <%@page import="java.util.List"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -44,8 +44,8 @@
 		%>
 
 		<tr>
-			<td class="adminOperationsList"><a href="/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a>
-				<a href="/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a></td>
+			<td class="adminOperationsList"><a href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a>
+				<a href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a></td>
 			<td><%=campusName%></td>
 		</tr>
 
@@ -58,7 +58,7 @@
 	<tfoot>
 	<tr>
 		<td colspan="2" class="footer">
-			<a href="/admin/addCampus.jsp">Add a New Campus</a>
+			<a href="/gae/admin/addCampus.jsp">Add a New Campus</a>
 		</td>
 	</tr>
 	</tfoot>

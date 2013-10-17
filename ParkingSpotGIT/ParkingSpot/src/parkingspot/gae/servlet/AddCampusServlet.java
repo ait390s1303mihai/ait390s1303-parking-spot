@@ -32,6 +32,6 @@ public class AddCampusServlet extends HttpServlet {
 		//TODO check if the campus name is already used
 		//TODO if used return an error
 	    Entity campus = Campus.createCampus(campusName);
-	    resp.sendRedirect("/admin/editCampus.jsp?campus=" + Campus.getStringID(campus));
+	    resp.sendRedirect("/gae/admin/editCampus.jsp?campus=" + Campus.getStringID(campus));
 	}
 }

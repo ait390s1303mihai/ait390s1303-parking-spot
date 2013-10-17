@@ -25,6 +25,6 @@ public class UpdateCampusServlet extends HttpServlet {
 		Campus.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
 				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
 
-		resp.sendRedirect("/admin/allCampuses.jsp");
+		resp.sendRedirect("/gae/admin/allCampuses.jsp");
 	}
 }

@@ -1,12 +1,7 @@
-<%@page import="parkingspot.db.jdo.CampusJdo"%>
+<%@page import="parkingspot.jdo.db.CampusJdo"%>
 <%@page import="javax.jdo.Query"%>
-<%@page import="parkingspot.db.jdo.PMF"%>
-<%@page import="javax.jdo.PersistenceManager"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.google.appengine.api.users.User" %>
-<%@ page import="com.google.appengine.api.users.UserService" %>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -19,15 +14,9 @@
   </head>
   <body>
 <%
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
+	List<CampusJdo> results = CampusJdo.getFirstCampuses(100); 
 			
-			Query q = pm.newQuery(CampusJdo.class);
-			q.setOrdering("name asc");
-			
-			List<CampusJdo> results = (List<CampusJdo>)q.execute();
-			
-	  		if (results.isEmpty()) {
+	  		if (results==null || results.isEmpty()) {
 	  			%>
 	  						<h1>There are no campuses currently in the system</h1>
 	  			<%
@@ -56,9 +45,7 @@
 	<%		
 	  						}
 	  					}
-		} finally {
-			pm.close();
-		}
+
 
 			%>	
 					
@@ -67,7 +54,7 @@
 		<div class="column grid_8">
 			<h4>Want to add another?</h4>
 			<div class="column grid_2">
-				<a href="/addCampusJDO.jsp">Add a Campus</a>
+				<a href="/jdo/admin/addCampusJDO.jsp">Add a Campus</a>
 			</div>
 		</div>
 		
