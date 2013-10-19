@@ -30,7 +30,8 @@ public class AddCampusServlet extends HttpServlet {
 		String campusName = req.getParameter("campusName");
 		//TODO check if the campus name is already used
 		//TODO if used return an error
-		CampusJdo campus = CampusJdo.createCampus(campusName);
+		//CampusJdo campus = 
+				CampusJdo.createCampus(campusName);
 	    //resp.sendRedirect("/gae/admin/editCampus.jsp?campus=" + Campus.getStringID(campus));
 	    resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
