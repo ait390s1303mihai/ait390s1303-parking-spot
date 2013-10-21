@@ -9,7 +9,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Mihai Boicu, ... 
+   Authors: Andrew Tsai, Mihai Boicu, ... 
    
    Version 0.1 - Fall 2013
 -->
@@ -30,15 +30,22 @@ var selectedCampus=null;
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
+	$(".editbutton").attr("disabled", (value)?"disabled":null);
 	$("#addcampus").attr("disabled", (value)?"disabled":null);
 }
 
-function deletebutton(campusID) {
+function deleteButton(campusID) {
 	disableAllButtons(true);
 	$("#delete"+campusID).show();
 }
 
-function confirmdeletecampus(campusID) {
+function editButton(campusID) {
+	disableAllButtons(true);
+	$("#view"+campusID).hide();
+	$("#edit"+campusID).show();
+}
+
+function confirmDeleteCampus(campusID) {
 	selectedCampus=campusID;
 	$.post("/gae/admin/deleteCampusCommand", 
 			{campusID: campusID}, 
@@ -56,8 +63,14 @@ function confirmdeletecampus(campusID) {
 	
 }
 
-function canceldeletecampus(campusID) {
+function cancelDeleteCampus(campusID) {
 	$("#delete"+campusID).hide();
+	disableAllButtons(false);
+}
+
+function cancelEditCampus(campusID) {
+	$("#edit"+campusID).hide();
+	$("#view"+campusID).show();
 	disableAllButtons(false);
 }
 
@@ -74,7 +87,7 @@ function canceldeletecampus(campusID) {
 		} else {
 	%>
 	<h1>ALL CAMPUSES</h1>
-	<table>
+	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Campus Name</th>
@@ -86,16 +99,48 @@ function canceldeletecampus(campusID) {
 		%>
 
 		<tr>
-			<td class="adminOperationsList"><a
-				href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a> <!-- <a href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a> -->
+			<td class="adminOperationsList">
+				<button class="editbutton" type="button"
+					onclick="editButton(<%=campusID%>)">Edit</button>
 				<button class="deletebutton" type="button"
-					onclick="deletebutton(<%=campusID%>)">Delete</button></td>
-			<td><div><%=campusName%></div>
-				<div id="delete<%=campusID%>" style="display: none">
-					Do you want to delete this campus?
-					<button type="button" onclick="confirmdeletecampus(<%=campusID%>)">Delete</button>
-					<button type="button" onclick="canceldeletecampus(<%=campusID%>)">Cancel</button>
-				</div></td>
+					onclick="deleteButton(<%=campusID%>)">Delete</button>
+			</td>
+
+			<td><div id="view<%=campusID%>"><%=campusName%></div>
+
+				<div id="edit<%=campusID%>" style="display: none">
+
+					<form action="/gae/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						<table class="editTable">
+							<tr>
+								<td class="editTable" width=90>Name:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=campusName%>" name="campusName" /></td>
+							</tr>
+							<tr>
+								<td class="editTable">Address:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=Campus.getAddress(campus)%>" name="campusAddress" /></td>
+							</tr>
+							<tr>
+								<td class="editTable">Google Map:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=Campus.getGoogleMapLocation(campus)%>"
+									name="googleMapLocation" /></td>
+							</tr>
+						</table>
+		<input type="submit" value="Save" />
+		<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
+		</form>
+		</div>
+
+		<div id="delete<%=campusID%>" style="display: none">
+			Do you want to delete this campus?
+			<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
+			<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+		</div>
+		</td>
 		</tr>
 
 		<%
