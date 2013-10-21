@@ -1,5 +1,6 @@
 package parkingspot.jdo.db;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -21,6 +22,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Name" = "Lot A"
  *		"TotalSpaces" = 350
  * 		"Location" "Lot A General, Braddock, Virginia, United States@38.826182,-77.308211"
+ * 
+ * 	Authors: Drew Lorence
  *  
  */     
 
@@ -44,6 +47,31 @@ public class LotJdo {
 		this.name = name;
 		this.location = location;
 		this.spaces = spaces;
+	}
+	
+	public static LotJdo createLot(String lotName){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		LotJdo lot = new LotJdo(lotName, "", 0);
+		
+		try {
+            pm.makePersistent(lot);
+        } finally {
+            pm.close();
+        }
+		
+		return lot;
+	}
+	
+	public static void deleteLot(LotJdo l){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try {
+            pm.deletePersistent(l);
+        } finally {
+            pm.close();
+        }
+		
 	}
 	
 	public Key getKey(){

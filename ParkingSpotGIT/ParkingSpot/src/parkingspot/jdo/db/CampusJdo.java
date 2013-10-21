@@ -9,7 +9,11 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 /**
  * 
@@ -27,6 +31,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Address" = "4400 University Dr., Fairfax, VA 22030, USA"
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Fairfax Campus"
+ *  
+ *     Authors: Drew Lorence, Mihai Boicu
  *  
  */     
 
@@ -61,10 +67,27 @@ public class CampusJdo {
             pm.close();
         }
 		
-		
 		return campus;
 	}
-
+	
+	public static boolean deleteCampus(String string){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try {
+            pm.deletePersistent(string);
+        } finally {
+            pm.close();
+        }
+		return false;
+	}
+	
+	public static CampusJdo getCampus(String string){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		CampusJdo c = pm.getObjectById(CampusJdo.class, string);
+		
+		return c;
+	}
 	
 	public Key getKey(){
 		return key;

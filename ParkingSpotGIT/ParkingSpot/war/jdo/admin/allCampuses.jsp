@@ -1,17 +1,16 @@
-<%@page import="parkingspot.jdo.db.CampusJdo"%>
-<%@page import="javax.jdo.Query"%>
+<%@ page import="parkingspot.jdo.db.CampusJdo"%>
+<%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
 
 <!--  
    Copyright 2013 - 
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Mihai Boicu, ... 
+   Authors: Alex Leone, Mihai Boicu
    
    Version 0.1 - Fall 2013
 -->
@@ -21,8 +20,48 @@
 
 <title>All Campuses</title>
 <!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	href="/stylesheets/parkingspot.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script>
+
+var selectedCampus=null;
+
+function disableAllButtons(value) {
+	$(".deletebutton").attr("disabled", (value)?"disabled":null);
+	$("#addcampus").attr("disabled", (value)?"disabled":null);
+}
+
+function deletebutton(campusID) {
+	disableAllButtons(true);
+	$("#delete"+campusID).show();
+}
+
+function confirmdeletecampus(campusID) {
+	selectedCampus=campusID;
+	$.post("/jdo/admin/deleteCampusCommand", 
+			{campusID: campusID}, 
+			function (data,status) {
+				//alert("Data "+data+" status "+status);
+				if (status="success") {
+					location.reload();
+				} else {
+					canceldeletecampus(selectedCampus);
+					selectedCampus=null;
+				}
+			}
+			
+	);
+	
+}
+
+function canceldeletecampus(campusID) {
+	$("#delete"+campusID).hide();
+	disableAllButtons(false);
+}
+
+</script>
+
 </head>
 <body>
 	<%
@@ -47,8 +86,8 @@
 
 		<tr>
 			<td class="adminOperationsList"><a
-				href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a> <a
-				href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a></td>
+				href="/jdo/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a> <a
+				href="/jdo/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a></td>
 			<td><%=campusName%></td>
 		</tr>
 

@@ -28,6 +28,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Last Name" = "Shmoe"
  *		"PermitType" = Permit Object
  *		"Buildings" =["Johnson Center", "David King Hall", "Exploratory Hall"]
+ *
+ *	Authors: Drew Lorence
  *  
  */ 
 

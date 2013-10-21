@@ -28,7 +28,9 @@ import parkingspot.jdo.db.CampusJdo;
 public class AddCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String campusName = req.getParameter("campusName");
+		
 		//TODO check if the campus name is already used
+		
 		//TODO if used return an error
 		//CampusJdo campus = 
 				CampusJdo.createCampus(campusName);

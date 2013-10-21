@@ -1,5 +1,6 @@
 package parkingspot.jdo.db;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -20,6 +21,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Id" = 1003
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Johnson Center"
+ *
+ *	Authors: Drew Lorence
  *  
  */ 
 
@@ -39,6 +42,31 @@ public class BuildingJdo {
 	public BuildingJdo(String name, String location){
 		this.name = name;
 		this.location = location;
+	}
+	
+	public static BuildingJdo createBuilding(String buildingName){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		BuildingJdo building = new BuildingJdo(buildingName, "");
+		
+		try {
+            pm.makePersistent(building);
+        } finally {
+            pm.close();
+        }
+		
+		return building;
+	}
+	
+	public static void deleteBuilding(BuildingJdo b){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try {
+            pm.deletePersistent(b);
+        } finally {
+            pm.close();
+        }
+		
 	}
 	
 	public Key getKey(){
