@@ -29,12 +29,6 @@ h1 {
 	margin-bottom: 3px;
 }
 
-table, th, td, tfoot {
-	border: 1px solid #006600;
-	border-collapse:collapse;
-	text-align: left;
-	padding: 2px;
-}
 
 #main {
 	width: 700px;
@@ -48,7 +42,7 @@ table, th, td, tfoot {
 }
 
 .editText {
-	width: 435px;
+	width: 475px;
 	height: 20px;
 }
 
@@ -56,9 +50,20 @@ form {
     display: inline;
 }
 
+table, th, td, tfoot {
+	border: 1px solid #006600;
+	border-collapse:collapse;
+	text-align: left;
+	padding: 2px;
+}
+
 th {
 	color: #E9FFE9;
 	background-color: #003300;
+}
+
+.editTable {
+	border: none;
 }
 
 td {
@@ -78,5 +83,5 @@ a:active {color:#006600;}  /* selected link */
 
 /* ADMIN PARKING SPOT */
 .adminOperationsList {
-	width:105px;
+	width:110px;
 }

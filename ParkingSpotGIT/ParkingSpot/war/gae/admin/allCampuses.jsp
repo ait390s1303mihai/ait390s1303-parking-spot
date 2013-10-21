@@ -36,17 +36,18 @@ function disableAllButtons(value) {
 	$("#addcampus").attr("disabled", (value)?"disabled":null);
 }
 
-function deletebutton(campusID) {
+function deleteButton(campusID) {
 	disableAllButtons(true);
 	$("#delete"+campusID).show();
 }
 
-function editbutton(campusID) {
+function editButton(campusID) {
 	disableAllButtons(true);
+	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
 }
 
-function confirmdeletecampus(campusID) {
+function confirmDeleteCampus(campusID) {
 	selectedCampus=campusID;
 	$.post("/gae/admin/deleteCampusCommand", 
 			{campusID: campusID}, 
@@ -64,8 +65,14 @@ function confirmdeletecampus(campusID) {
 	
 }
 
-function canceldeletecampus(campusID) {
+function cancelDeleteCampus(campusID) {
 	$("#delete"+campusID).hide();
+	disableAllButtons(false);
+}
+
+function cancelEditCampus(campusID) {
+	$("#edit"+campusID).hide();
+	$("#view"+campusID).show();
 	disableAllButtons(false);
 }
 
@@ -95,51 +102,47 @@ function canceldeletecampus(campusID) {
 
 		<tr>
 			<td class="adminOperationsList">
-			<!-- <a href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a>  -->
-			<!-- <a href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a> -->
-				
 				<button class="editbutton" type="button"
-					onclick="editbutton(<%=campusID%>)">Edit</button>				
+					onclick="editButton(<%=campusID%>)">Edit</button>
 				<button class="deletebutton" type="button"
-					onclick="deletebutton(<%=campusID%>)">Delete</button></td>
-			<td><div><%=campusName%></div>
-			
+					onclick="deleteButton(<%=campusID%>)">Delete</button>
+			</td>
+
+			<td><div id="view<%=campusID%>"><%=campusName%></div>
+
 				<div id="edit<%=campusID%>" style="display: none">
-				
-				<%
-					campus = Campus.getCampus(campusID);
-					pageContext.setAttribute("campusName", Campus.getName(campus));
-					pageContext.setAttribute("campusAddress", Campus.getAddress(campus));
-					pageContext.setAttribute("googleMapLocation", Campus.getGoogleMapLocation(campus));
-				%>				
-				<form action="/gae/admin/updateCampusCommand" method="get">
+
+					<form action="/gae/admin/updateCampusCommand" method="get">
 						<input type="hidden" value="<%=campusID%>" name="campusID" />
-						<table id="edit">
+						<table class="editTable">
 							<tr>
-								<td width="25%">Name:</td>
-								<td width="75%"><input type="text" class="editText" value="${fn:escapeXml(campusName)}"
-									name="campusName" /></td>
+								<td class="editTable" width=90>Name:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=campusName%>" name="campusName" /></td>
 							</tr>
 							<tr>
-								<td>Address:</td>
-								<td><input type="text" class="editText" value="${fn:escapeXml(campusAddress)}"
-									name="campusAddress" /></td>
+								<td class="editTable">Address:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=Campus.getAddress(campus)%>" name="campusAddress" /></td>
 							</tr>
 							<tr>
-								<td>Google Map Location:</td>
-								<td><input type="text" class="editText"
-									value="${fn:escapeXml(googleMapLocation)}" name="googleMapLocation" /></td>
+								<td class="editTable">Google Map:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=Campus.getGoogleMapLocation(campus)%>"
+									name="googleMapLocation" /></td>
 							</tr>
 						</table>
-						<input type="submit" value="Save" />
-				</form>					
-				</div>
-				
-				<div id="delete<%=campusID%>" style="display: none">
-					Do you want to delete this campus?
-					<button type="button" onclick="confirmdeletecampus(<%=campusID%>)">Delete</button>
-					<button type="button" onclick="canceldeletecampus(<%=campusID%>)">Cancel</button>
-				</div></td>
+		<input type="submit" value="Save" />
+		<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
+		</form>
+		</div>
+
+		<div id="delete<%=campusID%>" style="display: none">
+			Do you want to delete this campus?
+			<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
+			<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+		</div>
+		</td>
 		</tr>
 
 		<%
