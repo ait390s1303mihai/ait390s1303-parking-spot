@@ -22,11 +22,9 @@ import parkingspot.gae.db.Campus;
 @SuppressWarnings("serial")
 public class DeleteCampusServlet extends HttpServlet {
 
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		Campus.deleteCampusCommand(req.getParameter("campusID"));
-        	
-        //Return to main admin page
-        resp.sendRedirect("/gae/admin/allCampuses.jsp");
+		boolean result=Campus.deleteCampusCommand(req.getParameter("campusID"));
+		resp.setStatus((result)?HttpServletResponse.SC_OK:HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	}
 }

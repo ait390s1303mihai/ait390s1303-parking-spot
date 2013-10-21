@@ -21,6 +21,50 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
+
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+ </script>
+
+<script>
+
+var selectedCampus=null;
+
+function disableAllButtons(value) {
+	$(".deletebutton").attr("disabled", (value)?"disabled":null);
+	$("#addcampus").attr("disabled", (value)?"disabled":null);
+}
+
+function deletebutton(campusID) {
+	disableAllButtons(true);
+	$("#delete"+campusID).show();
+}
+
+function confirmdeletecampus(campusID) {
+	selectedCampus=campusID;
+	$.post("/gae/admin/deleteCampusCommand", 
+			{campusID: campusID}, 
+			function (data,status) {
+				//alert("Data "+data+" status "+status);
+				if (status="success") {
+					location.reload();
+				} else {
+					canceldeletecampus(selectedCampus);
+					selectedCampus=null;
+				}
+			}
+			
+	);
+	
+}
+
+function canceldeletecampus(campusID) {
+	$("#delete"+campusID).hide();
+	disableAllButtons(false);
+}
+
+</script>
+
 </head>
 <body>
 	<%
@@ -45,9 +89,15 @@
 
 		<tr>
 			<td class="adminOperationsList"><a
-				href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a> <a
-				href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a></td>
-			<td><%=campusName%></td>
+				href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a> <!-- <a href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a> -->
+				<button class="deletebutton" type="button"
+					onclick="deletebutton(<%=campusID%>)">Delete</button></td>
+			<td><div><%=campusName%></div>
+				<div id="delete<%=campusID%>" style="display: none">
+					Do you want to delete this campus?
+					<button type="button" onclick="confirmdeletecampus(<%=campusID%>)">Delete</button>
+					<button type="button" onclick="canceldeletecampus(<%=campusID%>)">Cancel</button>
+				</div></td>
 		</tr>
 
 		<%
@@ -60,9 +110,9 @@
 			<tr>
 				<td colspan="2" class="footer">
 					<form action="/gae/admin/addCampusCommand" method="get">
-						New Campus: <input type="text" name="campusName" size="50"/> <input type="submit"
-							value="Add" />
-					</form> 
+						New Campus: <input type="text" name="campusName" size="50" /> <input
+							id="addcampus" type="submit" value="Add" />
+					</form>
 				</td>
 			</tr>
 		</tfoot>
