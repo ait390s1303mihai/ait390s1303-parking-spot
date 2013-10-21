@@ -9,7 +9,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Mihai Boicu, ... 
+   Authors: Andrew Tsai, Mihai Boicu, ... 
    
    Version 0.1 - Fall 2013
 -->
@@ -32,12 +32,18 @@ var selectedCampus=null;
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
+	$(".editbutton").attr("disabled", (value)?"disabled":null);
 	$("#addcampus").attr("disabled", (value)?"disabled":null);
 }
 
 function deletebutton(campusID) {
 	disableAllButtons(true);
 	$("#delete"+campusID).show();
+}
+
+function editbutton(campusID) {
+	disableAllButtons(true);
+	$("#edit"+campusID).show();
 }
 
 function confirmdeletecampus(campusID) {
@@ -76,7 +82,7 @@ function canceldeletecampus(campusID) {
 		} else {
 	%>
 	<h1>ALL CAMPUSES</h1>
-	<table>
+	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Campus Name</th>
@@ -88,11 +94,47 @@ function canceldeletecampus(campusID) {
 		%>
 
 		<tr>
-			<td class="adminOperationsList"><a
-				href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a> <!-- <a href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a> -->
+			<td class="adminOperationsList">
+			<!-- <a href="/gae/admin/editCampus.jsp?campus=<%=campusID%>">Edit</a>  -->
+			<!-- <a href="/gae/admin/deleteCampus.jsp?campus=<%=campusID%>">Delete</a> -->
+				
+				<button class="editbutton" type="button"
+					onclick="editbutton(<%=campusID%>)">Edit</button>				
 				<button class="deletebutton" type="button"
 					onclick="deletebutton(<%=campusID%>)">Delete</button></td>
 			<td><div><%=campusName%></div>
+			
+				<div id="edit<%=campusID%>" style="display: none">
+				
+				<%
+					campus = Campus.getCampus(campusID);
+					pageContext.setAttribute("campusName", Campus.getName(campus));
+					pageContext.setAttribute("campusAddress", Campus.getAddress(campus));
+					pageContext.setAttribute("googleMapLocation", Campus.getGoogleMapLocation(campus));
+				%>				
+				<form action="/gae/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						<table id="edit">
+							<tr>
+								<td width="25%">Name:</td>
+								<td width="75%"><input type="text" class="editText" value="${fn:escapeXml(campusName)}"
+									name="campusName" /></td>
+							</tr>
+							<tr>
+								<td>Address:</td>
+								<td><input type="text" class="editText" value="${fn:escapeXml(campusAddress)}"
+									name="campusAddress" /></td>
+							</tr>
+							<tr>
+								<td>Google Map Location:</td>
+								<td><input type="text" class="editText"
+									value="${fn:escapeXml(googleMapLocation)}" name="googleMapLocation" /></td>
+							</tr>
+						</table>
+						<input type="submit" value="Save" />
+				</form>					
+				</div>
+				
 				<div id="delete<%=campusID%>" style="display: none">
 					Do you want to delete this campus?
 					<button type="button" onclick="confirmdeletecampus(<%=campusID%>)">Delete</button>

@@ -5,7 +5,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Alexander Leone, Mihai Boicu, ... 
+   Authors: Alexander Leone, Andrew Tsai, Mihai Boicu, ... 
    
    Version 0.1 - Fall 2013
 */
@@ -36,10 +36,24 @@ table, th, td, tfoot {
 	padding: 2px;
 }
 
-table {
+#main {
 	width: 700px;
 	margin: 0px;
 	margin-bottom: 3px;
+}
+
+#edit {
+	width: 585px;
+	margin: 0px;
+}
+
+.editText {
+	width: 435px;
+	height: 20px;
+}
+
+form {
+    display: inline;
 }
 
 th {
@@ -64,5 +78,5 @@ a:active {color:#006600;}  /* selected link */
 
 /* ADMIN PARKING SPOT */
 .adminOperationsList {
-	width:100px;
+	width:105px;
 }
