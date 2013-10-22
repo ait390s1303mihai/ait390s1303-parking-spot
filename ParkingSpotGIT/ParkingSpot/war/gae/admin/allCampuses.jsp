@@ -132,17 +132,16 @@ function cancelEditCampus(campusID) {
 									name="googleMapLocation" /></td>
 							</tr>
 						</table>
-		<input type="submit" value="Save" />
-		<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
-		</form>
-		</div>
+						<input type="submit" value="Save" />
+						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
+					</form>
+				</div>
 
-		<div id="delete<%=campusID%>" style="display: none">
-			Do you want to delete this campus?
-			<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
-			<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
-		</div>
-		</td>
+				<div id="delete<%=campusID%>" style="display: none">
+					Do you want to delete this campus?
+					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
+					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+				</div></td>
 		</tr>
 
 		<%
