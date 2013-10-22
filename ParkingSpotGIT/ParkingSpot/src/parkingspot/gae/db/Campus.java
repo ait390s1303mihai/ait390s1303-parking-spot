@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Mihai Boicu, ...
+ * Authors: Mihai Boicu
  */
 
 package parkingspot.gae.db;
