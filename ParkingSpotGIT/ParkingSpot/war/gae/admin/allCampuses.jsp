@@ -28,9 +28,29 @@
 
 <script>
 
+
+$(document).ready(function(){
+	
+	// keypress event for Add button
+	$("#addCampusInput").keyup(function() {
+	name=$("#addCampusInput").val();
+	if (checkCampusName(name)) {
+		$("#addCampusButton").attr("disabled",null);
+		$("#addCampusError").hide();
+	} else {
+		$("#addCampusButton").attr("disabled","disabled");
+		if (name!=null && name.length>0) 
+			$("#addCampusError").show();
+	}
+	});
+});	
+
+var campusNamePattern = /^[\s\d\w-'',]{3,}$/
+campusNamePattern.compile(campusNamePattern)
+
 // check the syntax of the name of a campus 
-function checkName() {
-	//TODO implement the function	
+function checkCampusName(name) {
+	return campusNamePattern.test(name);
 }
 
 var selectedCampus=null;
@@ -38,7 +58,7 @@ var selectedCampus=null;
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
-	$("#addcampus").attr("disabled", (value)?"disabled":null);
+	$("#addCampusButton").attr("disabled", (value)?"disabled":null);
 }
 
 function deleteButton(campusID) {
@@ -158,10 +178,13 @@ function cancelEditCampus(campusID) {
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form action="/gae/admin/addCampusCommand" method="get">
-						New Campus: <input type="text" name="campusName" size="50" /> <input
-							id="addcampus" type="submit" value="Add" />
+					<form name="addCampusForm" action="/gae/admin/addCampusCommand"
+						onsubmit="return checkCampusName()" method="get">
+						New Campus: <input id="addCampusInput" type="text"
+							name="campusName" size="50" /> <input id="addCampusButton"
+							type="submit" value="Add" disabled="disabled" />
 					</form>
+					<div id="addCampusError" class="error" style="display: none">Invalid campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>
