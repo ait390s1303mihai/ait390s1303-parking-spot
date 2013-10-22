@@ -28,6 +28,7 @@
 
 <script>
 
+// check the syntax of the name of a campus
 function checkName() {
 	
 }
