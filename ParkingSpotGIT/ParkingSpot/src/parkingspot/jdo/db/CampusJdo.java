@@ -72,7 +72,7 @@ public class CampusJdo {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		System.out.println("sKey: " + sKey);
 		try {
-			CampusJdo campus = getCampus(sKey);
+			CampusJdo campus = getCampus(pm, sKey);
             pm.deletePersistent(campus);
         } finally {
             pm.close();
@@ -81,13 +81,12 @@ public class CampusJdo {
 	
 	public static CampusJdo getCampus(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
-		
+		return getCampus(pm, sKey);
+	}
+	
+	public static CampusJdo getCampus(PersistenceManager pm, String sKey){
 		long k = Long.parseLong(sKey);
-		
-		
 		CampusJdo c = pm.getObjectById(CampusJdo.class, k);
-		
 		return c;
 	}
 	
