@@ -15,12 +15,15 @@
    Version 0.1 - Fall 2013
 -->
 
+
 <html>
 <head>
 
 <title>All Campuses</title>
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
+<link rel="stylesheet" type="text/css"
+	href="/stylesheets/parkingspot.css">
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
@@ -29,15 +32,22 @@ var selectedCampus=null;
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
+	$(".editbutton").attr("disabled", (value)?"disabled":null);
 	$("#addcampus").attr("disabled", (value)?"disabled":null);
 }
 
-function deletebutton(campusID) {
+function deleteButton(campusID) {
 	disableAllButtons(true);
 	$("#delete"+campusID).show();
 }
 
-function confirmdeletecampus(campusID) {
+function editButton(campusID) {
+	disableAllButtons(true);
+	$("#view"+campusID).hide();
+	$("#edit"+campusID).show();
+}
+
+function confirmDeleteCampus(campusID) {
 	selectedCampus=campusID;
 	$.post("/jdo/admin/deleteCampusCommand", 
 			{campusID: campusID}, 
@@ -55,8 +65,14 @@ function confirmdeletecampus(campusID) {
 	
 }
 
-function canceldeletecampus(campusID) {
+function cancelDeleteCampus(campusID) {
 	$("#delete"+campusID).hide();
+	disableAllButtons(false);
+}
+
+function cancelEditCampus(campusID) {
+	$("#edit"+campusID).hide();
+	$("#view"+campusID).show();
 	disableAllButtons(false);
 }
 
@@ -111,4 +127,92 @@ function canceldeletecampus(campusID) {
 	</table>
 
 </body>
+</html> 
+<%-- 
+	<%
+		List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
+		if (allCampuses.isEmpty()) {
+	%>
+	<h1>No Campus Defined</h1>
+	<%
+		} else {
+	%>
+	<h1>ALL CAMPUSES</h1>
+	<table id="main">
+		<tr>
+			<th class="adminOperationsList">Operations</th>
+			<th>Campus Name</th>
+		</tr>
+		<%
+			for (Object campus : allCampuses) {
+					String campusName = CampusJdo.getName(campus);
+					String campusID = CampusJdo.getStringID(campus);
+		%>
+
+		<tr>
+			<td class="adminOperationsList">
+				<button class="editbutton" type="button"
+					onclick="editButton(<%=campusID%>)">Edit</button>
+				<button class="deletebutton" type="button"
+					onclick="deleteButton(<%=campusID%>)">Delete</button>
+			</td>
+
+			<td><div id="view<%=campusID%>"><%=campusName%></div>
+
+				<div id="edit<%=campusID%>" style="display: none">
+
+					<form action="/gae/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						<table class="editTable">
+							<tr>
+								<td class="editTable" width=90>Name:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=campusName%>" name="campusName" /></td>
+							</tr>
+							<tr>
+								<td class="editTable">Address:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=Campus.getAddress(campus)%>" name="campusAddress" /></td>
+							</tr>
+							<tr>
+								<td class="editTable">Google Map:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=Campus.getGoogleMapLocation(campus)%>"
+									name="googleMapLocation" /></td>
+							</tr>
+						</table>
+		<input type="submit" value="Save" />
+		<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
+		</form>
+		</div>
+
+		<div id="delete<%=campusID%>" style="display: none">
+			Do you want to delete this campus?
+			<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
+			<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+		</div>
+		</td>
+		</tr>
+
+		<%
+			}
+
+			}
+		%>
+
+		<tfoot>
+			<tr>
+				<td colspan="2" class="footer">
+					<form action="/gae/admin/addCampusCommand" method="get">
+						New Campus: <input type="text" name="campusName" size="50" /> <input
+							id="addcampus" type="submit" value="Add" />
+					</form>
+				</td>
+			</tr>
+		</tfoot>
+
+	</table>
+
+</body>
 </html>
+ --%>

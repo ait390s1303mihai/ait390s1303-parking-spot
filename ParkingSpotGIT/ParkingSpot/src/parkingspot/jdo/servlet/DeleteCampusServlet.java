@@ -11,7 +11,6 @@ import java.io.IOException;
 
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
-//import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,10 +20,9 @@ import parkingspot.jdo.db.CampusJdo;
 
 @SuppressWarnings("serial")
 public class DeleteCampusServlet extends HttpServlet {
-
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-		boolean result=CampusJdo.deleteCampus(req.getParameter("campus"));
-		resp.setStatus((result)?HttpServletResponse.SC_OK:HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		System.out.println("YAAAAAYYYY BOIIIIII 222222 ");
+		CampusJdo.deleteCampusCommand(req.getParameter("campus"));
+		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
 }

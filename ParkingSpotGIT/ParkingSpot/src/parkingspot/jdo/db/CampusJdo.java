@@ -32,8 +32,6 @@ import com.google.appengine.api.datastore.KeyFactory;
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Fairfax Campus"
  *  
- *     Authors: Drew Lorence, Mihai Boicu
- *  
  */     
 
 
@@ -70,24 +68,30 @@ public class CampusJdo {
 		return campus;
 	}
 	
-	public static boolean deleteCampus(String string){
+	public static void deleteCampusCommand(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
+		System.out.println("sKey: " + sKey);
 		try {
-            pm.deletePersistent(string);
+			CampusJdo campus = getCampus(sKey);
+            pm.deletePersistent(campus);
         } finally {
             pm.close();
         }
-		return false;
 	}
 	
-	public static CampusJdo getCampus(String string){
+	public static CampusJdo getCampus(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
-		CampusJdo c = pm.getObjectById(CampusJdo.class, string);
+		
+		long k = Long.parseLong(sKey);
+		
+		
+		CampusJdo c = pm.getObjectById(CampusJdo.class, k);
 		
 		return c;
 	}
+	
+
 	
 	public Key getKey(){
 		return key;
@@ -105,7 +109,7 @@ public class CampusJdo {
 		return address;
 	}
 	
-	public String getLocation(){
+	public String getGoogleMapLocation(){
 		return location;
 	}
 	

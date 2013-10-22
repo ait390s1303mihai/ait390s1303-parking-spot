@@ -29,27 +29,30 @@
 	String campusName = null;
 	boolean error = (campusID == null);
 /* 	Entity campus = null; GAE */
-	Object campus = null;
+	CampusJdo campus = null;
 	if (!error) {
 		campus = CampusJdo.getCampus(campusID);
 		error = (campus == null);
 	}
 	if (!error) {
-		campusName = CampusJdo.getName(campus);
-		pageContext.setAttribute("campusName", CampusJdo.getName(campus));
-		pageContext.setAttribute("campusAddress", CampusJdo.getAddress(campus));
-		pageContext.setAttribute("googleMapLocation", CampusJdo.getGoogleMapLocation(campus));
+  		campusName = campus.getName();
+ 		pageContext.setAttribute("campusName", campusName);
+		pageContext.setAttribute("campusAddress", campus.getAddress());
+		pageContext.setAttribute("googleMapLocation", campus.getGoogleMapLocation());  
+		System.out.println(" CampusName:"+campusName);
+		System.out.println(" CampusId: "+campusID);
 	}
+	
 	%>
-
+	
 	<h1>Delete Campus</h1>
-
+	
 	<p>
 		Do you want to delete the campus <i><%=campusName%> </i> ?
 	</p>
 
-	<form action="/jdo/admin/deleteCampusCommand" method="get">
-		<input type="hidden" value="<%=campusID%>" name="campusID" /> <br>
+	<form action="/jdo/admin/deleteCampusCommand" method="post">
+		<input type="hidden" value="<%=campusID%>" name="campus" /> <br>
 		<input type="submit" value="Delete" />
 	</form>
 	<form action="/jdo/admin/allCampuses.jsp">
