@@ -28,9 +28,9 @@
 
 <script>
 
-// check the syntax of the name of a campus
+// check the syntax of the name of a campus 
 function checkName() {
-	
+	//TODO implement the function	
 }
 
 var selectedCampus=null;
