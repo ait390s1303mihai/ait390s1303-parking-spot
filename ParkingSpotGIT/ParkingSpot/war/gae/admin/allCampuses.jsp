@@ -9,7 +9,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Andrew Tsai, Mihai Boicu, ... 
+   Authors: Andrew Tsai, Mihai Boicu 
    
    Version 0.1 - Fall 2013
 -->
@@ -27,6 +27,10 @@
  </script>
 
 <script>
+
+function checkName() {
+	
+}
 
 var selectedCampus=null;
 
