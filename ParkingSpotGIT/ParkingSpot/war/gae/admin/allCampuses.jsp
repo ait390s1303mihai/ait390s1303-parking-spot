@@ -28,6 +28,7 @@
 
 <script>
 
+var selectedCampusForEdit = null
 
 $(document).ready(function(){
 	
@@ -43,6 +44,22 @@ $(document).ready(function(){
 			$("#addCampusError").show();
 	}
 	});
+	
+	$(".editCampusNameInput").keyup(function() {
+		if (selectedCampusForEdit==null)
+			return;
+		name=$("#editCampusNameInput").val();
+		if (checkCampusName(name)) {
+			$("#addCampusButton").attr("disabled",null);
+			$("#addCampusError").hide();
+		} else {
+			$("#addCampusButton").attr("disabled","disabled");
+			if (name!=null && name.length>0) 
+				$("#addCampusError").show();
+		}
+		});
+	
+	
 });	
 
 var campusNamePattern = /^[\s\d\w-'',]{3,}$/
@@ -53,7 +70,6 @@ function checkCampusName(name) {
 	return campusNamePattern.test(name);
 }
 
-var selectedCampus=null;
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
@@ -72,8 +88,10 @@ function editButton(campusID) {
 	$("#edit"+campusID).show();
 }
 
+var selectedCampusForDelete=null;
+
 function confirmDeleteCampus(campusID) {
-	selectedCampus=campusID;
+	selectedCampusForDelete=campusID;
 	$.post("/gae/admin/deleteCampusCommand", 
 			{campusID: campusID}, 
 			function (data,status) {
@@ -81,7 +99,7 @@ function confirmDeleteCampus(campusID) {
 				if (status="success") {
 					location.reload();
 				} else {
-					canceldeletecampus(selectedCampus);
+					canceldeletecampus(selectedCampusForDelete);
 					selectedCampus=null;
 				}
 			}
@@ -142,7 +160,7 @@ function cancelEditCampus(campusID) {
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
-								<td class="editTable"><input type="text" class="editText"
+								<td class="editTable"><input type="text" class="editCampusNameInput"
 									value="<%=campusName%>" name="campusName" /></td>
 							</tr>
 							<tr>

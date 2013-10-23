@@ -41,7 +41,7 @@ h1 {
 	margin: 0px;
 }
 
-.editText {
+.editText, .editCampusNameInput {
 	width: 475px;
 	height: 20px;
 }
@@ -67,7 +67,7 @@ th {
 	background-color: #003300;
 }
 
-.editTable {
+.editTable  {
 	border: none;
 }
 
