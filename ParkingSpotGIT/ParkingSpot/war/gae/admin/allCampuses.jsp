@@ -28,17 +28,68 @@
 
 <script>
 
-// check the syntax of the name of a campus 
-function checkName() {
-	//TODO implement the function	
+var selectedCampusForEdit = null
+var editNameError = false;
+var editLocationError = false;
+var editAddressError = false;
+
+$(document).ready(function(){
+	
+	// keypress event for Add button
+	$("#addCampusInput").keyup(function() {
+	name=$("#addCampusInput").val();
+	if (checkCampusName(name)) {
+		$("#addCampusButton").attr("disabled",null);
+		$("#addCampusError").hide();
+	} else {
+		$("#addCampusButton").attr("disabled","disabled");
+		if (name!=null && name.length>0) 
+			$("#addCampusError").show();
+	}
+	});
+	
+	$(".editCampusNameInput").keyup(function() {
+		if (selectedCampusForEdit==null)
+			return;
+		name=$("#editCampusNameInput"+selectedCampusForEdit).val();
+		editNameError = ! checkCampusName(name);
+		updateSaveEditButton();
+		});
+	
+});	
+
+
+
+function updateSaveEditButton() {
+	if (editNameError||editLocationError||editAddressError) {
+		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled","disabled");
+	} else {
+		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled",null);
+	}
+	if (editNameError) {
+		$("#editCampusNameError"+selectedCampusForEdit).show();
+	} else {
+		$("#editCampusNameError"+selectedCampusForEdit).hide();
+	}
+	
 }
 
-var selectedCampus=null;
+
+
+var campusNamePattern = /^[\s\d\w-'',]{3,}$/
+campusNamePattern.compile(campusNamePattern)
+
+// check the syntax of the name of a campus 
+function checkCampusName(name) {
+	return campusNamePattern.test(name);
+}
+
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
-	$("#addcampus").attr("disabled", (value)?"disabled":null);
+	if (value)
+		$("#addCampusButton").attr("disabled", (value)?"disabled":null);
 }
 
 function deleteButton(campusID) {
@@ -46,14 +97,10 @@ function deleteButton(campusID) {
 	$("#delete"+campusID).show();
 }
 
-function editButton(campusID) {
-	disableAllButtons(true);
-	$("#view"+campusID).hide();
-	$("#edit"+campusID).show();
-}
+var selectedCampusForDelete=null;
 
 function confirmDeleteCampus(campusID) {
-	selectedCampus=campusID;
+	selectedCampusForDelete=campusID;
 	$.post("/gae/admin/deleteCampusCommand", 
 			{campusID: campusID}, 
 			function (data,status) {
@@ -61,7 +108,7 @@ function confirmDeleteCampus(campusID) {
 				if (status="success") {
 					location.reload();
 				} else {
-					canceldeletecampus(selectedCampus);
+					canceldeletecampus(selectedCampusForDelete);
 					selectedCampus=null;
 				}
 			}
@@ -75,7 +122,27 @@ function cancelDeleteCampus(campusID) {
 	disableAllButtons(false);
 }
 
+var selectedCampusOldName=null;
+var selectedCampusOldAddress=null;
+var selectedCampusOldLocation=null;
+
+function editButton(campusID) {
+	selectedCampusForEdit=campusID;
+	disableAllButtons(true);
+	editNameError = false;
+	editLocationError = false;
+	editAddressError = false;
+	updateSaveEditButton();
+	selectedCampusOldName=$("#editCampusNameInput"+selectedCampusForEdit).val();
+	selectedCampusOldAddress=null;
+	selectedCampusOldLocation=null;	
+	$("#view"+campusID).hide();
+	$("#edit"+campusID).show();
+}
+
+
 function cancelEditCampus(campusID) {
+	$("#editCampusNameInput"+selectedCampusForEdit).val(selectedCampusOldName);
 	$("#edit"+campusID).hide();
 	$("#view"+campusID).show();
 	disableAllButtons(false);
@@ -122,8 +189,13 @@ function cancelEditCampus(campusID) {
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=campusName%>" name="campusName" /></td>
+								<td class="editTable"><input type="text"
+									id="editCampusNameInput<%=campusID%>"
+									class="editCampusNameInput" value="<%=campusName%>"
+									name="campusName" />
+									<div id="editCampusNameError<%=campusID%>" class="error"
+										style="display: none">Invalid campus name (minimum 3
+										characters: letters, digits, spaces, -, ')</div></td>
 							</tr>
 							<tr>
 								<td class="editTable">Address:</td>
@@ -137,7 +209,8 @@ function cancelEditCampus(campusID) {
 									name="googleMapLocation" /></td>
 							</tr>
 						</table>
-						<input type="submit" value="Save" />
+						<input id="saveEditCampusButton<%=campusID%>" type="submit"
+							value="Save" />
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
@@ -158,10 +231,14 @@ function cancelEditCampus(campusID) {
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form action="/gae/admin/addCampusCommand" method="get">
-						New Campus: <input type="text" name="campusName" size="50" /> <input
-							id="addcampus" type="submit" value="Add" />
+					<form name="addCampusForm" action="/gae/admin/addCampusCommand"
+						method="get">
+						New Campus: <input id="addCampusInput" type="text"
+							name="campusName" size="50" /> <input id="addCampusButton"
+							type="submit" value="Add" disabled="disabled" />
 					</form>
+					<div id="addCampusError" class="error" style="display: none">Invalid
+						campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>
