@@ -17,6 +17,10 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Transaction;
 
 /**
  * GAE ENTITY UTIL CLASS: "Campus" <br>
@@ -33,6 +37,28 @@ public final class Campus {
 	 * The name of the Campus ENTITY KIND used in GAE.
 	 */
 	private static final String ENTITY_KIND = "Campus";
+	
+	private static final String NAME_PROPERTY = "name";
+	private static final String ADDRESS_PROPERTY = "address";
+	private static final String GOOGLE_MAP_LOCATION = "google-map-location";
+
+	public static Key getKey(String campusId) {
+		long id = Long.parseLong(campusId);
+		Key campusKey = KeyFactory.createKey(ENTITY_KIND, id);
+		return campusKey;
+	}
+	
+	public static String getName(Entity campus) {
+		return (String) campus.getProperty(NAME_PROPERTY);
+	}
+	
+	public static String getAddress(Entity campus) {
+		return (String) campus.getProperty(ADDRESS_PROPERTY);
+	}
+	
+	public static String getGoogleMapLocation(Entity campus) {
+		return (String) campus.getProperty(GOOGLE_MAP_LOCATION);
+	}
 
 	/**
 	 * Private constructor to avoid instantiation.
@@ -40,12 +66,28 @@ public final class Campus {
 	private Campus() {
 	}
 
-	// TODO comments
+	/**
+	 * Create a new campus if none exists.
+	 * @param campusName The name for the campus.
+	 * @return the Entity created with this name or null if error
+	 */
 	public static Entity createCampus(String campusName) {
-		Entity campus = new Entity(ENTITY_KIND);
-		campus.setProperty(NAME_PROPERTY, campusName);
+		Entity campus = null;
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		datastore.put(campus);
+		Transaction txn = datastore.beginTransaction();
+		try {
+			
+			campus = new Entity(ENTITY_KIND);
+			campus.setProperty(NAME_PROPERTY, campusName);
+			datastore.put(campus);
+
+		    txn.commit();
+		} finally {
+		    if (txn.isActive()) {
+		        txn.rollback();
+		    }
+		}
+		
 		return campus;
 	}
 
@@ -68,16 +110,31 @@ public final class Campus {
 		return campus;
 	}
 
-	public static Key getKey(String campusId) {
-		long id = Long.parseLong(campusId);
-		Key campusKey = KeyFactory.createKey(ENTITY_KIND, id);
-		return campusKey;
+	public static Entity getCampusWithName(String name) {
+		Entity campus = null;
+		try {
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			
+			Filter hasName =
+					  new FilterPredicate(NAME_PROPERTY,
+					                      FilterOperator.EQUAL,
+					                      name);
+			Query query = new Query(ENTITY_KIND);
+			query.setFilter(hasName);
+			List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(10));
+			if (result!=null && result.size()>0) {
+				campus=result.get(0);
+			}
+		} catch (Exception e) {
+			// TODO log the error
+		}
+		return campus;
 	}
 	
 	//TODO
 	public static List<Entity> getFirstCampuses(int limit) {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query query = new Query("Campus");
+		Query query = new Query(ENTITY_KIND);
 		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 		return result;
 	}
@@ -88,21 +145,7 @@ public final class Campus {
 
 	// TODO comments
 
-	private static final String NAME_PROPERTY = "name";
-	private static final String ADDRESS_PROPERTY = "address";
-	private static final String GOOGLE_MAP_LOCATION = "google-map-location";
 
-	public static String getName(Entity campus) {
-		return (String) campus.getProperty(NAME_PROPERTY);
-	}
-	
-	public static String getAddress(Entity campus) {
-		return (String) campus.getProperty(ADDRESS_PROPERTY);
-	}
-	
-	public static String getGoogleMapLocation(Entity campus) {
-		return (String) campus.getProperty(GOOGLE_MAP_LOCATION);
-	}
 	
 	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation) {
 		Entity campus = null;
