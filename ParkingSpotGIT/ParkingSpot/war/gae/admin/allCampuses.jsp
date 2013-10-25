@@ -28,12 +28,12 @@
 
 <script>
 
-var selectedCampusForEdit = null
+var selectedCampusForEdit = null  
 var editNameError = false;
 var editLocationError = false;
 var editAddressError = false;
 
-$(document).ready(function(){
+$(document).ready(function(){ //test
 	
 	// keypress event for Add button
 	$("#addCampusInput").keyup(function() {
