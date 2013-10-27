@@ -50,7 +50,7 @@ public class CampusJdo {
 		this.location = location;
 	}
 	
-	public static CampusJdo createCampus(String campusName) {
+	public static CampusJdo createCampus(String campusName) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
         CampusJdo campus = new CampusJdo(campusName, "", "");
