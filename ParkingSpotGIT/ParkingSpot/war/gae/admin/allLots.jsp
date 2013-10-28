@@ -1,3 +1,4 @@
+<%@page import="parkingspot.gae.db.Lot"%>
 <%@page import="com.google.appengine.api.datastore.Entity"%>
 <%@page import="parkingspot.gae.db.Campus"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
@@ -9,7 +10,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Andrew Tsai, Mihai Boicu 
+   Authors: Mihai Boicu 
    
    Version 0.1 - Fall 2013
 -->
@@ -17,40 +18,46 @@
 <html>
 <head>
 
-<title>All Campuses</title>
+<%
+	String campusID=request.getParameter("campusID");
+	Entity campus=Campus.getCampus(campusID);
+	String campusName = Campus.getName(campus);
+%>
+
+<title>All Lots in <%=campusName%></title>
 <!-- CSS -->
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
 
-var selectedCampusForEdit = null  
+var selectedLotForEdit = null
 var editNameError = false;
 var editLocationError = false;
-var editAddressError = false;
 
-$(document).ready(function(){ //test
+$(document).ready(function(){
 	
 	// keypress event for Add button
-	$("#addCampusInput").keyup(function() {
-	name=$("#addCampusInput").val();
-	if (checkCampusName(name)) {
-		$("#addCampusButton").attr("disabled",null);
-		$("#addCampusError").hide();
+	$("#addLotInput").keyup(function() {
+	name=$("#addLotInput").val();
+	if (checkLotName(name)) {
+		$("#addLotButton").attr("disabled",null);
+		$("#addLotError").hide();
 	} else {
-		$("#addCampusButton").attr("disabled","disabled");
+		$("#addLotButton").attr("disabled","disabled");
 		if (name!=null && name.length>0) 
-			$("#addCampusError").show();
+			$("#addLotError").show();
 	}
 	});
 	
-	$(".editCampusNameInput").keyup(function() {
-		if (selectedCampusForEdit==null)
+	$(".editLotNameInput").keyup(function() {
+		if (selectedLotForEdit==null)
 			return;
-		name=$("#editCampusNameInput"+selectedCampusForEdit).val();
-		editNameError = ! checkCampusName(name);
+		name=$("#editLotNameInput"+selectedLotForEdit).val();
+		editNameError = ! checkLotName(name);
 		updateSaveEditButton();
 		});
 	
@@ -60,14 +67,14 @@ $(document).ready(function(){ //test
 
 function updateSaveEditButton() {
 	if (editNameError||editLocationError||editAddressError) {
-		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled","disabled");
+		$("#saveEditLotButton"+selectedLotForEdit).attr("disabled","disabled");
 	} else {
-		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled",null);
+		$("#saveEditLotButton"+selectedLotForEdit).attr("disabled",null);
 	}
 	if (editNameError) {
-		$("#editCampusNameError"+selectedCampusForEdit).show();
+		$("#editLotNameError"+selectedLotForEdit).show();
 	} else {
-		$("#editCampusNameError"+selectedCampusForEdit).hide();
+		$("#editLotNameError"+selectedLotForEdit).hide();
 	}
 	
 }
@@ -78,7 +85,7 @@ var campusNamePattern = /^[\s\w-'',]{3,}$/
 campusNamePattern.compile(campusNamePattern)
 
 // check the syntax of the name of a campus 
-function checkCampusName(name) {
+function checkLotName(name) {
 	return campusNamePattern.test(name);
 }
 
@@ -87,7 +94,7 @@ function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
 	if (value)
-		$("#addCampusButton").attr("disabled", (value)?"disabled":null);
+		$("#addLotButton").attr("disabled", (value)?"disabled":null);
 }
 
 function deleteButton(campusID) {
@@ -95,19 +102,19 @@ function deleteButton(campusID) {
 	$("#delete"+campusID).show();
 }
 
-var selectedCampusForDelete=null;
+var selectedLotForDelete=null;
 
-function confirmDeleteCampus(campusID) {
-	selectedCampusForDelete=campusID;
-	$.post("/gae/admin/deleteCampusCommand", 
+function confirmDeleteLot(campusID) {
+	selectedLotForDelete=campusID;
+	$.post("/gae/admin/deleteLotCommand", 
 			{campusID: campusID}, 
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
 					location.reload();
 				} else {
-					canceldeletecampus(selectedCampusForDelete);
-					selectedCampus=null;
+					canceldeletecampus(selectedLotForDelete);
+					selectedLot=null;
 				}
 			}
 			
@@ -115,32 +122,32 @@ function confirmDeleteCampus(campusID) {
 	
 }
 
-function cancelDeleteCampus(campusID) {
+function cancelDeleteLot(campusID) {
 	$("#delete"+campusID).hide();
 	disableAllButtons(false);
 }
 
-var selectedCampusOldName=null;
-var selectedCampusOldAddress=null;
-var selectedCampusOldLocation=null;
+var selectedLotOldName=null;
+var selectedLotOldAddress=null;
+var selectedLotOldLocation=null;
 
 function editButton(campusID) {
-	selectedCampusForEdit=campusID;
+	selectedLotForEdit=campusID;
 	disableAllButtons(true);
 	editNameError = false;
 	editLocationError = false;
 	editAddressError = false;
 	updateSaveEditButton();
-	selectedCampusOldName=$("#editCampusNameInput"+selectedCampusForEdit).val();
-	selectedCampusOldAddress=null;
-	selectedCampusOldLocation=null;	
+	selectedLotOldName=$("#editLotNameInput"+selectedLotForEdit).val();
+	selectedLotOldAddress=null;
+	selectedLotOldLocation=null;	
 	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
 }
 
 
-function cancelEditCampus(campusID) {
-	$("#editCampusNameInput"+selectedCampusForEdit).val(selectedCampusOldName);
+function cancelEditLot(campusID) {
+	$("#editLotNameInput"+selectedLotForEdit).val(selectedLotOldName);
 	$("#edit"+campusID).hide();
 	$("#view"+campusID).show();
 	disableAllButtons(false);
@@ -151,24 +158,23 @@ function cancelEditCampus(campusID) {
 </head>
 <body>
 	<%
-		List<Entity> allCampuses = Campus.getFirstCampuses(100);
-		if (allCampuses.isEmpty()) {
+		List<Entity> allLots = null;//TODO Lot.getFirstLots(100);
+		if (allLots.isEmpty()) {
 	%>
-	<h1>No Campus Defined</h1>
+	<h1>No Lots Defined</h1>
 	<%
 		} else {
 	%>
-	<h1>ALL CAMPUSES</h1>
+	<h1>ALL LOTS IN</h1>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
-			<th>Campus Name</th>
-			<th>View</th>
+			<th>Lot Name</th>
 		</tr>
 		<%
-			for (Entity campus : allCampuses) {
-					String campusName = Campus.getName(campus);
-					String campusID = Campus.getStringID(campus);
+			for (Entity campus1 : allLots) {
+					String campusName1 = Lot.getName(campus);
+					String campusID1 = Lot.getStringID(campus);
 		%>
 
 		<tr>
@@ -183,49 +189,41 @@ function cancelEditCampus(campusID) {
 
 				<div id="edit<%=campusID%>" style="display: none">
 
-					<form action="/gae/admin/updateCampusCommand" method="get">
+					<form action="/gae/admin/updateLotCommand" method="get">
 						<input type="hidden" value="<%=campusID%>" name="campusID" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
 								<td class="editTable"><input type="text"
-									id="editCampusNameInput<%=campusID%>"
-									class="editCampusNameInput" value="<%=campusName%>"
-									name="campusName" />
-									<div id="editCampusNameError<%=campusID%>" class="error"
+									id="editLotNameInput<%=campusID%>" class="editLotNameInput"
+									value="<%=campusName%>" name="campusName" />
+									<div id="editLotNameError<%=campusID%>" class="error"
 										style="display: none">Invalid campus name (minimum 3
 										characters: letters, digits, spaces, -, ')</div></td>
 							</tr>
 							<tr>
 								<td class="editTable">Address:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=Campus.getAddress(campus)%>" name="campusAddress" /></td>
+									value="<%=Lot.getAddress(campus)%>" name="campusAddress" /></td>
 							</tr>
 							<tr>
 								<td class="editTable">Google Map:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=Campus.getGoogleMapLocation(campus)%>"
+									value="<%=Lot.getGoogleMapLocation(campus)%>"
 									name="googleMapLocation" /></td>
 							</tr>
 						</table>
-						<input id="saveEditCampusButton<%=campusID%>" type="submit"
+						<input id="saveEditLotButton<%=campusID%>" type="submit"
 							value="Save" />
-						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
+						<button type="button" onclick="cancelEditLot(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
 
 				<div id="delete<%=campusID%>" style="display: none">
 					Do you want to delete this campus?
-					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
-					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+					<button type="button" onclick="confirmDeleteLot(<%=campusID%>)">Delete</button>
+					<button type="button" onclick="cancelDeleteLot(<%=campusID%>)">Cancel</button>
 				</div></td>
-				
-				<td>
-				<form action="/gae/admin/alllots.jsp" style="display:inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" />
-					<input type="submit" value="Lots">
-				</form>
-				</td>
 		</tr>
 
 		<%
@@ -237,13 +235,13 @@ function cancelEditCampus(campusID) {
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form name="addCampusForm" action="/gae/admin/addCampusCommand"
+					<form name="addLotForm" action="/gae/admin/addLotCommand"
 						method="get">
-						New Campus: <input id="addCampusInput" type="text"
-							name="campusName" size="50" /> <input id="addCampusButton"
-							type="submit" value="Add" disabled="disabled" />
+						New Lot: <input id="addLotInput" type="text" name="campusName"
+							size="50" /> <input id="addLotButton" type="submit" value="Add"
+							disabled="disabled" />
 					</form>
-					<div id="addCampusError" class="error" style="display: none">Invalid
+					<div id="addLotError" class="error" style="display: none">Invalid
 						campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>

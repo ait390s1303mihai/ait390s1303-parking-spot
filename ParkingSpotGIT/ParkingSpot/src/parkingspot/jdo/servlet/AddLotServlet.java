@@ -25,7 +25,7 @@ import parkingspot.jdo.db.CampusJdo;
  * If error (e.g. duplicated name) show error page.
  */
 @SuppressWarnings("serial")
-public class AddCampusServlet extends HttpServlet {
+public class AddLotServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String campusName = req.getParameter("campusName");
 		
@@ -33,7 +33,7 @@ public class AddCampusServlet extends HttpServlet {
 		
 		//TODO if used return an error
 		//CampusJdo campus = 
-				CampusJdo.createCampus(campusName);
+		//		CampusJdo.createCampus(campusName);
 	    //resp.sendRedirect("/gae/admin/editCampus.jsp?campus=" + Campus.getStringID(campus));
 	    resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}

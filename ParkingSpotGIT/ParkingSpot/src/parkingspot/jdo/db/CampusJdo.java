@@ -9,7 +9,11 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 /**
  * 
@@ -27,6 +31,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Address" = "4400 University Dr., Fairfax, VA 22030, USA"
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Fairfax Campus"
+ *  
+ *  Authors: Drew Lorence, Alex Leone
  *  
  */     
 
@@ -50,7 +56,7 @@ public class CampusJdo {
 		this.location = location;
 	}
 	
-	public static CampusJdo createCampus(String campusName) {
+	public static CampusJdo createCampus(String campusName) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
         CampusJdo campus = new CampusJdo(campusName, "", "");
@@ -61,9 +67,31 @@ public class CampusJdo {
             pm.close();
         }
 		
-		
 		return campus;
 	}
+	
+	public static void deleteCampusCommand(String sKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		System.out.println("sKey: " + sKey);
+		try {
+			CampusJdo campus = getCampus(pm, sKey);
+            pm.deletePersistent(campus);
+        } finally {
+            pm.close();
+        }
+	}
+	
+	public static CampusJdo getCampus(String sKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		return getCampus(pm, sKey);
+	}
+	
+	public static CampusJdo getCampus(PersistenceManager pm, String sKey){
+		long k = Long.parseLong(sKey);
+		CampusJdo c = pm.getObjectById(CampusJdo.class, k);
+		return c;
+	}
+	
 
 	
 	public Key getKey(){
@@ -82,7 +110,7 @@ public class CampusJdo {
 		return address;
 	}
 	
-	public String getLocation(){
+	public String getGoogleMapLocation(){
 		return location;
 	}
 	
@@ -102,4 +130,23 @@ public class CampusJdo {
 		}
 		return results;
 	}
+	
+
+	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation) {
+        try {
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			CampusJdo campus = getCampus(pm, campusID);
+			campus.name= name;
+			campus.address= address;
+			campus.location= googleMapLocation;
+		    pm.close();
+			
+        } catch (Exception e) {
+        	return false;			
+	    }
+ 
+        	return true;
+		
+		}
+	
 }
