@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Mihai Boicu, ...
+ * Authors: Alex Leone, Mihai Boicu
  */
 package parkingspot.jdo.servlet;
 
@@ -14,7 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.gae.db.Campus;
+import parkingspot.jdo.db.CampusJdo;
 
 //TODO comments
 @SuppressWarnings("serial")
@@ -22,9 +22,9 @@ import parkingspot.gae.db.Campus;
 // It is going through the catch every time
 public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Campus.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
+		CampusJdo.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
 				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
 
-		resp.sendRedirect("/gae/admin/allCampuses.jsp");
+		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
 }

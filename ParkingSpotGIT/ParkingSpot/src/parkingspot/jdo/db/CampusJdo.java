@@ -32,6 +32,8 @@ import com.google.appengine.api.datastore.KeyFactory;
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Fairfax Campus"
  *  
+ *  Authors: Drew Lorence, Alex Leone
+ *  
  */     
 
 
@@ -128,4 +130,23 @@ public class CampusJdo {
 		}
 		return results;
 	}
+	
+
+	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation) {
+        try {
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			CampusJdo campus = getCampus(pm, campusID);
+			campus.name= name;
+			campus.address= address;
+			campus.location= googleMapLocation;
+		    pm.close();
+			
+        } catch (Exception e) {
+        	return false;			
+	    }
+ 
+        	return true;
+		
+		}
+	
 }

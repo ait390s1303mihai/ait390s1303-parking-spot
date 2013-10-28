@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Mihai Boicu, ...
+ * Authors: Alex Leone, Mihai Boicu
  */
 package parkingspot.jdo.servlet;
 
@@ -21,8 +21,9 @@ import parkingspot.jdo.db.CampusJdo;
 @SuppressWarnings("serial")
 public class DeleteCampusServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("YAAAAAYYYY BOIIIIII 222222 ");
-		CampusJdo.deleteCampusCommand(req.getParameter("campus"));
+		System.out.println("Key: "+req.getParameter("campusID"));
+		
+		CampusJdo.deleteCampusCommand(req.getParameter("campusID"));
 		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
 }
