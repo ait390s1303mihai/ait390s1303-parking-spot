@@ -21,6 +21,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Permit ID" = 1
  *		"Permit_Name" = "Faculty and Workers"
  *		"Fuel_Efficient" ="True"
+ *
+ *	Authors: Drew Lorence
  *  
  */ 
 

@@ -5,9 +5,7 @@
  * 
  * Authors: Alex Leone, Mihai Boicu
  */
-
 package parkingspot.jdo.servlet;
-
 
 import java.io.IOException;
 
@@ -18,23 +16,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.jdo.db.CampusJdo;
 
-
-/**
- * Answer to the HTTP Servlet to add a campus. 
- * Redirect to the full editing page for the campus.
- * If error (e.g. duplicated name) show error page.
- */
+//TODO comments
 @SuppressWarnings("serial")
-public class AddCampusServlet extends HttpServlet {
+// NOTE: It is passing the new value the campus was renamed to
+// It is going through the catch every time
+public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String campusName = req.getParameter("campusName");
-		
-		//TODO check if the campus name is already used
-		
-		//TODO if used return an error
-		//CampusJdo campus = 
-				CampusJdo.createCampus(campusName);
-	    //resp.sendRedirect("/gae/admin/editCampus.jsp?campus=" + Campus.getStringID(campus));
-	    resp.sendRedirect("/jdo/admin/allCampuses.jsp");
+		CampusJdo.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
+				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
+
+		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
 }
