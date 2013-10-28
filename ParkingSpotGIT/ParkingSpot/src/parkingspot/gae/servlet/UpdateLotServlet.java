@@ -5,7 +5,6 @@
  * 
  * Authors: Mihai Boicu, ...
  */
-
 package parkingspot.gae.servlet;
 
 import java.io.IOException;
@@ -16,17 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.gae.db.Campus;
+import parkingspot.gae.db.Lot;
 
-/**
- * Answer to the HTTP Servlet to add a campus. Redirect to the full editing page for the campus. If error (e.g.
- * duplicated name) show error page.
- */
+//TODO comments
 @SuppressWarnings("serial")
-public class AddCampusServlet extends HttpServlet {
-	
+// NOTE: It is passing the new value the campus was renamed to
+// It is going through the catch every time
+public class UpdateLotServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String campusName = req.getParameter("campusName");
-		Campus.createCampus(campusName);
-		resp.sendRedirect("/gae/admin/allCampuses.jsp");
+		String campusID = req.getParameter("campusID");
+		Lot.updateLotCommand(campusID, req.getParameter("lotID"), req.getParameter("lotName"),
+				req.getParameter("totalSpaces"), req.getParameter("googleMapLocation"));
+
+		resp.sendRedirect("/gae/admin/allLots.jsp?campusID="+campusID);
 	}
 }

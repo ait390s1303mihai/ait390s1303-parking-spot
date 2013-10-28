@@ -16,17 +16,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.gae.db.Campus;
+import parkingspot.gae.db.Lot;
 
 /**
- * Answer to the HTTP Servlet to add a campus. Redirect to the full editing page for the campus. If error (e.g.
+ * Answer to the HTTP Servlet to add a Lot. Redirect to the full editing page for the campus. If error (e.g.
  * duplicated name) show error page.
  */
 @SuppressWarnings("serial")
-public class AddCampusServlet extends HttpServlet {
+public class AddLotServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String campusName = req.getParameter("campusName");
-		Campus.createCampus(campusName);
-		resp.sendRedirect("/gae/admin/allCampuses.jsp");
+		String campusID = req.getParameter("campusID");
+		String lotName = req.getParameter("lotName");
+		Lot.createLot(campusID, lotName);
+		resp.sendRedirect("/gae/admin/allLots.jsp?campusID="+campusID);
 	}
 }

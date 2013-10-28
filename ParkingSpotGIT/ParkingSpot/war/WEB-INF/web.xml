@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
 
 	<servlet>
 		<servlet-name>AddCampusServlet</servlet-name>
@@ -13,7 +13,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>AddCampusServlet</servlet-name>
 		<url-pattern>/gae/admin/addCampusCommand</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet>
+		<servlet-name>AddLotServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.AddLotServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddLotServlet</servlet-name>
+		<url-pattern>/gae/admin/addLotCommand</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>DeleteCampusServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.DeleteCampusServlet</servlet-class>
@@ -22,7 +31,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>DeleteCampusServlet</servlet-name>
 		<url-pattern>/gae/admin/deleteCampusCommand</url-pattern>
 	</servlet-mapping>
-	
+
+	<servlet>
+		<servlet-name>DeleteLotServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.DeleteLotServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteLotServlet</servlet-name>
+		<url-pattern>/gae/admin/deleteLotCommand</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>UpdateCampusServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.UpdateCampusServlet</servlet-class>
@@ -32,6 +50,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<url-pattern>/gae/admin/updateCampusCommand</url-pattern>
 	</servlet-mapping>
 	
+		<servlet>
+		<servlet-name>UpdateLotServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.UpdateLotServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateLotServlet</servlet-name>
+		<url-pattern>/gae/admin/updateLotCommand</url-pattern>
+	</servlet-mapping>
+	
+
 	<servlet>
 		<servlet-name>AddCampusJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.AddCampusServlet</servlet-class>
@@ -39,8 +67,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>AddCampusJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/addCampusCommand</url-pattern>
-	</servlet-mapping>	
-	
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>DeleteCampusJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.DeleteCampusServlet</servlet-class>
@@ -48,9 +76,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>DeleteCampusJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/deleteCampusCommand</url-pattern>
-	</servlet-mapping>	
-	
-	
+	</servlet-mapping>
+
+
 	<servlet>
 		<servlet-name>UpdateCampusJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.UpdateCampusServlet</servlet-class>
@@ -58,8 +86,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>UpdateCampusJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updateCampusCommand</url-pattern>
-	</servlet-mapping>	
-	
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>AddLotJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.AddLotServlet</servlet-class>
@@ -67,8 +95,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>AddLotJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/addLotCommand</url-pattern>
-	</servlet-mapping>	
-	
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>DeleteLotJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.DeleteLotServlet</servlet-class>
@@ -76,8 +104,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>DeleteLotJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/deleteLotCommand</url-pattern>
-	</servlet-mapping>	
-	
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>UpdateLotJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.UpdateLotServlet</servlet-class>
@@ -85,9 +113,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>UpdateLotJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updateLotCommand</url-pattern>
-	</servlet-mapping>	
-	
+	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>allCampus.jsp</welcome-file>
 	</welcome-file-list>
-	</web-app>
+</web-app>

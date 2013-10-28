@@ -55,6 +55,31 @@ public final class Campus {
 	private static final String ENTITY_KIND = "Campus";
 	
 	//
+	// KEY
+	//
+	
+	/**
+	 * Return the Key for a given campus id given as String. 
+	 * @param campusId A string with the campus ID (a long).
+	 * @return the Key for this campusID. 
+	 */
+	public static Key getKey(String campusId) {
+		long id = Long.parseLong(campusId);
+		Key campusKey = KeyFactory.createKey(ENTITY_KIND, id);
+		return campusKey;
+	}
+	
+	/**
+	 * Return the string ID corresponding to the key for the campus.
+	 * @param campus The GAE Entity storing the campus.
+	 * @return A string with the campus ID (a long).
+	 */
+	public static String getStringID(Entity campus) {
+		return Long.toString(campus.getKey().getId());
+	}
+	
+	
+	//
 	// NAME
 	//
 	
@@ -91,24 +116,45 @@ public final class Campus {
 	// ADDRESS
 	//
 	
+	/**
+	 *  The property name for the <b>address</b> of the campus.
+	 */
 	private static final String ADDRESS_PROPERTY = "address";
+	
+	/**
+	 * Return the address of the campus. 
+	 * @param campus The Entity storing the campus
+	 * @return a String with the address. 
+	 */
+	public static String getAddress(Entity campus) {
+		Object val=campus.getProperty(ADDRESS_PROPERTY);
+		if (val==null) return "";
+		return (String) val;
+	}
+	
+	//
+	// GOOGLE MAP LOCATION
+	//
+	
+	/**
+	 *  The property name for the <b>google-map-location</b> of the campus.
+	 */
 	private static final String GOOGLE_MAP_LOCATION = "google-map-location";
 
-	public static Key getKey(String campusId) {
-		long id = Long.parseLong(campusId);
-		Key campusKey = KeyFactory.createKey(ENTITY_KIND, id);
-		return campusKey;
-	}
-
-	
-	public static String getAddress(Entity campus) {
-		return (String) campus.getProperty(ADDRESS_PROPERTY);
-	}
-	
+	/**
+	 * Return the Google Map Location of the campus. 
+	 * @param campus The campus Entity for which the location is requested.
+	 * @return A String with the Google Map syntax of the location.
+	 */
 	public static String getGoogleMapLocation(Entity campus) {
-		return (String) campus.getProperty(GOOGLE_MAP_LOCATION);
+		Object val=campus.getProperty(GOOGLE_MAP_LOCATION);
+		if (val==null) return "";
+		return (String) val;
 	}
 
+	//
+	// CREATE CAMPUS
+	//
 
 	/**
 	 * Create a new campus if the name is correct and none exists with this name.
@@ -143,6 +189,10 @@ public final class Campus {
 		
 		return campus;
 	}
+	
+	//
+	// GET CAMPUS
+	//
 
 	/**
 	 * Get a campus based on a string containing its long ID.
@@ -163,11 +213,22 @@ public final class Campus {
 		return campus;
 	}
 
+	/**
+	 * Get a campus based on a string containing its name.
+	 * @param name The name of the campus as a String.
+	 * @return A GAE {@link Entity} for the Campus or <code>null</code> if none or error.
+	 */
 	public static Entity getCampusWithName(String name) {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		return getCampusWithName(datastore, name);
 	}
 	
+	/**
+	 * Get a campus based on a string containing its name.
+	 * @param datastore The current datastore instance. 
+	 * @param name The name of the campus as a String.
+	 * @return A GAE {@link Entity} for the Campus or <code>null</code> if none or error.
+	 */
 	public static Entity getCampusWithName(DatastoreService datastore, String name) {
 		Entity campus = null;
 		try {
@@ -188,22 +249,18 @@ public final class Campus {
 		return campus;
 	}
 	
-	//TODO
-	public static List<Entity> getFirstCampuses(int limit) {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query query = new Query(ENTITY_KIND);
-		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
-		return result;
-	}
+	//
+	// UPDATE CAMPUS
+	//
 	
-	public static String getStringID(Entity campus) {
-		return Long.toString(campus.getKey().getId());
-	}
-
-	// TODO comments
-
-
-	
+	/**
+	 * Update the current description of the campus.
+	 * @param campusID A string with the campus ID (a long).
+	 * @param name The name of the campus as a String.
+	 * @param address The address of the campus as a String.
+	 * @param googleMapLocation The Google Map Location of the campus as a String.
+	 * @return true if succeed and false otherwise
+	 */
 	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation) {
 		Entity campus = null;
 		try {
@@ -219,6 +276,15 @@ public final class Campus {
 		return true;
 	}
 	
+	//
+	// DELETE CAMPUS
+	//
+	
+	/**
+	 * Delete the campus is empty (not linked to anything else).
+	 * @param campusID campusID A string with the campus ID (a long).
+	 * @return True if succeed, false otherwise.
+	 */
 	public static boolean deleteCampusCommand(String campusID) {
 		try {
 			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -229,6 +295,22 @@ public final class Campus {
 		return true;
 	}
 	
+	//
+	// QUERY CAMPUSES
+	//
 	
+	/**
+	 * Return the requested number of campuses (e.g. 100).  
+	 * @param limit The number of campuses to be returned. 
+	 * @return A list of GAE {@link Entity entities}. 
+	 */
+	public static List<Entity> getFirstCampuses(int limit) {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query(ENTITY_KIND);
+		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
+		return result;
+	}
+	
+
 
 }

@@ -19,7 +19,7 @@
 <head>
 
 <%
-	String campusID=request.getParameter("campusID");
+	String campusID=request.getParameter("campusID"); 
 	Entity campus=Campus.getCampus(campusID);
 	String campusName = Campus.getName(campus);
 %>
@@ -81,14 +81,13 @@ function updateSaveEditButton() {
 
 
 
-var campusNamePattern = /^[\s\w-'',]{3,}$/
-campusNamePattern.compile(campusNamePattern)
+var lotNamePattern = /^[\s\w-'',]{3,}$/
+lotNamePattern.compile(lotNamePattern)
 
-// check the syntax of the name of a campus 
+// check the syntax of the name of a lot 
 function checkLotName(name) {
-	return campusNamePattern.test(name);
+	return lotNamePattern.test(name);
 }
-
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
@@ -97,23 +96,26 @@ function disableAllButtons(value) {
 		$("#addLotButton").attr("disabled", (value)?"disabled":null);
 }
 
-function deleteButton(campusID) {
+function deleteButton(lotID) {
 	disableAllButtons(true);
-	$("#delete"+campusID).show();
+	$("#delete"+lotID).show();
 }
 
 var selectedLotForDelete=null;
 
-function confirmDeleteLot(campusID) {
-	selectedLotForDelete=campusID;
-	$.post("/gae/admin/deleteLotCommand", 
-			{campusID: campusID}, 
+function confirmDeleteLot(lotID) {
+	selectedLotForDelete=lotID;
+	$.post("/gae/admin/deleteLotCommand",
+			{
+			lotID: lotID, 
+			campusID: "<%= campusID %>"
+			}, 
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
-					location.reload();
+					location.reload(true);
 				} else {
-					canceldeletecampus(selectedLotForDelete);
+					canceldeletelot(selectedLotForDelete);
 					selectedLot=null;
 				}
 			}
@@ -122,8 +124,8 @@ function confirmDeleteLot(campusID) {
 	
 }
 
-function cancelDeleteLot(campusID) {
-	$("#delete"+campusID).hide();
+function cancelDeleteLot(lotID) {
+	$("#delete"+lotID).hide();
 	disableAllButtons(false);
 }
 
@@ -131,8 +133,8 @@ var selectedLotOldName=null;
 var selectedLotOldAddress=null;
 var selectedLotOldLocation=null;
 
-function editButton(campusID) {
-	selectedLotForEdit=campusID;
+function editButton(lotID) {
+	selectedLotForEdit=lotID;
 	disableAllButtons(true);
 	editNameError = false;
 	editLocationError = false;
@@ -141,15 +143,15 @@ function editButton(campusID) {
 	selectedLotOldName=$("#editLotNameInput"+selectedLotForEdit).val();
 	selectedLotOldAddress=null;
 	selectedLotOldLocation=null;	
-	$("#view"+campusID).hide();
-	$("#edit"+campusID).show();
+	$("#view"+lotID).hide();
+	$("#edit"+lotID).show();
 }
 
 
-function cancelEditLot(campusID) {
+function cancelEditLot(lotID) {
 	$("#editLotNameInput"+selectedLotForEdit).val(selectedLotOldName);
-	$("#edit"+campusID).hide();
-	$("#view"+campusID).show();
+	$("#edit"+lotID).hide();
+	$("#view"+lotID).show();
 	disableAllButtons(false);
 }
 
@@ -158,71 +160,74 @@ function cancelEditLot(campusID) {
 </head>
 <body>
 	<%
-		List<Entity> allLots = null;//TODO Lot.getFirstLots(100);
+		List<Entity> allLots = Lot.getFirstLots(campusID,100);
 		if (allLots.isEmpty()) {
 	%>
-	<h1>No Lots Defined</h1>
+	<h1>No Lots Defined in <%=campusName%></h1>
+	<p><a href="/gae/admin/allCampuses.jsp">All campuses</a></p>
 	<%
 		} else {
 	%>
-	<h1>ALL LOTS IN</h1>
+	<h1>ALL LOTS IN <%=campusName%></h1>
+	<p><a href="/gae/admin/allCampuses.jsp">All campuses</a></p>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Lot Name</th>
 		</tr>
 		<%
-			for (Entity campus1 : allLots) {
-					String campusName1 = Lot.getName(campus);
-					String campusID1 = Lot.getStringID(campus);
+			for (Entity lot : allLots) {
+					String lotName = Lot.getName(lot);
+					String lotID = Lot.getStringID(lot);
 		%>
 
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>)">Edit</button>
+					onclick="editButton(<%=lotID%>)">Edit</button>
 				<button class="deletebutton" type="button"
-					onclick="deleteButton(<%=campusID%>)">Delete</button>
+					onclick="deleteButton(<%=lotID%>)">Delete</button>
 			</td>
 
-			<td><div id="view<%=campusID%>"><%=campusName%></div>
+			<td><div id="view<%=lotID%>"><%=lotName%></div>
 
-				<div id="edit<%=campusID%>" style="display: none">
+				<div id="edit<%=lotID%>" style="display: none">
 
 					<form action="/gae/admin/updateLotCommand" method="get">
 						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						<input type="hidden" value="<%=lotID%>" name="lotID" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
 								<td class="editTable"><input type="text"
-									id="editLotNameInput<%=campusID%>" class="editLotNameInput"
-									value="<%=campusName%>" name="campusName" />
-									<div id="editLotNameError<%=campusID%>" class="error"
-										style="display: none">Invalid campus name (minimum 3
+									id="editLotNameInput<%=lotID%>" class="editLotNameInput"
+									value="<%=lotName%>" name="lotName" />
+									<div id="editLotNameError<%=lotID%>" class="error"
+										style="display: none">Invalid lot name (minimum 3
 										characters: letters, digits, spaces, -, ')</div></td>
 							</tr>
 							<tr>
-								<td class="editTable">Address:</td>
+								<td class="editTable">Spaces:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=Lot.getAddress(campus)%>" name="campusAddress" /></td>
+									value="<%=Lot.getTotalSpaces(lot)%>" name="totalSpaces" /></td>
 							</tr>
 							<tr>
 								<td class="editTable">Google Map:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=Lot.getGoogleMapLocation(campus)%>"
+									value="<%=Lot.getGoogleMapLocation(lot)%>"
 									name="googleMapLocation" /></td>
 							</tr>
 						</table>
-						<input id="saveEditLotButton<%=campusID%>" type="submit"
+						<input id="saveEditLotButton<%=lotID%>" type="submit"
 							value="Save" />
-						<button type="button" onclick="cancelEditLot(<%=campusID%>)">Cancel</button>
+						<button type="button" onclick="cancelEditLot(<%=lotID%>)">Cancel</button>
 					</form>
 				</div>
 
-				<div id="delete<%=campusID%>" style="display: none">
-					Do you want to delete this campus?
-					<button type="button" onclick="confirmDeleteLot(<%=campusID%>)">Delete</button>
-					<button type="button" onclick="cancelDeleteLot(<%=campusID%>)">Cancel</button>
+				<div id="delete<%=lotID%>" style="display: none">
+					Do you want to delete this lot?
+					<button type="button" onclick="confirmDeleteLot(<%=lotID%>)">Delete</button>
+					<button type="button" onclick="cancelDeleteLot(<%=lotID%>)">Cancel</button>
 				</div></td>
 		</tr>
 
@@ -237,12 +242,13 @@ function cancelEditLot(campusID) {
 				<td colspan="2" class="footer">
 					<form name="addLotForm" action="/gae/admin/addLotCommand"
 						method="get">
-						New Lot: <input id="addLotInput" type="text" name="campusName"
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						New Lot: <input id="addLotInput" type="text" name="lotName"
 							size="50" /> <input id="addLotButton" type="submit" value="Add"
 							disabled="disabled" />
 					</form>
 					<div id="addLotError" class="error" style="display: none">Invalid
-						campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
+						lot name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>
