@@ -85,6 +85,3 @@ public class BuildingJdo {
 		return location;
 	}
 }
-		return location;
-	}
-}
