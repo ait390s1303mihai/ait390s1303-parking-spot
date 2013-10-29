@@ -81,7 +81,7 @@ function updateSaveEditButton() {
 
 
 
-var lotNamePattern = /^[\s\w-'',]{3,}$/
+var lotNamePattern = /^[ \w-'',]{3,100}$/
 lotNamePattern.compile(lotNamePattern)
 
 // check the syntax of the name of a lot 
