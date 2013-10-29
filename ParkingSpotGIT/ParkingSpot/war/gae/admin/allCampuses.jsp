@@ -74,7 +74,7 @@ function updateSaveEditButton() {
 
 
 
-var campusNamePattern = /^[\s\w-'',]{3,}$/
+var campusNamePattern = /^[ \w-'',]{3,100}$/
 campusNamePattern.compile(campusNamePattern)
 
 // check the syntax of the name of a campus 

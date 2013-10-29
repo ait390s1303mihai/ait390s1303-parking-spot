@@ -100,7 +100,7 @@ public final class Campus {
 	/**
 	 * The regular expression pattern for the name of the campus.
 	 */
-	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[\\s\\w-'',]{3,}\\Z");
+	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[ \\w-'',]{3,100}\\Z");
 	
 	/**
 	 * Check if the name is correct for a campus. 
