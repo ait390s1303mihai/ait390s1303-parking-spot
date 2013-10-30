@@ -35,8 +35,11 @@ public class MySession {
 	// ADMIN CHECK
 	//
 
-	public static boolean isAdminLogged(HttpServletRequest request) {
-		HttpSession session = request.getSession();
+	public static boolean isAdminLogged(ServletRequest request) {
+		HttpSession session = null; 
+		if (request instanceof HttpServletRequest) {
+			session = ((HttpServletRequest)request).getSession();
+		}
 		synchronized (session) {
 			Entity adminProfile = getAdminProfile(session);
 			if (adminProfile==null) {
@@ -52,6 +55,8 @@ public class MySession {
 				currentUser.getFederatedIdentity();
 			}
 		}
-		return true;
+		return false;
 	}
+	
+	
 }
