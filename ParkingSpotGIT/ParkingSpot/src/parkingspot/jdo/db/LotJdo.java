@@ -84,11 +84,11 @@ public class LotJdo {
 	}
 	
 	
-	public static void deleteLot(LotJdo l){
+	public static void deleteLot(LotJdo lot){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		try {
-            pm.deletePersistent(l);
+            pm.deletePersistent(lot);
         } finally {
             pm.close();
         }
@@ -120,27 +120,62 @@ public class LotJdo {
 
 	
 	@SuppressWarnings("unchecked")
-	public static List<LotJdo> getFirstLots(int number, String campusid) {
+	public static List<LotJdo> getFirstLots(int number, String campusIdParam) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<LotJdo> results = null;
+		Query q = pm.newQuery(LotJdo.class);
+		q.setFilter("campusId == campusIdParam");
+		q.setOrdering("name asc");	
+		q.declareParameters("String campusIdParam");
+
 		try {
+			System.out.println("campusIdParam: " + campusIdParam);
 			
-			Query q = pm.newQuery(LotJdo.class);
-			q.setFilter("campusId == campusid");
-			q.setOrdering("name asc");
-			
-			results = (List<LotJdo>)q.execute();
+			results = (List<LotJdo>)q.execute(campusIdParam);		
+	
+	
 		} catch (Exception e) {
 			
+			System.out.println("exception: " + e);
+			
+		} finally {
+			q.closeAll();		
 		}
+		
 		return results;
+	}
+   
+	public static boolean updateLotCommand(String lotID, String name, String googleMapLocation, int spaces, String campusId) {
+			try {
+	           PersistenceManager pm = PMF.get().getPersistenceManager();
+	           LotJdo lot = getLot(pm, lotID);
+	           System.out.println("Lot name: " + lot.name);
+	           lot.name= name;
+	           lot.location= googleMapLocation;
+	           lot.spaces= spaces;
+	       	   lot.campusId = campusId;
+	       	   
+	           pm.close();
+			               
+			} catch (Exception e) {
+			       return false;                        
+			   }
+			
+			       return true;
+			       
 	}
 	
 	
-	
+		
+
 	public Key getKey(){
 		return key;
 	}
+	
+	public String getStringID() {
+		return Long.toString(getKey().getId());
+	}
+	
 	
 	public String campusId(){
 		return campusId;

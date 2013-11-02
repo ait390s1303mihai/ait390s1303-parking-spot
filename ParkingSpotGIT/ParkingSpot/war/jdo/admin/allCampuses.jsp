@@ -115,7 +115,7 @@ function cancelEditCampus(campusID) {
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
 				<a class="addLotButton" type="button"
-					href="campusLots.jsp?campusId=<%=campusID%>">Add Lots</a>
+					href="campusLots.jsp?campusId=<%=campusID%>"> View Lots</a>
 			</td>
 
 			<td><div id="view<%=campusID%>"><%=campusName%></div>

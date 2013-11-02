@@ -20,9 +20,9 @@ import parkingspot.jdo.db.LotJdo;
 
 @SuppressWarnings("serial")
 public class DeleteLotServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("In DeleteLotServlet ");
-		System.out.println("Key: "+req.getParameter("campusId"));
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//		System.out.println("In DeleteLotServlet ");
+//		System.out.println("Key: "+req.getParameter("campusId"));
 		
 		LotJdo.deleteLotCommand(req.getParameter("lotId"));
 	    resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));

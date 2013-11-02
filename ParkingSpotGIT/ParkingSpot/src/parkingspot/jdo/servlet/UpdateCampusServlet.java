@@ -22,6 +22,7 @@ import parkingspot.jdo.db.CampusJdo;
 // It is going through the catch every time
 public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
 		CampusJdo.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
 				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
 

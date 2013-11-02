@@ -27,9 +27,13 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
+function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+}
 
 var selectedLot=null;
-var selectedCampus = $.url().param('campusId');
+var selectedCampus = getURLParameter('campusId');
+
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
@@ -51,8 +55,7 @@ function editButton(lotId) {
 function confirmDeleteLot(lotId) {
 	selectedLot=lotId;
 	$.post("/jdo/admin/deleteLotCommand", 
-			{lotId: lotId},
-			{campusId: selectedCampus}, 
+			{lotId: lotId}, 
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
@@ -98,15 +101,19 @@ function cancelEditLot(lotId) {
 	<%
 		} else {
 	%>
+	
 	<h1>ALL LOTS</h1>
+	<span class="backBtn" onclick="javascript:window.location='/jdo/admin/allCampuses.jsp';">Back</span>
 	<table id="main">
+		
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Lot Name</th>
 		</tr>
+		
 		<%
 			for (LotJdo lot : allLots) {
-				String lotId = lot.campusId();
+				String lotId = lot.getStringID();
 				String lotName = lot.getName();
 		%>
 
@@ -121,7 +128,7 @@ function cancelEditLot(lotId) {
 			<td><div id="view<%=lotId%>"><%=lotName%></div>
 
 			<div id="edit<%=lotId%>" style="display: none">
-				<form action="/jdo/admin/updateLot" method="get">
+				<form action="/jdo/admin/updateLotCommand" method="get">
 					<input type="hidden" value="<%=campusId%>" name="campusId" />
 					<input type="hidden" value="<%=lotId%>" name="lotId" />
 					<table class="editTable">
@@ -178,6 +185,6 @@ function cancelEditLot(lotId) {
 		</tfoot>
 
 	</table>
-
+	
 </body>
 </html>
