@@ -114,7 +114,34 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdateLotJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updateLotCommand</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>AddPermitJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.AddPermitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddPermitJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/addPermitCommand</url-pattern>
+	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>DeletePermitJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.DeletePermitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeletePermitJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/deletePermitCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UpdatePermitJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.UpdatePermitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdatePermitJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/updatePermitCommand</url-pattern>
+	</servlet-mapping>
+	
 	<welcome-file-list>
 		<welcome-file>allCampus.jsp</welcome-file>
 	</welcome-file-list>
