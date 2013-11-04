@@ -22,6 +22,7 @@ import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.User;
 
 /**
  * GAE ENTITY UTIL CLASS: "AdminProfile" <br>
@@ -92,13 +93,15 @@ public class AdminProfile {
 	 * @return the admin profile of the campus. 
 	 */
 	public static String getName(Entity adminProfile) {
-		return (String) adminProfile.getProperty(NAME_PROPERTY);
+		Object name = adminProfile.getProperty(NAME_PROPERTY);
+		if (name == null) name = "";
+		return (String)name;
 	}
 	
 	/**
 	 * The regular expression pattern for the name of the admin profile.
 	 */
-	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[A-Za-z]+([ -][A-Za-z]+){2,10}\\Z");
+	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[A-Za-z]+([ -][A-Za-z]+){0,10}\\Z");
 	
 	/**
 	 * Check if the name is correct for an admin profile. 
@@ -281,6 +284,32 @@ public class AdminProfile {
 		Query query = new Query(ENTITY_KIND);
 		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 		return result;
+	}
+	
+	//
+	// CHECK ADMIN PROFILE
+	//
+	
+	public static Entity getAdminProfile(User user) {
+		String loginID = null;
+		Entity adminProfile = null;
+		if (adminProfile==null && user.getUserId()!=null) {
+			loginID=user.getUserId();
+			adminProfile=getAdminProfileWithLoginID(loginID);
+		}
+		if (adminProfile==null && user.getEmail()!=null) {
+			loginID=user.getEmail();
+			adminProfile=getAdminProfileWithLoginID(loginID);
+		}
+		if (adminProfile==null && user.getFederatedIdentity()!=null) {
+			loginID=user.getFederatedIdentity();
+			adminProfile=getAdminProfileWithLoginID(loginID);
+		}
+		return adminProfile;
+	}
+	
+	public static boolean isAdminProfile(User user) {
+		return getAdminProfile(user)!=null;
 	}
 	
 }

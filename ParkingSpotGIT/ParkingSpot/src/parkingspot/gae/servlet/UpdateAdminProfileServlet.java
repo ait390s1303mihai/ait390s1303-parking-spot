@@ -22,9 +22,9 @@ import parkingspot.gae.db.AdminProfile;
 @SuppressWarnings("serial")
 public class UpdateAdminProfileServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		AdminProfile.updateAdminProfileCommand(req.getParameter("adminProfileID"), req.getParameter("name"),
-				req.getParameter("loginID"));
+		AdminProfile.updateAdminProfileCommand(req.getParameter("adminProfileID"), req.getParameter("adminProfileName"),
+				req.getParameter("adminProfileLoginID"));
 
-		resp.sendRedirect("/gae/admin/allUserProfiles.jsp");
+		resp.sendRedirect("/gae/admin/allAdminProfiles.jsp");
 	}
 }

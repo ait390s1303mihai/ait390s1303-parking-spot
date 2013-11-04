@@ -25,7 +25,7 @@ import parkingspot.gae.db.AdminProfile;
 public class AddAdminProfileServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String loginID = req.getParameter("loginID");
+		String loginID = req.getParameter("adminProfileLoginID");
 		AdminProfile.createAdminProfile(loginID);
 		resp.sendRedirect("/gae/admin/allAdminProfiles.jsp");
 	}
