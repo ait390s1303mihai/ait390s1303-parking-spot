@@ -5,6 +5,25 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
+	<filter>
+		<filter-name>adminlogin</filter-name>
+		<filter-class>parkingspot.gae.servlet.AdminLoginFilter</filter-class>
+	</filter>
+
+    <filter-mapping>
+        <filter-name>adminlogin</filter-name>
+        <url-pattern>/gae/admin/*</url-pattern>
+    </filter-mapping>
+
+	<servlet>
+		<servlet-name>AddAdminProfileServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.AddAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddAdminProfileServlet</servlet-name>
+		<url-pattern>/gae/admin/addAdminProfileCommand</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>AddCampusServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.AddCampusServlet</servlet-class>
@@ -21,6 +40,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>AddLotServlet</servlet-name>
 		<url-pattern>/gae/admin/addLotCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteAdminProfileServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.DeleteAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteAdminProfileServlet</servlet-name>
+		<url-pattern>/gae/admin/deleteAdminProfileCommand</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -42,6 +70,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>UpdateAdminProfileServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.UpdateAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateAdminProfileServlet</servlet-name>
+		<url-pattern>/gae/admin/updateAdminProfileCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>UpdateCampusServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.UpdateCampusServlet</servlet-class>
 	</servlet>
@@ -49,8 +86,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdateCampusServlet</servlet-name>
 		<url-pattern>/gae/admin/updateCampusCommand</url-pattern>
 	</servlet-mapping>
-	
-		<servlet>
+
+	<servlet>
 		<servlet-name>UpdateLotServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.UpdateLotServlet</servlet-class>
 	</servlet>
@@ -58,7 +95,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdateLotServlet</servlet-name>
 		<url-pattern>/gae/admin/updateLotCommand</url-pattern>
 	</servlet-mapping>
-	
+
 
 	<servlet>
 		<servlet-name>AddCampusJDOServlet</servlet-name>
