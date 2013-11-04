@@ -3,9 +3,8 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Mihai Boicu, ...
+ * Authors: Mihai Boicu.
  */
-
 package parkingspot.gae.servlet;
 
 import java.io.IOException;
@@ -15,19 +14,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.gae.db.Lot;
+import parkingspot.gae.db.AdminProfile;
 
 /**
- * Answer to the HTTP Servlet to add a Lot. Redirect to the full editing page for the campus. If error (e.g.
- * duplicated name) show error page.
+ * Update the admin profile.
  */
 @SuppressWarnings("serial")
-public class AddLotServlet extends HttpServlet {
-	
+public class UpdateAdminProfileServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String campusID = req.getParameter("campusID");
-		String lotName = req.getParameter("lotName");
-		Lot.createLot(campusID, lotName);
-		resp.sendRedirect("/gae/admin/allLots.jsp?campusID="+campusID);
+		AdminProfile.updateAdminProfileCommand(req.getParameter("adminProfileID"), req.getParameter("name"),
+				req.getParameter("loginID"));
+
+		resp.sendRedirect("/gae/admin/allUserProfiles.jsp");
 	}
 }

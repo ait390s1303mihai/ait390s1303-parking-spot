@@ -281,8 +281,8 @@ public final class Campus {
 	//
 	
 	/**
-	 * Delete the campus is empty (not linked to anything else).
-	 * @param campusID campusID A string with the campus ID (a long).
+	 * Delete the campus if not linked to anything else.
+	 * @param campusID A string with the campus ID (a long).
 	 * @return True if succeed, false otherwise.
 	 */
 	public static boolean deleteCampusCommand(String campusID) {

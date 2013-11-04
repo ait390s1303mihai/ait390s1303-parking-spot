@@ -7,12 +7,21 @@
  */
 package parkingspot.gae.db;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 /**
  * GAE ENTITY UTIL CLASS: "AdminProfile" <br>
@@ -101,6 +110,177 @@ public class AdminProfile {
 		return matcher.find();
 	}
 	
+	//
+	// LOGIN ID
+	//
 	
+	/**
+	 *  The property name for the <b>loginID</b> of the admin profile.
+	 */
+	private static final String LOGIN_ID_PROPERTY = "loginID";
+	
+	/**
+	 * Return the login ID of the profile. 
+	 * @param campus The Entity storing the admin profile.
+	 * @return a String with the login ID. 
+	 */
+	public static String getLoginID(Entity adminProfile) {
+		Object val=adminProfile.getProperty(LOGIN_ID_PROPERTY);
+		if (val==null) return "";
+		return (String) val;
+	}
+	
+	//
+	// CREATE ADMIN PROFILE
+	//
+
+	/**
+	 * Create a new admin profile if the login ID is correct and none exists with this id.
+	 * @param loginID The id for this admin.
+	 * @return the Entity created with this id or null if error
+	 */
+	public static Entity createAdminProfile(String loginID) {
+		Entity adminProfile = null;
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Transaction txn = datastore.beginTransaction();
+		try {
+		
+			adminProfile = getAdminProfileWithLoginID(loginID);
+			if (adminProfile!=null) {
+				return null;
+			}
+			
+			adminProfile = new Entity(ENTITY_KIND);
+			adminProfile.setProperty(LOGIN_ID_PROPERTY, loginID);
+			datastore.put(adminProfile);
+
+		    txn.commit();
+		} finally {
+		    if (txn.isActive()) {
+		        txn.rollback();
+		    }
+		}
+		
+		return adminProfile;
+	}
+	
+	//
+	// GET ADMIN PROFILE
+	//
+
+	/**
+	 * Get the admin profile based on a string containing its long ID.
+	 * 
+	 * @param id A {@link String} containing the ID key (a <code>long</code> number)
+	 * @return A GAE {@link Entity} for the AdminProfile or <code>null</code> if none or error.
+	 */
+	public static Entity getAdminProfile(String adminProfileId) {
+		Entity adminProfile = null;
+		try {
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			long id = Long.parseLong(adminProfileId);
+			Key adminProfileKey = KeyFactory.createKey(ENTITY_KIND, id);
+			adminProfile = datastore.get(adminProfileKey);
+		} catch (Exception e) {
+			// TODO log the error
+		}
+		return adminProfile;
+	}
+
+	/**
+	 * Get an admin profile based on a string containing its loginID.
+	 * @param loginID The login of the admin profile as a String.
+	 * @return A GAE {@link Entity} for the AdmnProfile or <code>null</code> if none or error.
+	 */
+	public static Entity getAdminProfileWithLoginID(String loginID) {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		return getAdminProfileWithLoginID(datastore, loginID);
+	}
+	
+	/**
+	 * Get an admin profile based on a string containing its loginID.
+	 * @param datastore The current datastore instance. 
+	 * @param loginID The login of the admin profile as a String.
+	 * @return A GAE {@link Entity} for the AdminProfile or <code>null</code> if none or error.
+	 */
+	public static Entity getAdminProfileWithLoginID(DatastoreService datastore, String loginID) {
+		Entity adminProfile = null;
+		try {
+			
+			Filter hasLoginID =
+					  new FilterPredicate(LOGIN_ID_PROPERTY,
+					                      FilterOperator.EQUAL,
+					                      loginID);
+			Query query = new Query(ENTITY_KIND);
+			query.setFilter(hasLoginID);
+			List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(10));
+			if (result!=null && result.size()>0) {
+				adminProfile=result.get(0);
+			}
+		} catch (Exception e) {
+			// TODO log the error
+		}
+		return adminProfile;
+	}
+	
+	//
+	// UPDATE ADMIN PROFILE
+	//
+	
+	/**
+	 * Update the current description of the admin profile.
+	 * @param adminProfileID A string with the admin profile ID (a long).
+	 * @param name The name of the admin as a String.
+	 * @param loginID The login ID of the admin as a String.
+	 * @return true if succeed and false otherwise
+	 */
+	public static boolean updateAdminProfileCommand(String adminProfileID, String name, String loginID) {
+		Entity adminProfile = null;
+		try {
+			adminProfile = getAdminProfile(adminProfileID);
+			adminProfile.setProperty(NAME_PROPERTY, name);
+			adminProfile.setProperty(LOGIN_ID_PROPERTY, loginID);
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			datastore.put(adminProfile);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	//
+	// DELETE ADMIN PROFILE
+	//
+	
+	/**
+	 * Delete the admin profile if not linked to anything else.
+	 * @param adminProfileID A string with the admin profile ID (a long).
+	 * @return True if succeed, false otherwise.
+	 */
+	public static boolean deleteAdminProfileCommand(String adminProfileID) {
+		try {
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			datastore.delete(getKey(adminProfileID));
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	//
+	// QUERY ADMIN PROFILES
+	//
+	
+	/**
+	 * Return the requested number of admin profiles (e.g. 100).  
+	 * @param limit The number of admin profiles to be returned. 
+	 * @return A list of GAE {@link Entity entities}. 
+	 */
+	public static List<Entity> getFirstAdminProfiles(int limit) {
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query(ENTITY_KIND);
+		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
+		return result;
+	}
 	
 }

@@ -14,14 +14,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.gae.db.Campus;
 import parkingspot.gae.db.Lot;
 
-//TODO comments
+/**
+ * Servlet to update a lot. 
+ */
 @SuppressWarnings("serial")
-// NOTE: It is passing the new value the campus was renamed to
-// It is going through the catch every time
 public class UpdateLotServlet extends HttpServlet {
+	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String campusID = req.getParameter("campusID");
 		Lot.updateLotCommand(campusID, req.getParameter("lotID"), req.getParameter("lotName"),
