@@ -90,3 +90,12 @@ a:active {color:#006600;}  /* selected link */
 .adminOperationsList {
 	width:110px;
 }
+.backBtn{
+	display:block;
+	position:relative;
+	float:right;
+	padding:2px;
+	border: black solid 3px;
+	background-color:white;
+	color:green;
+}

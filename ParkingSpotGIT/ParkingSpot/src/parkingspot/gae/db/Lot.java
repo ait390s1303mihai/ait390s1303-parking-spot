@@ -128,11 +128,11 @@ public class Lot{
 	 * @param lot The Entity storing the lot
 	 * @return a long with the number of the spaces. 
 	 */
-	//public static long getTotalSpaces(Entity lot) {
-	//	Object val=lot.getProperty(TOTAL_SPACES_PROPERTY);
-	//	if (val==null) return 0;
-	//	return (long) val;
-	//}
+	public static long getTotalSpaces(Entity lot) {
+		Object val=lot.getProperty(TOTAL_SPACES_PROPERTY);
+		if (val==null) return 0;
+		return (long) val;
+	}
 	
 	//
 	// GOOGLE MAP LOCATION
