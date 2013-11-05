@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Alex Leone, Mihai Boicu
+ * Authors: Alex Leone
  */
 package parkingspot.jdo.servlet;
 
@@ -14,7 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.jdo.db.CampusJdo;
+import parkingspot.jdo.db.LotJdo;
 
 //TODO comments
 @SuppressWarnings("serial")
@@ -22,9 +22,12 @@ import parkingspot.jdo.db.CampusJdo;
 // It is going through the catch every time
 public class UpdateLotServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		CampusJdo.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
-				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
-
-		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
+		int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
+		LotJdo.updateLotCommand(req.getParameter("lotId"), req.getParameter("lotName"),
+				req.getParameter("lotLocation"), lotSpaces, req.getParameter("campusId"));
+		
+		System.out.println("Update lot servlet");
+		
+		resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
 	}
 }

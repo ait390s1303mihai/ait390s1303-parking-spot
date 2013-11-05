@@ -14,16 +14,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.jdo.db.CampusJdo;
+import parkingspot.jdo.db.LotJdo;
 
 //TOOD comments
 
 @SuppressWarnings("serial")
 public class DeleteLotServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("Key: "+req.getParameter("campusID"));
+//		System.out.println("In DeleteLotServlet ");
+//		System.out.println("Key: "+req.getParameter("campusId"));
 		
-		CampusJdo.deleteCampusCommand(req.getParameter("campusID"));
-		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
+		LotJdo.deleteLotCommand(req.getParameter("lotId"));
+	    resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
 	}
+
 }
