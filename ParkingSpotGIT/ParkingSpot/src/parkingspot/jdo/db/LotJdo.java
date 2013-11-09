@@ -175,6 +175,7 @@ public class LotJdo {
 	        LotJdo lot = getLot(pm, lotID);
 	        
 	        lot.acceptedPermits.add(permit);
+	        pm.makePersistent(lot);
 	        pm.close();
 		} catch (Exception e){
 			return false;
@@ -182,7 +183,25 @@ public class LotJdo {
 		
 		return true;
 	}
-	
+
+	public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
+		try{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+	        LotJdo lot = getLot(pm, lotID);
+	        
+	        for (int i=0; i<permitIds.length; i++){
+	        	PermitJdo p = new PermitJdo("");
+	        	p = PermitJdo.getPermit(permitIds[i]);
+	        	lot.acceptedPermits.add(p);
+	        }
+	        pm.makePersistent(lot);
+	        pm.close();
+		} catch (Exception e){
+			return false;
+		}
+		
+		return true;
+	}
 	
 		
 
