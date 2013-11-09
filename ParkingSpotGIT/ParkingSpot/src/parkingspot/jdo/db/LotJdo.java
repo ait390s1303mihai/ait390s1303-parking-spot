@@ -175,6 +175,7 @@ public class LotJdo {
 	        LotJdo lot = getLot(pm, lotID);
 	        
 	        lot.acceptedPermits.add(permit);
+	        pm.makePersistent(lot);
 	        pm.close();
 		} catch (Exception e){
 			return false;

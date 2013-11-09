@@ -136,6 +136,7 @@ public class PermitJdo {
 			
 			permit.lots.add(lot);
 			
+			pm.makePersistent(permit);
 			pm.close();
 		} catch (Exception e){
 			return false;
