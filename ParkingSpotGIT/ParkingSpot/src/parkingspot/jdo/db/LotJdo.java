@@ -49,11 +49,15 @@ public class LotJdo {
 	@Persistent
 	private int spaces;
 	
+	@Persistent
+	private List<PermitJdo> acceptedPermits;
+	
 	public LotJdo(String campusId, String name, String location, int spaces){
 		this.campusId = campusId;
 		this.name = name;
 		this.location = location;
 		this.spaces = spaces;
+		this.acceptedPermits = null;
 	}
 	public static LotJdo createLot(String campusId){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -163,6 +167,20 @@ public class LotJdo {
 			
 			       return true;
 			       
+	}
+	
+	public static boolean updatePermitsInLotsCommand(String lotID, PermitJdo permit){
+		try{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+	        LotJdo lot = getLot(pm, lotID);
+	        
+	        lot.acceptedPermits.add(permit);
+	        pm.close();
+		} catch (Exception e){
+			return false;
+		}
+		
+		return true;
 	}
 	
 	
