@@ -31,8 +31,16 @@ import javax.jdo.Query;
 
 
 
+
+
+
+
+
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 //import com.google.appengine.api.datastore.DatastoreService;
 //import com.google.appengine.api.datastore.DatastoreServiceFactory;
 //import com.google.appengine.api.datastore.Entity;
@@ -159,6 +167,32 @@ public class AdminProfileJdo {
 		return true;
 	}
 	
+	//
+	// QUERY ADMIN PROFILES
+	//
+	
+	/**
+	 * Return the requested number of admin profiles (e.g. 100).  
+	 * @param limit The number of admin profiles to be returned. 
+	 * @return A list of JDO {@link Entity entities}. 
+	 */
+
+	@SuppressWarnings("unchecked")
+	public static List<AdminProfileJdo> getFirstAdminProfiles(int number) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<AdminProfileJdo> results = null;
+		try {
+			
+			Query q = pm.newQuery(AdminProfileJdo.class);
+			q.setOrdering("name asc");
+			
+			results = (List<AdminProfileJdo>)q.execute();
+		} catch (Exception e) {
+			
+		}
+		return results;
+	}
+	
 	public static AdminProfileJdo getAdminProfile(User user) {
 		String loginID = null;
 		AdminProfileJdo adminProfile = null;
@@ -181,8 +215,15 @@ public class AdminProfileJdo {
 		return key;
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
+	public String getLoginID(){
+		return loginId;
+	}
+	
 	public String getStringID() {
 		return Long.toString(getKey().getId());
 	}
-
 }

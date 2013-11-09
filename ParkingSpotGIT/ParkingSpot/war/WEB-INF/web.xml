@@ -180,6 +180,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet-mapping>
 	
 	<welcome-file-list>
-		<welcome-file>allCampus.jsp</welcome-file>
+		<welcome-file>/jdo/admin/allCampus.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>

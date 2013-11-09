@@ -27,6 +27,47 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
+var selectedCampusForEdit = null  
+var editNameError = false;
+var editLocationError = false;
+var editAddressError = false;
+
+$(document).ready(function(){ //test
+	
+	// keypress event for Add button
+	$("#addCampusInput").keyup(function() {
+	name=$("#addCampusInput").val();
+	if (checkCampusName(name)) {
+		$("#addCampusButton").attr("disabled",null);
+		$("#addCampusError").hide();
+	} else {
+		$("#addCampusButton").attr("disabled","disabled");
+		if (name!=null && name.length>0) 
+			$("#addCampusError").show();
+	}
+	});
+	
+	$(".editCampusNameInput").keyup(function() {
+		if (selectedCampusForEdit==null)
+			return;
+		name=$("#editCampusNameInput"+selectedCampusForEdit).val();
+		editNameError = ! checkCampusName(name);
+		updateSaveEditButton();
+		});
+	
+});	
+
+
+
+
+var campusNamePattern = /^[ \w-'',]{3,100}$/
+campusNamePattern.compile(campusNamePattern)
+
+// check the syntax of the name of a campus 
+function checkCampusName(name) {
+	return campusNamePattern.test(name);
+}
+
 
 var selectedCampus=null;
 
