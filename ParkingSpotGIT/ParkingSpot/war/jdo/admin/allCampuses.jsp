@@ -142,6 +142,7 @@ function cancelEditCampus(campusID) {
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Campus Name</th>
+			<th>View</th>
 		</tr>
 		<%
 			for (CampusJdo campus : allCampuses) {
@@ -155,8 +156,6 @@ function cancelEditCampus(campusID) {
 					onclick="editButton(<%=campusID%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
-				<a class="addLotButton" type="button"
-					href="campusLots.jsp?campusId=<%=campusID%>"> View Lots</a>
 			</td>
 
 			<td><div id="view<%=campusID%>"><%=campusName%></div>
@@ -194,6 +193,15 @@ function cancelEditCampus(campusID) {
 				<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
 			</div>
 		</td>
+		
+		
+			<td>
+				<form action="/jdo/admin/campusLots.jsp" style="display:inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" />
+					<input type="submit" value="Lots">
+				</form>
+			</td>
+		
 		</tr>
 
 		<%

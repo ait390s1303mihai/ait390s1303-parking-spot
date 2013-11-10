@@ -211,6 +211,11 @@ public class AdminProfileJdo {
 		return adminProfile;
 	}
 	
+	
+	public static boolean isAdminProfile(User user) {
+		return getAdminProfile(user)!=null;
+	}
+	
 	public Key getKey(){
 		return key;
 	}
