@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Alex Leone, Mihai Boicu
+ * Authors: Alex Leone
  */
 package parkingspot.jdo.servlet;
 
@@ -20,12 +20,9 @@ import parkingspot.jdo.db.LotJdo;
 
 @SuppressWarnings("serial")
 public class DeleteLotServlet extends HttpServlet {
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//		System.out.println("In DeleteLotServlet ");
-//		System.out.println("Key: "+req.getParameter("campusId"));
-		
-		LotJdo.deleteLotCommand(req.getParameter("lotId"));
-	    resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
-	}
-
+        protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                
+                LotJdo.deleteLotCommand(req.getParameter("lotId"));
+            resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
+        }
 }
