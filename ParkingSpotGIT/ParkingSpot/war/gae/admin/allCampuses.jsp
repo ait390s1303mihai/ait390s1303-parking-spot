@@ -127,7 +127,7 @@ var selectedCampusOldName=null;
 var selectedCampusOldAddress=null;
 var selectedCampusOldLocation=null;
 
-function editButton(campusID, lat, lng, zoom) {
+function editButton(campusID, campusName, lat, lng, zoom) {
 	selectedCampusForEdit=campusID;
 	disableAllButtons(true);
 	editNameError = false;
@@ -139,19 +139,25 @@ function editButton(campusID, lat, lng, zoom) {
 	selectedCampusOldLocation=null;	
 	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
-	initializeMap(campusID, lat, lng, zoom);
+	initializeMap(campusID, campusName, lat, lng, zoom);
 }
 
 var edited_map=null;
 
-function initializeMap(campusID, lat, lng, zoom) {
+function initializeMap(campusID, campusName, lat, lng, zoom) {
+	var myLatlng = new google.maps.LatLng(lat,lng);
     var map_canvas = document.getElementById('map_canvas_'+campusID);
     var map_options = {
-            center: new google.maps.LatLng(lat, lng),
+            center: myLatlng,
             zoom: zoom,
             mapTypeId: google.maps.MapTypeId.ROADMAP
           }
     edited_map = new google.maps.Map(map_canvas, map_options);
+    var marker = new google.maps.Marker({
+    	position: myLatlng,
+    	title: campusName
+    });
+    marker.setMap(edited_map);
 }
 
 function saveEditCampus(campusID) {
@@ -199,7 +205,7 @@ function cancelEditCampus(campusID) {
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>,<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
+					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
 			</td>
