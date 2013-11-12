@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -34,11 +35,11 @@ import com.google.appengine.api.datastore.Transaction;
  * - "google-map-location" a {@link String} with the Google map coordinates (e.g. "United States@38.826182,-77.308211") <br>
  */
 public final class Campus {
-	
+
 	//
 	// SECURITY
 	//
-	
+
 	/**
 	 * Private constructor to avoid instantiation.
 	 */
@@ -48,108 +49,134 @@ public final class Campus {
 	//
 	// KIND
 	//
-	
+
 	/**
 	 * The name of the Campus ENTITY KIND used in GAE.
 	 */
 	private static final String ENTITY_KIND = "Campus";
-	
+
 	//
 	// KEY
 	//
-	
+
 	/**
-	 * Return the Key for a given campus id given as String. 
+	 * Return the Key for a given campus id given as String.
+	 * 
 	 * @param campusId A string with the campus ID (a long).
-	 * @return the Key for this campusID. 
+	 * @return the Key for this campusID.
 	 */
 	public static Key getKey(String campusId) {
 		long id = Long.parseLong(campusId);
 		Key campusKey = KeyFactory.createKey(ENTITY_KIND, id);
 		return campusKey;
 	}
-	
+
 	/**
 	 * Return the string ID corresponding to the key for the campus.
+	 * 
 	 * @param campus The GAE Entity storing the campus.
 	 * @return A string with the campus ID (a long).
 	 */
 	public static String getStringID(Entity campus) {
 		return Long.toString(campus.getKey().getId());
 	}
-	
-	
+
 	//
 	// NAME
 	//
-	
+
 	/**
 	 * The property name for the <b>name</b> of the campus.
 	 */
 	private static final String NAME_PROPERTY = "name";
-	
+
 	/**
-	 * Return the name of the campus. 
+	 * Return the name of the campus.
+	 * 
 	 * @param campus The GAE Entity storing the campus.
-	 * @return the name of the campus. 
+	 * @return the name of the campus.
 	 */
 	public static String getName(Entity campus) {
 		return (String) campus.getProperty(NAME_PROPERTY);
 	}
-	
+
 	/**
 	 * The regular expression pattern for the name of the campus.
 	 */
 	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[ \\w-'',]{3,100}\\Z");
-	
+
 	/**
-	 * Check if the name is correct for a campus. 
-	 * @param name The checked string. 
-	 * @return true is the name is correct. 
+	 * Check if the name is correct for a campus.
+	 * 
+	 * @param name The checked string.
+	 * @return true is the name is correct.
 	 */
 	public static boolean checkName(String name) {
-		Matcher matcher=NAME_PATTERN.matcher(name);
+		Matcher matcher = NAME_PATTERN.matcher(name);
 		return matcher.find();
 	}
-	
+
 	//
 	// ADDRESS
 	//
-	
+
 	/**
-	 *  The property name for the <b>address</b> of the campus.
+	 * The property name for the <b>address</b> of the campus.
 	 */
 	private static final String ADDRESS_PROPERTY = "address";
-	
+
 	/**
-	 * Return the address of the campus. 
+	 * Return the address of the campus.
+	 * 
 	 * @param campus The Entity storing the campus
-	 * @return a String with the address. 
+	 * @return a String with the address.
 	 */
 	public static String getAddress(Entity campus) {
-		Object val=campus.getProperty(ADDRESS_PROPERTY);
-		if (val==null) return "";
+		Object val = campus.getProperty(ADDRESS_PROPERTY);
+		if (val == null)
+			return "";
 		return (String) val;
 	}
-	
+
 	//
 	// GOOGLE MAP LOCATION
 	//
-	
+
 	/**
-	 *  The property name for the <b>google-map-location</b> of the campus.
+	 * The property name for the <b>google-map-location</b> of the campus.
 	 */
 	private static final String GOOGLE_MAP_LOCATION = "google-map-location";
 
 	/**
-	 * Return the Google Map Location of the campus. 
+	 * Return the Google Map Location of the campus.
+	 * 
 	 * @param campus The campus Entity for which the location is requested.
 	 * @return A String with the Google Map syntax of the location.
 	 */
 	public static String getGoogleMapLocation(Entity campus) {
-		Object val=campus.getProperty(GOOGLE_MAP_LOCATION);
-		if (val==null) return "";
+		Object val = campus.getProperty(GOOGLE_MAP_LOCATION);
+		if (val == null)
+			return "";
 		return (String) val;
+	}
+
+	private static final String GOOGLE_MAP_FIGURE = "google-map-figure";
+
+	public static MapFigure getGoogleMapFigure(Entity campus) {
+		Object val = campus.getProperty(GOOGLE_MAP_FIGURE);
+		if (val == null)
+			return new MapFigure(38.830376, -77.307143, 10);
+		Blob blob = (Blob) val;
+		return MapFigure.toMapFigure(blob);
+	}
+
+	public static void setGoogleMapFigure(Entity campus, double lat, double lng, int z) {
+		Blob blob = MapFigure.toBlob(new MapFigure(lat, lng, z));
+		campus.setProperty(GOOGLE_MAP_FIGURE, blob);
+	}
+
+	public static MapFigure getMapFigure(Entity campus) {
+		return new MapFigure(38.830376, -77.307143, 10);
 	}
 
 	//
@@ -158,6 +185,7 @@ public final class Campus {
 
 	/**
 	 * Create a new campus if the name is correct and none exists with this name.
+	 * 
 	 * @param campusName The name for the campus.
 	 * @return the Entity created with this name or null if error
 	 */
@@ -166,30 +194,30 @@ public final class Campus {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Transaction txn = datastore.beginTransaction();
 		try {
-			
+
 			if (!checkName(campusName)) {
 				return null;
 			}
-			
+
 			campus = getCampusWithName(campusName);
-			if (campus!=null) {
+			if (campus != null) {
 				return null;
 			}
-			
+
 			campus = new Entity(ENTITY_KIND);
 			campus.setProperty(NAME_PROPERTY, campusName);
 			datastore.put(campus);
 
-		    txn.commit();
+			txn.commit();
 		} finally {
-		    if (txn.isActive()) {
-		        txn.rollback();
-		    }
+			if (txn.isActive()) {
+				txn.rollback();
+			}
 		}
-		
+
 		return campus;
 	}
-	
+
 	//
 	// GET CAMPUS
 	//
@@ -215,6 +243,7 @@ public final class Campus {
 
 	/**
 	 * Get a campus based on a string containing its name.
+	 * 
 	 * @param name The name of the campus as a String.
 	 * @return A GAE {@link Entity} for the Campus or <code>null</code> if none or error.
 	 */
@@ -222,52 +251,56 @@ public final class Campus {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		return getCampusWithName(datastore, name);
 	}
-	
+
 	/**
 	 * Get a campus based on a string containing its name.
-	 * @param datastore The current datastore instance. 
+	 * 
+	 * @param datastore The current datastore instance.
 	 * @param name The name of the campus as a String.
 	 * @return A GAE {@link Entity} for the Campus or <code>null</code> if none or error.
 	 */
 	public static Entity getCampusWithName(DatastoreService datastore, String name) {
 		Entity campus = null;
 		try {
-			
-			Filter hasName =
-					  new FilterPredicate(NAME_PROPERTY,
-					                      FilterOperator.EQUAL,
-					                      name);
+
+			Filter hasName = new FilterPredicate(NAME_PROPERTY, FilterOperator.EQUAL, name);
 			Query query = new Query(ENTITY_KIND);
 			query.setFilter(hasName);
 			List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(10));
-			if (result!=null && result.size()>0) {
-				campus=result.get(0);
+			if (result != null && result.size() > 0) {
+				campus = result.get(0);
 			}
 		} catch (Exception e) {
 			// TODO log the error
 		}
 		return campus;
 	}
-	
+
 	//
 	// UPDATE CAMPUS
 	//
-	
+
 	/**
 	 * Update the current description of the campus.
+	 * 
 	 * @param campusID A string with the campus ID (a long).
 	 * @param name The name of the campus as a String.
 	 * @param address The address of the campus as a String.
 	 * @param googleMapLocation The Google Map Location of the campus as a String.
 	 * @return true if succeed and false otherwise
 	 */
-	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation) {
+	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation,
+			String latString, String lngString, String zoomString) {
 		Entity campus = null;
 		try {
+			double lat=Double.parseDouble(latString);
+			double lng=Double.parseDouble(lngString);
+			int zoom=Integer.parseInt(zoomString);
 			campus = getCampus(campusID);
 			campus.setProperty(NAME_PROPERTY, name);
 			campus.setProperty(ADDRESS_PROPERTY, address);
 			campus.setProperty(GOOGLE_MAP_LOCATION, googleMapLocation);
+			setGoogleMapFigure(campus, lat, lng, zoom);
 			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 			datastore.put(campus);
 		} catch (Exception e) {
@@ -275,13 +308,14 @@ public final class Campus {
 		}
 		return true;
 	}
-	
+
 	//
 	// DELETE CAMPUS
 	//
-	
+
 	/**
 	 * Delete the campus if not linked to anything else.
+	 * 
 	 * @param campusID A string with the campus ID (a long).
 	 * @return True if succeed, false otherwise.
 	 */
@@ -294,15 +328,16 @@ public final class Campus {
 		}
 		return true;
 	}
-	
+
 	//
 	// QUERY CAMPUSES
 	//
-	
+
 	/**
-	 * Return the requested number of campuses (e.g. 100).  
-	 * @param limit The number of campuses to be returned. 
-	 * @return A list of GAE {@link Entity entities}. 
+	 * Return the requested number of campuses (e.g. 100).
+	 * 
+	 * @param limit The number of campuses to be returned.
+	 * @return A list of GAE {@link Entity entities}.
 	 */
 	public static List<Entity> getFirstCampuses(int limit) {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -310,7 +345,5 @@ public final class Campus {
 		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 		return result;
 	}
-	
-
 
 }
