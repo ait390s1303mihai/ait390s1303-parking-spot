@@ -32,7 +32,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>AddCampusServlet</servlet-name>
 		<url-pattern>/gae/admin/addCampusCommand</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet>
 		<servlet-name>AddLotServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.AddLotServlet</servlet-class>
@@ -178,6 +178,32 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/jdo/admin/updatePermitCommand</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>AddBuildingJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.AddBuildingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddBuildingJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/addBuildingCommand</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DeleteBuildingJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.DeleteBuildingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteBuildingJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/deleteBuildingCommand</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>UpdateBuildingJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.UpdateBuildingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateBuildingJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/updateBuildingCommand</url-pattern>
+	</servlet-mapping>
 	
 	<filter>
 		<filter-name>adminJDOlogin</filter-name>

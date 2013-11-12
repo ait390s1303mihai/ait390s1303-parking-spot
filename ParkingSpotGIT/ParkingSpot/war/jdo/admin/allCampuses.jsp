@@ -200,6 +200,10 @@ function cancelEditCampus(campusID) {
 					<input type="hidden" value="<%=campusID%>" name="campusID" />
 					<input type="submit" value="Lots">
 				</form>
+				<form action="/jdo/admin/allBuildings.jsp" style="display:inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" />
+					<input type="submit" value="Buildings">
+				</form>
 			</td>
 		
 		</tr>

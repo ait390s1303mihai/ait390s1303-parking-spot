@@ -32,6 +32,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Id" = 1003
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Johnson Center"
+ *
+ *	Authors: Jeff, Drew Lorence
  *  
  */ 
 
@@ -49,16 +51,16 @@ public class BuildingJdo {
 	@Persistent
 	private String location;
 	@Persistent
-	private CampusJdo campus;
+	private String campusID;
 	
 	
 	/**
 	 * Constructor
 	 */
-	public BuildingJdo(String name, String location, CampusJdo campus){
+	public BuildingJdo(String name, String location, String campusID){
 		this.name = name;
 		this.location = location;
-		this.campus = campus;
+		this.campusID = campusID;
 	}
 	
 	/**
@@ -70,8 +72,12 @@ public class BuildingJdo {
 	public String getName(){
 		return name;
 	}
-	public String getLocation(){
+	public String getGoogleMapLocation(){
 		return location;
+	}
+	
+	public String getStringID() {
+		return Long.toString(getKey().getId());
 	}
 	
 	/**
@@ -115,36 +121,37 @@ public class BuildingJdo {
 		return b;
 	}
 	
-	public String getStringID() {
-		return Long.toString(getKey().getId());
-	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<BuildingJdo> getFirstBuildings(int number) {
+	public static List<BuildingJdo> getFirstBuildings(int number, String campusIdParam) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<BuildingJdo> results = null;
+		Query q = pm.newQuery(BuildingJdo.class);
+		q.setFilter("campusId == campusIdParam");
+		q.setOrdering("name asc");	
+		q.declareParameters("String campusIdParam");
 		try {
-			
-			Query q = pm.newQuery(BuildingJdo.class);
-			q.setOrdering("name asc");
-			
 			results = (List<BuildingJdo>)q.execute();
 		} catch (Exception e) {
 			
+		} finally{
+			q.closeAll();
 		}
 		return results;
 	}	
 	
-	public static void updateBuildingCommand(String buildingId, String name, String location, CampusJdo campus) {
+	public static boolean updateBuildingCommand(String buildingId, String name, String location, String campusID) {
 		try{
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			BuildingJdo building = getBuilding(pm, buildingId);
-		
+			building.name = name;
+			building.location = location;
+			building.campusID = campusID;
+			pm.makePersistent(building);
+			pm.close();
 		} catch(Exception e){
-			
-		} finally{
-			
-		}
-		
+			return false;
+			}
+		return true;
 	}
 }
