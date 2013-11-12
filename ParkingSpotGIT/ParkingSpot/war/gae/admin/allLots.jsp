@@ -134,7 +134,7 @@ var selectedLotOldName=null;
 var selectedLotOldAddress=null;
 var selectedLotOldLocation=null;
 
-function editButton(lotID) {
+function editButton(lotID, lat, lng, zoom) {
 	selectedLotForEdit=lotID;
 	disableAllButtons(true);
 	editNameError = false;
