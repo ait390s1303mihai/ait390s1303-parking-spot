@@ -21,13 +21,13 @@ import parkingspot.jdo.db.LotJdo;
 // NOTE: It is passing the new value the campus was renamed to
 // It is going through the catch every time
 public class UpdateLotServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
-		LotJdo.updateLotCommand(req.getParameter("lotId"), req.getParameter("lotName"),
-				req.getParameter("lotLocation"), lotSpaces, req.getParameter("campusId"));
-		
-		System.out.println("Update lot servlet");
-		
-		resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
-	}
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
+                LotJdo.updateLotCommand(req.getParameter("lotId"), req.getParameter("lotName"),
+                                req.getParameter("lotLocation"), lotSpaces, req.getParameter("campusId"));
+                
+                System.out.println("Update lot servlet");
+                
+                resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
+        }
 }

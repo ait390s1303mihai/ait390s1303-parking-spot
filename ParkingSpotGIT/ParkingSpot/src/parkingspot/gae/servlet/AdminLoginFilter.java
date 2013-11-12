@@ -46,7 +46,7 @@ public class AdminLoginFilter implements Filter {
     			if (request instanceof HttpServletRequest) {
     				location = ((HttpServletRequest) request).getRequestURL().toString();
     			} else {
-    				location = "/gae/admin/allCampuses.jsp";
+    				location = "/jdo/admin/allCampuses.jsp";
     			}
     			UserService userService = UserServiceFactory.getUserService();
     			String address = userService.createLoginURL(location);

@@ -1,4 +1,4 @@
-<%@page import="parkingspot.gae.db.AdminProfile"%>
+<%@page import="parkingspot.jdo.db.AdminProfileJdo"%>
 <%@page import="com.google.appengine.api.datastore.Entity"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <%@page import="java.util.List"%>
@@ -9,7 +9,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Mihai Boicu 
+   Authors: Drew Lorence, Alex Leone, Mihai Boicu 
    
    Version 0.1 - Fall 2013
 -->
@@ -163,8 +163,11 @@ function cancelEditAdminProfile(adminProfileID) {
 </head>
 <body>
 	<%
-		List<Entity> allAdminProfiles = AdminProfile.getFirstAdminProfiles(100);
+		List<AdminProfileJdo> allAdminProfiles = AdminProfileJdo.getFirstAdminProfiles(100);
+
 		if (allAdminProfiles.isEmpty()) {
+		
+	
 	%>
 	<h1>No Admin Profile Defined</h1>
 	<%
@@ -178,10 +181,10 @@ function cancelEditAdminProfile(adminProfileID) {
 
 		</tr>
 		<%
-			for (Entity adminProfile : allAdminProfiles) {
-					String adminProfileName = AdminProfile.getName(adminProfile);
-					String adminProfileID = AdminProfile.getStringID(adminProfile);
-					String adminProfileLoginID = AdminProfile.getLoginID(adminProfile);
+		for (AdminProfileJdo adminProfile : allAdminProfiles) {
+					String adminProfileName = adminProfile.getName();
+					String adminProfileID = adminProfile.getStringID();
+					String adminProfileLoginID = adminProfile.getLoginID();
 		%>
 
 		<tr>
@@ -196,7 +199,7 @@ function cancelEditAdminProfile(adminProfileID) {
 
 				<div id="edit<%=adminProfileID%>" style="display: none">
 
-					<form action="/gae/admin/updateAdminProfileCommand" method="get">
+					<form action="/jdo/admin/updateAdminProfileCommand" method="get">
 						<input type="hidden" value="<%=adminProfileID%>"
 							name="adminProfileID" />
 						<table class="editTable">
@@ -244,7 +247,7 @@ function cancelEditAdminProfile(adminProfileID) {
 			<tr>
 				<td colspan="2" class="footer">
 					<form name="addAdminProfileForm"
-						action="/gae/admin/addAdminProfileCommand" method="get">
+						action="/jdo/admin/addAdminProfileCommand" method="get">
 						New Admin Profile Login ID: <input id="addAdminProfileInput"
 							type="text" name="adminProfileLoginID" size="50" /> <input
 							id="addAdminProfileButton" type="submit" value="Add"
