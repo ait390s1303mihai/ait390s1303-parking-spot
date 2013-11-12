@@ -1,4 +1,3 @@
-<%@page import="parkingspot.gae.db.MapFigure"%>
 <%@page import="com.google.appengine.api.datastore.Entity"%>
 <%@page import="parkingspot.gae.db.Campus"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
@@ -23,23 +22,9 @@
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
 
-<script
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 <script>
-
-function initialize() {
-    var map_canvas = document.getElementById('map_canvas');
-    var map_options = {
-            center: new google.maps.LatLng(38.830376,-77.307143),
-            zoom: 14,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-    var map = new google.maps.Map(map_canvas, map_options);
-
-  }
-google.maps.event.addDomListener(window, 'load', initialize);
 
 var selectedCampusForEdit = null  
 var editNameError = false;
@@ -139,7 +124,7 @@ var selectedCampusOldName=null;
 var selectedCampusOldAddress=null;
 var selectedCampusOldLocation=null;
 
-function editButton(campusID, lat, lng, zoom) {
+function editButton(campusID) {
 	selectedCampusForEdit=campusID;
 	disableAllButtons(true);
 	editNameError = false;
@@ -151,32 +136,11 @@ function editButton(campusID, lat, lng, zoom) {
 	selectedCampusOldLocation=null;	
 	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
-	initializeMap(campusID, lat, lng, zoom);
 }
 
-var edited_map=null;
-
-function initializeMap(campusID, lat, lng, zoom) {
-    var map_canvas = document.getElementById('map_canvas_'+campusID);
-    var map_options = {
-            center: new google.maps.LatLng(lat, lng),
-            zoom: zoom,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-    edited_map = new google.maps.Map(map_canvas, map_options);
-}
-
-function saveEditCampus(campusID) {
-	if (edited_map!=null) {
-		$("#latitude"+campusID).val(edited_map.getCenter().lat());
-		$("#longitude"+campusID).val(edited_map.getCenter().lng());
-		$("#zoom"+campusID).val(edited_map.getZoom());
-	}
-	document.forms["form"+campusID].submit();
-}
 
 function cancelEditCampus(campusID) {
-	$("#editCampusNameInput"+campusID).val(selectedCampusOldName);
+	$("#editCampusNameInput"+selectedCampusForEdit).val(selectedCampusOldName);
 	$("#edit"+campusID).hide();
 	$("#view"+campusID).show();
 	disableAllButtons(false);
@@ -205,13 +169,12 @@ function cancelEditCampus(campusID) {
 			for (Entity campus : allCampuses) {
 					String campusName = Campus.getName(campus);
 					String campusID = Campus.getStringID(campus);
-					MapFigure mapFig = Campus.getGoogleMapFigure(campus);
 		%>
 
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>,<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
+					onclick="editButton(<%=campusID%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
 			</td>
@@ -220,11 +183,8 @@ function cancelEditCampus(campusID) {
 
 				<div id="edit<%=campusID%>" style="display: none">
 
-					<form id="form<%=campusID%>" action="/gae/admin/updateCampusCommand" method="get">
+					<form action="/gae/admin/updateCampusCommand" method="get">
 						<input type="hidden" value="<%=campusID%>" name="campusID" />
-						<input id="latitude<%=campusID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
-						<input id="longitude<%=campusID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
-						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
@@ -248,9 +208,8 @@ function cancelEditCampus(campusID) {
 									name="googleMapLocation" /></td>
 							</tr>
 						</table>
-						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
-
-						<button id="saveEditCampusButton<%=campusID%>"  type="button" onclick="saveEditCampus(<%=campusID%>)">Save</button>
+						<input id="saveEditCampusButton<%=campusID%>" type="submit"
+							value="Save" />
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
@@ -260,13 +219,13 @@ function cancelEditCampus(campusID) {
 					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
 					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
 				</div></td>
-
-			<td>
-				<form action="/gae/admin/allLots.jsp" style="display: inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-						type="submit" value="Lots">
+				
+				<td>
+				<form action="/gae/admin/allLots.jsp" style="display:inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" />
+					<input type="submit" value="Lots">
 				</form>
-			</td>
+				</td>
 		</tr>
 
 		<%
@@ -291,8 +250,6 @@ function cancelEditCampus(campusID) {
 		</tfoot>
 
 	</table>
-
-	<div id="map_canvas"></div>
 
 </body>
 </html>

@@ -1,0 +1,9 @@
+Alex: ADMIN for each lot keep the permits allowed, and for each permit the lots where it can park
+
+Drew: ADMIN login and admin profile
+
+Min: admin MAP for all campuses
+
+NEXT:
+
+user view: select campus from list, and type of permit (including visitor) - show lots to park (list - map)
