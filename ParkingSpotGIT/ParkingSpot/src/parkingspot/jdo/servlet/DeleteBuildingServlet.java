@@ -25,7 +25,7 @@ import parkingspot.jdo.db.BuildingJdo;
 public class DeleteBuildingServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String buildingName = req.getParameter("buildingName");
-		BuildingJdo.deleteBuilding(buildingName);
+		BuildingJdo.deleteBuildingCommand(buildingName);
 	    resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
 }
