@@ -9,14 +9,13 @@
    
    Version 0.1 - Fall 2013
 */
-
 body {
-	width:700px;
- 	padding:3px;
- 	border:3px solid #006600;
- 	margin:0px auto; 
- 	background-color:#E9FFE9;
- 	text-align:center;
+	width: 700px;
+	padding: 3px;
+	border: 3px solid #006600;
+	margin: 0px auto;
+	background-color: #E9FFE9;
+	text-align: center;
 }
 
 h1 {
@@ -29,6 +28,17 @@ h1 {
 	margin-bottom: 3px;
 }
 
+.big_map_canvas {
+	width: 696px;
+	height: 400px;
+	background-color: #CCC;
+}
+
+.edit_map_canvas {
+	width: 565px;
+	height: 400px;
+	background-color: #CCC;
+}
 
 #main {
 	width: 700px;
@@ -41,23 +51,23 @@ h1 {
 	margin: 0px;
 }
 
-.editText, .editCampusNameInput {
+.editText,.editCampusNameInput {
 	width: 475px;
 	height: 20px;
 }
 
 .error {
 	color: red;
-	font-style:italic;
+	font-style: italic;
 }
 
 form {
-    display: inline;
+	display: inline;
 }
 
-table, th, td, tfoot {
+table,th,td,tfoot {
 	border: 1px solid #006600;
-	border-collapse:collapse;
+	border-collapse: collapse;
 	text-align: left;
 	padding: 2px;
 }
@@ -67,7 +77,7 @@ th {
 	background-color: #003300;
 }
 
-.editTable  {
+.editTable {
 	border: none;
 }
 
@@ -81,21 +91,30 @@ td {
 	background-color: #CCFFCC;
 }
 
-a:link {color:#006600;}      /* unvisited link */
-a:visited {color:#006600;}  /* visited link */
-a:hover {color:#339933;}  /* mouse over link */
-a:active {color:#006600;}  /* selected link */ 
+a:link {
+	color: #006600;
+} /* unvisited link */
+a:visited {
+	color: #006600;
+} /* visited link */
+a:hover {
+	color: #339933;
+} /* mouse over link */
+a:active {
+	color: #006600;
+} /* selected link */
 
 /* ADMIN PARKING SPOT */
 .adminOperationsList {
-	width:110px;
+	width: 110px;
 }
-.backBtn{
-	display:block;
-	position:relative;
-	float:right;
-	padding:2px;
+
+.backBtn {
+	display: block;
+	position: relative;
+	float: right;
+	padding: 2px;
 	border: black solid 3px;
-	background-color:white;
-	color:green;
+	background-color: white;
+	color: green;
 }
