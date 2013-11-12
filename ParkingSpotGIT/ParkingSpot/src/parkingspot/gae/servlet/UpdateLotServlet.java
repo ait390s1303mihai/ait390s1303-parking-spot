@@ -17,16 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 import parkingspot.gae.db.Lot;
 
 /**
- * Servlet to update a lot. 
+ * Servlet to update a lot.
  */
 @SuppressWarnings("serial")
 public class UpdateLotServlet extends HttpServlet {
-	
+
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String campusID = req.getParameter("campusID");
 		Lot.updateLotCommand(campusID, req.getParameter("lotID"), req.getParameter("lotName"),
-				req.getParameter("totalSpaces"), req.getParameter("googleMapLocation"));
+				req.getParameter("totalSpaces"), req.getParameter("googleMapLocation"), req.getParameter("latitude"),
+				req.getParameter("longitude"), req.getParameter("zoom"));
 
-		resp.sendRedirect("/gae/admin/allLots.jsp?campusID="+campusID);
+		resp.sendRedirect("/gae/admin/allLots.jsp?campusID=" + campusID);
 	}
 }
