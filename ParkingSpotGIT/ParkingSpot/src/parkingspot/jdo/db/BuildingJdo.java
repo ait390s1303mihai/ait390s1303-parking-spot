@@ -85,7 +85,7 @@ public class BuildingJdo {
 	 */
 	public static BuildingJdo createBuilding(String buildingName) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        BuildingJdo building = new BuildingJdo(buildingName, "", null);
+        BuildingJdo building = new BuildingJdo(buildingName, "", "");
         try {
             pm.makePersistent(building);
         }
@@ -126,16 +126,16 @@ public class BuildingJdo {
 	public static List<BuildingJdo> getFirstBuildings(int number, String campusIdParam) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<BuildingJdo> results = null;
-		Query q = pm.newQuery(BuildingJdo.class);
-		q.setFilter("campusId == campusIdParam");
-		q.setOrdering("name asc");	
-		q.declareParameters("String campusIdParam");
+		
 		try {
+			Query q = pm.newQuery(BuildingJdo.class);
+			q.setFilter("campusId == campusIdParam");
+			q.setOrdering("name asc");	
+			q.declareParameters("String campusIdParam");
 			results = (List<BuildingJdo>)q.execute();
+			q.closeAll();
 		} catch (Exception e) {
 			
-		} finally{
-			q.closeAll();
 		}
 		return results;
 	}	

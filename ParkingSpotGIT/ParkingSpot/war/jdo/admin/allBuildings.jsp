@@ -128,9 +128,9 @@ function cancelEditBuilding(buildingID) {
 </head>
 <body>
 	<%
-		String campusId = request.getParameter("campusId");
+		String campusId = request.getParameter("campusID");
 		List<BuildingJdo> allBuildings = BuildingJdo.getFirstBuildings(100, campusId);
-		if (allBuildings.isEmpty()) {
+		if (allBuildings==null||allBuildings.isEmpty()) {
 	%>
 	<h1>No Building Defined</h1>
 	<%
@@ -146,6 +146,7 @@ function cancelEditBuilding(buildingID) {
 		<%
 			for (BuildingJdo building : allBuildings) {
 				String buildingName = building.getName();
+				System.out.println("Building Name" + buildingName);
 				String buildingID = building.getStringID();
 		%>
 
