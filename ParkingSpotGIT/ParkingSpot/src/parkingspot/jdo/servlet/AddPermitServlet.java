@@ -24,7 +24,9 @@ import parkingspot.jdo.db.PermitJdo;
 public class AddPermitServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String permitName = req.getParameter("permitName");
-		PermitJdo.createPermit(permitName);
-		resp.sendRedirect("/jdo/admin/allPermits.jsp");
+		String lotId = req.getParameter("lotId");
+		System.out.println("AddPermitServlet");
+		PermitJdo.createPermit(permitName, lotId);
+		resp.sendRedirect("/jdo/admin/allPermits.jsp?lotId="+lotId);
 	}
 }

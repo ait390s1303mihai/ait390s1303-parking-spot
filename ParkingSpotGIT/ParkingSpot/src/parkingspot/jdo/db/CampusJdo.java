@@ -72,7 +72,7 @@ public class CampusJdo {
 	
 	public static void deleteCampusCommand(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		System.out.println("sKey: " + sKey);
+
 		try {
 			CampusJdo campus = getCampus(pm, sKey);
             pm.deletePersistent(campus);

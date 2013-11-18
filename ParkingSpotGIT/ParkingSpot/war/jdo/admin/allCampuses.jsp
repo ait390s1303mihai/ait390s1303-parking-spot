@@ -130,6 +130,7 @@ function cancelEditCampus(campusID) {
 </head>
 <body>
 	<%
+	
 		List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
 		if (allCampuses.isEmpty()) {
 	%>
@@ -197,7 +198,7 @@ function cancelEditCampus(campusID) {
 		
 			<td>
 				<form action="/jdo/admin/campusLots.jsp" style="display:inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" />
+					<input type="hidden" value="<%=campusID%>" name="campusId" />
 					<input type="submit" value="Lots">
 				</form>
 			</td>
