@@ -17,8 +17,8 @@ import parkingspot.gae.db.Permit;
 public class AddPermitServlet extends HttpServlet {
         
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                String permitID = req.getParameter("permitID");
-                Permit.createPermit(permitID);
+                String permitName = req.getParameter("permitName");
+                Permit.createPermit(permitName);
                 resp.sendRedirect("/gae/admin/allPermits.jsp");
         }
 }

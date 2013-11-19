@@ -188,22 +188,39 @@ function cancelEditLot(lotID) {
 	<h1>
 		No Lots Defined in
 		<%=campusName%></h1>
-	<p>
-		<a href="/gae/admin/allCampuses.jsp">All campuses</a>
-	</p>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<%
 		} else {
 	%>
 	<h1>
 		ALL LOTS IN
 		<%=campusName%></h1>
-	<p>
-		<a href="/gae/admin/allCampuses.jsp">All campuses</a>
-	</p>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Lot Name</th>
+			<th>View</th>
 		</tr>
 		<%
 			for (Entity lot : allLots) {
@@ -224,13 +241,17 @@ function cancelEditLot(lotID) {
 
 				<div id="edit<%=lotID%>" style="display: none">
 
-					<form id="form<%=lotID%>" action="/gae/admin/updateLotCommand" method="get">
+					<form id="form<%=lotID%>" action="/gae/admin/updateLotCommand"
+						method="get">
 						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-							type="hidden" value="<%=lotID%>" name="lotID" />
-						<input id="latitude<%=lotID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
-						<input id="longitude<%=lotID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
-						<input id="zoom<%=lotID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
-						
+							type="hidden" value="<%=lotID%>" name="lotID" /> <input
+							id="latitude<%=lotID%>" type="hidden"
+							value="<%=mapFig.latitude%>" name="latitude" /> <input
+							id="longitude<%=lotID%>" type="hidden"
+							value="<%=mapFig.longitude%>" name="longitude" /> <input
+							id="zoom<%=lotID%>" type="hidden" value="<%=mapFig.zoom%>"
+							name="zoom" />
+
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
@@ -254,8 +275,9 @@ function cancelEditLot(lotID) {
 							</tr>
 						</table>
 						<div id="map_canvas_<%=lotID%>" class="edit_map_canvas"></div>
-						
-						<button id="saveEditLotButton<%=campusID%>"  type="button" onclick="saveEditLot(<%=lotID%>)">Save</button>
+
+						<button id="saveEditLotButton<%=campusID%>" type="button"
+							onclick="saveEditLot(<%=lotID%>)">Save</button>
 						<button type="button" onclick="cancelEditLot(<%=lotID%>)">Cancel</button>
 					</form>
 				</div>
@@ -265,6 +287,15 @@ function cancelEditLot(lotID) {
 					<button type="button" onclick="confirmDeleteLot(<%=lotID%>)">Delete</button>
 					<button type="button" onclick="cancelDeleteLot(<%=lotID%>)">Cancel</button>
 				</div></td>
+
+			<td>
+				<form action="/gae/admin/allPermitsForLot.jsp"
+					style="display: inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+						type="hidden" value="<%=lotID%>" name="lotID" /> <input
+						type="submit" value="Permits">
+				</form>
+			</td>
 		</tr>
 
 		<%

@@ -185,10 +185,33 @@ function cancelEditCampus(campusID) {
 		if (allCampuses.isEmpty()) {
 	%>
 	<h1>No Campus Defined</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<%
 		} else {
 	%>
 	<h1>ALL CAMPUSES</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -214,11 +237,15 @@ function cancelEditCampus(campusID) {
 
 				<div id="edit<%=campusID%>" style="display: none">
 
-					<form id="form<%=campusID%>" action="/gae/admin/updateCampusCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" />
-						<input id="latitude<%=campusID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
-						<input id="longitude<%=campusID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
-						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+					<form id="form<%=campusID%>"
+						action="/gae/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+							id="latitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.latitude%>" name="latitude" /> <input
+							id="longitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.longitude%>" name="longitude" /> <input
+							id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>"
+							name="zoom" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
@@ -244,7 +271,8 @@ function cancelEditCampus(campusID) {
 						</table>
 						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
 
-						<button id="saveEditCampusButton<%=campusID%>"  type="button" onclick="saveEditCampus(<%=campusID%>)">Save</button>
+						<button id="saveEditCampusButton<%=campusID%>" type="button"
+							onclick="saveEditCampus(<%=campusID%>)">Save</button>
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>

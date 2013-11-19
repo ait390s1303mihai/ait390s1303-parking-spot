@@ -7,6 +7,7 @@
  */
 package parkingspot.gae.db;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -235,16 +236,16 @@ public class Lot {
 	/**
 	 * Get a lot based on a string containing its long ID and a string containing its parent id (campus).
 	 * 
-	 * @param campusId A {@link String} containing the ID key (a <code>long</code> number) for the parent campus
-	 * @param lotId A {@link String} containing the ID key (a <code>long</code> number) for the lot
+	 * @param campusID A {@link String} containing the ID key (a <code>long</code> number) for the parent campus
+	 * @param lotID A {@link String} containing the ID key (a <code>long</code> number) for the lot
 	 * @return A GAE {@link Entity} for the Lot or <code>null</code> if none or error.
 	 */
-	public static Entity getLot(String campusId, String lotId) {
+	public static Entity getLot(String campusID, String lotID) {
 		Entity lot = null;
 		try {
 			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-			long id = Long.parseLong(lotId);
-			Key campusKey = Campus.getKey(campusId);
+			long id = Long.parseLong(lotID);
+			Key campusKey = Campus.getKey(campusID);
 			Key lotKey = KeyFactory.createKey(campusKey, ENTITY_KIND, id);
 			lot = datastore.get(lotKey);
 		} catch (Exception e) {
@@ -361,6 +362,14 @@ public class Lot {
 		Query query = new Query(ENTITY_KIND, Campus.getKey(campusId));
 		List<Entity> result = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(limit));
 		return result;
+	}
+	
+	//
+	// PERMITS
+	// 
+	
+	public static List<Entity> getPermits(Entity lot) {
+		return new ArrayList<Entity>();
 	}
 
 }
