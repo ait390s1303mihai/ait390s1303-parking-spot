@@ -170,7 +170,8 @@ public class PermitJdo {
 			PermitJdo permit = getPermit(pm, permitId);
 			
 			for (int i=0; i<lotIds.length; i++){
-				
+				LotJdo lot = null; // WRONG new LotJdo("", "");
+				lot = LotJdo.getLot(lotIds[i]);
 				permit.lotIds.add(lotIds[i]);
 			}
 			pm.makePersistent(permit);

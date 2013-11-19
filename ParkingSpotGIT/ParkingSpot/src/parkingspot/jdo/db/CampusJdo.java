@@ -1,152 +1,220 @@
 package parkingspot.jdo.db;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
+import parkingspot.jdo.db.MapFigureJdo;
+
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+
 
 /**
  * 
- *        ENTITY KIND: "Campus"
- *        PARENT: NONE
- *        KEY: A campus Id
- *        FEATURES:
- *                Name: "Id" Type: int
- *                Name: "Name" Type: String
- *                Name: "Address" Type: String
- *                Name: "Location"Type: String
- *        Examples:
- *        Campus("Fairfax")
- *                "Id" = 1
- *                "Address" = "4400 University Dr., Fairfax, VA 22030, USA"
- *                "Location" =  "United States@38.826182,-77.308211"
- *                "Name" = "Fairfax Campus"
- *  
- *  Authors: Drew Lorence, Alex Leone
- *  
- */     
-
+ * ENTITY KIND: "Campus" <br>
+ * PARENT: NONE <br>
+ * KEY: A campus Id <br>
+ * FEATURES: <br>
+ * - Name: "Id" Type: int <br>
+ * - Name: "Name" Type: String <br>
+ * - Name: "Address" Type: String <br>
+ * - Name: "Location"Type: String <br>
+ * Examples: <br>
+ * - Campus("Fairfax") <br>
+ * - "Id" = 1 <br>
+ * - "Address" = "4400 University Dr., Fairfax, VA 22030, USA" <br>
+ * - "Location" = "United States@38.826182,-77.308211" <br>
+ * - "Name" = "Fairfax Campus" <br>
+ * 
+ * Authors: Drew Lorence, Alex Leone <br>
+ * 
+ */
 
 @PersistenceCapable
 public class CampusJdo {
-        
-        @PrimaryKey
-        @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-        private Key key;
-        @Persistent
-        private String name;
-        @Persistent
-        private String address;
-        @Persistent
-        private String location;
-        
-        public CampusJdo(String name, String address, String location){
-                this.name = name;
-                this.address = address;
-                this.location = location;
-        }
-        
-        public static CampusJdo createCampus(String campusName) {  
-        PersistenceManager pm = PMF.get().getPersistenceManager();
+	
+	//
+	// KEY
+	//
 
-        CampusJdo campus = new CampusJdo(campusName, "", "");
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
+	
+	public Key getKey() {
+		return key;
+	}
 
-        try {
-            pm.makePersistent(campus);
-        } finally {
-            pm.close();
-        }
-                
-                return campus;
-        }
-        
-        public static void deleteCampusCommand(String sKey){
-                PersistenceManager pm = PMF.get().getPersistenceManager();
+	public String getStringID() {
+		return Long.toString(getKey().getId());
+	}
+	
+	//
+	// NAME
+	//
 
-                try {
-                        CampusJdo campus = getCampus(pm, sKey);
-            pm.deletePersistent(campus);
-        } finally {
-            pm.close();
-        }
-        }
-        
-        public static CampusJdo getCampus(String sKey){
-                PersistenceManager pm = PMF.get().getPersistenceManager();
-                return getCampus(pm, sKey);
-        }
-        
-        public static CampusJdo getCampus(PersistenceManager pm, String sKey){
-                long k = Long.parseLong(sKey);
-                CampusJdo c = pm.getObjectById(CampusJdo.class, k);
-                return c;
-        }
-        
+	@Persistent
+	private String name;
 
-        
-        public Key getKey(){
-                return key;
-        }
-        
-        public String getStringID() {
-                return Long.toString(getKey().getId());
-        }
-        
-        public String getName(){
-                return name;
-        }
-        
-        public String getAddress(){
-                return address;
-        }
-        
-        public String getGoogleMapLocation(){
-                return location;
-        }
-        
-        
-        @SuppressWarnings("unchecked")
-        public static List<CampusJdo> getFirstCampuses(int number) {
-                PersistenceManager pm = PMF.get().getPersistenceManager();
-                List<CampusJdo> results = null;
-                try {
-                        
-                        Query q = pm.newQuery(CampusJdo.class);
-                        q.setOrdering("name asc");
-                        
-                        results = (List<CampusJdo>)q.execute();
-                } catch (Exception e) {
-                        
-                }
-                return results;
-        }
-        
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * The regular expression pattern for the name of the campus.
+	 */
+	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[ \\w-'',]{3,100}\\Z");
 
-        public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation) {
-        try {
-                        PersistenceManager pm = PMF.get().getPersistenceManager();
-                        CampusJdo campus = getCampus(pm, campusID);
-                        campus.name= name;
-                        campus.address= address;
-                        campus.location= googleMapLocation;
-                    pm.close();
-                        
-        } catch (Exception e) {
-                return false;                        
-            }
- 
-                return true;
-                
-                }
-        
+	/**
+	 * Check if the name is correct for a campus.
+	 * 
+	 * @param name The checked string.
+	 * @return true is the name is correct.
+	 */
+	public static boolean checkName(String name) {
+		Matcher matcher = NAME_PATTERN.matcher(name);
+		return matcher.find();
+	}
+	
+	//
+	// ADDRESS
+	//
+	
+	@Persistent
+	private String address;
+	
+	public String getAddress() {
+		return address;
+	}
+	
+	//
+	// GOOGLE MAP LOCATION
+	//
+
+	@Persistent
+	private String location;
+	
+	public String getGoogleMapLocation() {
+		return location;
+	}
+	
+	//
+	// GOOGLE MAP FIGURE
+	//
+
+	@Persistent
+	@Embedded
+	private MapFigureJdo mapFigure;
+	
+	public MapFigureJdo getGoogleMapFigure() {
+		if (mapFigure == null)
+			return new MapFigureJdo(38.830376, -77.307143, 10);
+		return mapFigure;
+	}
+	
+	public void setGoogleMapFigure(CampusJdo campus, double lat, double lng, int z) {
+		mapFigure = new MapFigureJdo(lat, lng, z);
+	}
+	
+	//
+	// CREATE CAMPUS
+	//
+
+	private CampusJdo(String name, String address, String location) {
+		//TODO check the values
+		this.name = name;
+		this.address = address;
+		this.location = location;
+		this.mapFigure = null;
+	}
+	
+	public static CampusJdo createCampus(String campusName) {
+		CampusJdo campus = null;
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+
+		try {
+
+			if (!checkName(campusName)) {
+				return null;
+			}
+			//TODO
+
+			
+			campus = new CampusJdo(campusName, "", "");
+			pm.makePersistent(campus);
+			return campus;
+		} finally {
+			pm.close();
+		}
+
+	}
+
+	public static void deleteCampusCommand(String sKey) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//System.out.println("sKey: " + sKey);
+		try {
+			CampusJdo campus = getCampus(pm, sKey);
+			pm.deletePersistent(campus);
+		} finally {
+			pm.close();
+		}
+	}
+
+	public static CampusJdo getCampus(String sKey) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		return getCampus(pm, sKey);
+	}
+
+	public static CampusJdo getCampus(PersistenceManager pm, String sKey) {
+		long k = Long.parseLong(sKey);
+		CampusJdo c = pm.getObjectById(CampusJdo.class, k);
+		return c;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<CampusJdo> getFirstCampuses(int number) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<CampusJdo> results = null;
+		try {
+
+			Query q = pm.newQuery(CampusJdo.class);
+			q.setOrdering("name asc");
+
+			results = (List<CampusJdo>) q.execute();
+		} catch (Exception e) {
+
+		}
+		return results;
+	}
+
+	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation,
+			String latString, String lngString, String zoomString) {
+		try {
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			CampusJdo campus = getCampus(pm, campusID);
+			double lat = Double.parseDouble(latString);
+			double lng = Double.parseDouble(lngString);
+			int zoom = Integer.parseInt(zoomString);
+			campus.name = name;
+			campus.address = address;
+			campus.location = googleMapLocation;
+			campus.setGoogleMapFigure(campus, lat, lng, zoom);
+			pm.close();
+
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
+
+	}
+
 }

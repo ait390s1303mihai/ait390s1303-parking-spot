@@ -139,7 +139,7 @@ public class Lot {
 		Object val = lot.getProperty(TOTAL_SPACES_PROPERTY);
 		if (val == null)
 			return 0;
-		return (long) val;
+		return (Long) val;
 	}
 
 	//

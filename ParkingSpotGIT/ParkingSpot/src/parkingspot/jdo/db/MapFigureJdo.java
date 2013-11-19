@@ -1,10 +1,12 @@
 package parkingspot.jdo.db;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
 
 
 
@@ -22,17 +24,14 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 @PersistenceCapable
+@EmbeddedOnly
 public class MapFigureJdo{
 	
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
+	@Persistent
+	public double latitude;
 	
 	@Persistent
-	private double latitude;
-	
-	@Persistent
-	private double longitude;
+	public double longitude;
 	
 	@Persistent
 	private int zoom;
@@ -82,12 +81,5 @@ public class MapFigureJdo{
 		}
 	}
 	
-	public Key getKey(){
-		return key;
-	}
-	
-	public String getStringID() {
-		return Long.toString(getKey().getId());
-	}
 	
 }
