@@ -34,7 +34,7 @@ import com.google.appengine.api.datastore.Key;
  * - "Location" = "United States@38.826182,-77.308211" <br>
  * - "Name" = "Fairfax Campus" <br>
  * 
- * Authors: Drew Lorence, Alex Leone <br>
+ * Authors: Drew Lorence, Alex Leone, Mihai Boicu <br>
  * 
  */
 
@@ -129,7 +129,6 @@ public class CampusJdo {
 	//
 
 	private CampusJdo(String name, String address, String location) {
-		//TODO check the values
 		this.name = name;
 		this.address = address;
 		this.location = location;
@@ -145,8 +144,11 @@ public class CampusJdo {
 			if (!checkName(campusName)) {
 				return null;
 			}
-			//TODO
-
+			
+			campus = getCampusWithName(campusName);
+			if (campus != null) {
+				return null;
+			}
 			
 			campus = new CampusJdo(campusName, "", "");
 			pm.makePersistent(campus);
@@ -157,17 +159,10 @@ public class CampusJdo {
 
 	}
 
-	public static void deleteCampusCommand(String sKey) {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		//System.out.println("sKey: " + sKey);
-		try {
-			CampusJdo campus = getCampus(pm, sKey);
-			pm.deletePersistent(campus);
-		} finally {
-			pm.close();
-		}
-	}
-
+	//
+	// GET CAMPUS
+	//
+	
 	public static CampusJdo getCampus(String sKey) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		return getCampus(pm, sKey);
@@ -178,23 +173,36 @@ public class CampusJdo {
 		CampusJdo c = pm.getObjectById(CampusJdo.class, k);
 		return c;
 	}
-
-	@SuppressWarnings("unchecked")
-	public static List<CampusJdo> getFirstCampuses(int number) {
+	
+	public static CampusJdo getCampusWithName(String name) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		List<CampusJdo> results = null;
-		try {
-
-			Query q = pm.newQuery(CampusJdo.class);
-			q.setOrdering("name asc");
-
-			results = (List<CampusJdo>) q.execute();
-		} catch (Exception e) {
-
-		}
-		return results;
+		return getCampusWithName(pm, name);
 	}
 
+	public static CampusJdo getCampusWithName(PersistenceManager pm, String name) {
+		CampusJdo campus = null;
+		try {
+
+			Query query = pm.newQuery(CampusJdo.class);
+			query.setFilter("name == nameParam");
+			query.setOrdering("name asc");
+			query.declareParameters("String nameParam");
+			@SuppressWarnings("unchecked")
+			List<CampusJdo> result = (List<CampusJdo>)query.execute(name);
+			
+			if (result != null && result.size() > 0) {
+				campus = result.get(0);
+			}
+		} catch (Exception e) {
+			// TODO log the error
+		}
+		return campus;
+	}
+	
+	//
+	// UPDATE CAMPUS
+	//
+	
 	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation,
 			String latString, String lngString, String zoomString) {
 		try {
@@ -214,7 +222,43 @@ public class CampusJdo {
 		}
 
 		return true;
-
 	}
 
+	//
+	// DELETE CAMPUS
+	//
+	
+	public static void deleteCampusCommand(String sKey) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//System.out.println("sKey: " + sKey);
+		try {
+			CampusJdo campus = getCampus(pm, sKey);
+			pm.deletePersistent(campus);
+		} finally {
+			pm.close();
+		}
+	}
+
+	
+	//
+	// QUERY CAMPUSES
+	//
+	
+	@SuppressWarnings("unchecked")
+	public static List<CampusJdo> getFirstCampuses(int number) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<CampusJdo> results = null;
+		try {
+
+			Query q = pm.newQuery(CampusJdo.class);
+			q.setOrdering("name asc");
+
+			results = (List<CampusJdo>) q.execute();
+		} catch (Exception e) {
+
+		}
+		return results;
+	}
+
+	
 }

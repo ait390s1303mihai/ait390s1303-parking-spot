@@ -130,15 +130,14 @@ public class LotJdo {
 	
 		
     public static MapFigureJdo getGoogleMapFigure(LotJdo lot) {
-        Object val = lot.getGoogleMapFigure();
+        MapFigureJdo val = lot.getGoogleMapFigure();
         if (val == null)
                 return new MapFigureJdo(38.830376, -77.307143, 10);
-        Blob blob = (Blob) val;
-        return MapFigureJdo.toMapFigure(blob);
-}
+        return val;
+    }
 
     public static void setGoogleMapFigure(LotJdo lot, double lat, double lng, int z) {
-        Blob blob = MapFigureJdo.toBlob(new MapFigureJdo(lat, lng, z));
+     //   Blob blob = MapFigureJdo.toBlob(new MapFigureJdo(lat, lng, z));
 //        lot.mapFigure = blob;
     }
 

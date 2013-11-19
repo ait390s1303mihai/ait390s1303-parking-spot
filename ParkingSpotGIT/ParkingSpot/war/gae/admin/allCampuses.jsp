@@ -314,7 +314,5 @@ function cancelEditCampus(campusID) {
 
 	</table>
 
-	<div id="map_canvas"></div>
-
 </body>
 </html>

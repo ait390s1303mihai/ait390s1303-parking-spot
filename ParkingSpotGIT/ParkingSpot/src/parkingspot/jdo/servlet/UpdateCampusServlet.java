@@ -18,8 +18,6 @@ import parkingspot.jdo.db.CampusJdo;
 
 //TODO comments
 @SuppressWarnings("serial")
-// NOTE: It is passing the new value the campus was renamed to
-// It is going through the catch every time
 public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		

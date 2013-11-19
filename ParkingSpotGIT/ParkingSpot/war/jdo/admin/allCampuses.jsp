@@ -25,7 +25,8 @@
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script>
@@ -91,8 +92,8 @@ var selectedCampus=null;
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
-	$(".addLotButton").attr("disabled", (value)?"disabled":null);
-	$("#addcampus").attr("disabled", (value)?"disabled":null);
+	if (value)
+		$("#addCampusButton").attr("disabled", (value)?"disabled":null);
 }
 
 function deleteButton(campusID) {
@@ -122,6 +123,10 @@ function cancelDeleteCampus(campusID) {
 	$("#delete"+campusID).hide();
 	disableAllButtons(false);
 }
+
+var selectedCampusOldName=null;
+var selectedCampusOldAddress=null;
+var selectedCampusOldLocation=null;
 
 function editButton(campusID, campusName, lat, lng, zoom) {
 	selectedCampusForEdit=campusID;
@@ -164,6 +169,7 @@ function saveEditCampus(campusID) {
 	}
 	document.forms["form"+campusID].submit();
 }
+
 function cancelEditCampus(campusID) {
 	$("#editCampusNameInput"+campusID).val(selectedCampusOldName);
 	$("#edit"+campusID).hide();
@@ -177,15 +183,37 @@ function cancelEditCampus(campusID) {
 </head>
 <body>
 	<%
-	
 		List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
 		if (allCampuses.isEmpty()) {
 	%>
 	<h1>No Campus Defined</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<%
 		} else {
 	%>
 	<h1>ALL CAMPUSES</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+	
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -194,9 +222,9 @@ function cancelEditCampus(campusID) {
 		</tr>
 		<%
 			for (CampusJdo campus : allCampuses) {
-				String campusName = campus.getName();
-				String campusID = campus.getStringID();
-				MapFigureJdo mapFig = CampusJdo.getGoogleMapFigure(campus);
+					String campusName = campus.getName();
+					String campusID = campus.getStringID();
+					MapFigureJdo mapFig = campus.getGoogleMapFigure();
 		%>
 
 		<tr>
@@ -209,12 +237,17 @@ function cancelEditCampus(campusID) {
 
 			<td><div id="view<%=campusID%>"><%=campusName%></div>
 
-			<div id="edit<%=campusID%>" style="display: none">
-					<form id="form<%=campusID%>" action="/jdo/admin/updateCampusCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" />
-						<input id="latitude<%=campusID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
-						<input id="longitude<%=campusID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
-						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+				<div id="edit<%=campusID%>" style="display: none">
+				
+					<form id="form<%=campusID%>"
+						action="/jdo/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+							id="latitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.latitude%>" name="latitude" /> <input
+							id="longitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.longitude%>" name="longitude" /> <input
+							id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>"
+							name="zoom" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
@@ -240,38 +273,33 @@ function cancelEditCampus(campusID) {
 						</table>
 						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
 
-						<button id="saveEditCampusButton<%=campusID%>"  type="button" onclick="saveEditCampus(<%=campusID%>)">Save</button>
+						<button id="saveEditCampusButton<%=campusID%>" type="button"
+							onclick="saveEditCampus(<%=campusID%>)">Save</button>
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
-
-				<div id="delete<%=campusID%>" style="display: none">
-					Do you want to delete this campus?
-					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
-					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
-				</div></td>
 
 			<div id="delete<%=campusID%>" style="display: none">
 				Do you want to delete this campus?
 				<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
 				<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
 			</div>
-		</td>
-		
-		
+			</td>
+
+
 			<td>
 				<form action="/jdo/admin/campusLots.jsp" style="display: inline">
 					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
 						type="submit" value="Lots">
 				</form>
 			</td>
-		
+
 		</tr>
 
 		<%
 			}
 
-		}
+			}
 		%>
 
 		<tfoot>
@@ -290,8 +318,6 @@ function cancelEditCampus(campusID) {
 		</tfoot>
 
 	</table>
-
-	<div id="map_canvas"></div>
 
 </body>
 </html>
