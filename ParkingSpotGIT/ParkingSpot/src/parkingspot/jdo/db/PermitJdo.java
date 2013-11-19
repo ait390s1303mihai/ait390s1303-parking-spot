@@ -117,16 +117,24 @@ public class PermitJdo {
 	public static List<PermitJdo> getFirstPermitsByLotId(int number, String lotIdParam) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<PermitJdo> results = null;
+		
+		Query q = pm.newQuery(PermitJdo.class);
+		q.setFilter("campusId == lotIdParam");
+		q.setOrdering("name asc");	
+		q.declareParameters("String lotIdParam");
+
 		try {
-			Query query = pm.newQuery(PermitJdo.class);
-			query.setFilter("campusId == campusIdParam");
-			query.setOrdering("name asc");	
-			query.declareParameters("String campusIdParam");
-			results = (List<PermitJdo>)query.execute();
+
+			results = (List<PermitJdo>)q.execute(lotIdParam);	
+		
 		} catch (Exception e) {
 				
-		}
+		} finally {
+			q.closeAll();		
+		}		
+		
 		return results;
+		
 	}
 	
 
@@ -178,6 +186,7 @@ public class PermitJdo {
 	public static boolean updateLotInPermitCommand(PermitJdo permit, String lotId){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		javax.jdo.Transaction tx = pm.currentTransaction();
+		System.out.println("here a new line");
 		try
 			{
 				
@@ -187,9 +196,6 @@ public class PermitJdo {
 			    
 			    try{
 					
-					
-					String permitId = Long.toString(permit.key.getId());
-					
 					permit.lotIds.add(lotId);
 					
 					pm.makePersistent(permit);
@@ -197,27 +203,18 @@ public class PermitJdo {
 					pm.close();
 					
 				} catch (Exception e){
+					
 					return false;
 				}
 			    
-			    
-			    
-//			    System.out.println("new line");
-//					    
-//			    System.out.println("permitName from object :"+ permit.name);
-//			    System.out.println("permitName :"+permitName);
-//		        System.out.println("new line");
-//		        
-//		        System.out.println("permitId :"+permitId);
-
-			    
-		        LotJdo.updatePermitsInLotsCommand(lotId, permitId);
-		        
+			    System.out.println("new line");
+		       
+			    LotJdo.updatePermitsInLotsCommand(lotId, permit.getStringID());
+		        		
 		       
 			    tx.commit(); // Commit the PM transaction
 				
-			
-				
+			    return true;
 			}
 			finally
 			{
@@ -230,8 +227,6 @@ public class PermitJdo {
 			    
 			}
 
-		
-		return true;
 	}
 	
 }
