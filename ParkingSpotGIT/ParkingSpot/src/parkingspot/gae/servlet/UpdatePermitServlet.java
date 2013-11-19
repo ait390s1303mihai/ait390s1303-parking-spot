@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.gae.db.Permit;
-import parkingspot.gae.db.Users;
 
 /**
  * Update the permit profile.
@@ -16,8 +15,7 @@ import parkingspot.gae.db.Users;
 @SuppressWarnings("serial")
 public class UpdatePermitServlet extends HttpServlet {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                Permit.updatePermitCommand(req.getParameter("permitID"), req.getParameter("permitName"),
-                                req.getParameter("fuelEffiency"));
+                Permit.updatePermitCommand(req.getParameter("permitID"), req.getParameter("permitName"));
 
                 resp.sendRedirect("/gae/admin/allPermits.jsp");
         }

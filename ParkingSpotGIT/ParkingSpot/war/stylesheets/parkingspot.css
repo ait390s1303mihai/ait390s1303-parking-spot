@@ -28,6 +28,26 @@ h1 {
 	margin-bottom: 3px;
 }
 
+.menu {
+	width: 690px;
+	padding: 0px;
+	margin: 0px;
+	background-color: #E9FFE9;
+	color: #006600;
+	text-align: left;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.menu_item {
+	display: inline;
+	margin-right: 5px;
+	padding: 5px;
+	background-color: #CCFFCC;
+	color: #006600;
+	text-align: left;
+}
+
 .big_map_canvas {
 	width: 696px;
 	height: 400px;
@@ -51,7 +71,7 @@ h1 {
 	margin: 0px;
 }
 
-.editText,.editCampusNameInput {
+.editText,.editCampusNameInput, .editPermitNameInput {
 	width: 475px;
 	height: 20px;
 }

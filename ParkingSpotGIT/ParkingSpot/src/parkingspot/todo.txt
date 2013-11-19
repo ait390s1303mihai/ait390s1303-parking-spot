@@ -1,3 +1,20 @@
+TODO: 
+
+A. CampusJdo
+A.1. Comments for public functions
+A.2. All parameters of public functions must be checked (text only accepted)
+A.3. Log all errors but escape them.
+
+B. Servlets for campus (add, delete, update)
+B.1. Comments for public functions, including expected parameters.
+
+C. allCampuses.jsp
+C.1. Checks for read fields. 
+C.2. Map improvements related to the markers. (set the marker, set the marker text)
+
+
+
+
 Alex: ADMIN JDO finish the link between lots and permits
 
 Drew: ADMIN JDO buildings with maps

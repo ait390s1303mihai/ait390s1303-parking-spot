@@ -18,13 +18,11 @@ import parkingspot.jdo.db.CampusJdo;
 
 //TODO comments
 @SuppressWarnings("serial")
-// NOTE: It is passing the new value the campus was renamed to
-// It is going through the catch every time
 public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		CampusJdo.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
-				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"));
+				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"), req.getParameter("latitude"), req.getParameter("longitude"), req.getParameter("zoom"));
 
 		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}

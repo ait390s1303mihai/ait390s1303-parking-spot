@@ -1,3 +1,4 @@
+<%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="parkingspot.jdo.db.CampusJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -10,7 +11,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Alex Leone, Mihai Boicu
+   Authors: Alex Leone, Mihai Boicu, Min-Seop Kim
    
    Version 0.1 - Fall 2013
 -->
@@ -24,13 +25,19 @@
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script>
 var selectedCampusForEdit = null  
 var editNameError = false;
 var editLocationError = false;
 var editAddressError = false;
+var selectedCampusForDelete=null;
+var selectedCampusOldName=null;
+var selectedCampusOldAddress=null;
+var selectedCampusOldLocation=null;
 
 $(document).ready(function(){ //test
 	
@@ -57,8 +64,19 @@ $(document).ready(function(){ //test
 	
 });	
 
-
-
+function updateSaveEditButton() {
+	if (editNameError||editLocationError||editAddressError) {
+		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled","disabled");
+	} else {
+		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled",null);
+	}
+	if (editNameError) {
+		$("#editCampusNameError"+selectedCampusForEdit).show();
+	} else {
+		$("#editCampusNameError"+selectedCampusForEdit).hide();
+	}
+	
+}
 
 var campusNamePattern = /^[ \w-'',]{3,100}$/
 campusNamePattern.compile(campusNamePattern)
@@ -74,19 +92,13 @@ var selectedCampus=null;
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
-	$(".addLotButton").attr("disabled", (value)?"disabled":null);
-	$("#addcampus").attr("disabled", (value)?"disabled":null);
+	if (value)
+		$("#addCampusButton").attr("disabled", (value)?"disabled":null);
 }
 
 function deleteButton(campusID) {
 	disableAllButtons(true);
 	$("#delete"+campusID).show();
-}
-
-function editButton(campusID) {
-	disableAllButtons(true);
-	$("#view"+campusID).hide();
-	$("#edit"+campusID).show();
 }
 
 function confirmDeleteCampus(campusID) {
@@ -112,13 +124,54 @@ function cancelDeleteCampus(campusID) {
 	disableAllButtons(false);
 }
 
-function cancelEditCampus(campusID) {
-	$("#edit"+campusID).hide();
-	$("#view"+campusID).show();
-	disableAllButtons(false);
+var selectedCampusOldName=null;
+var selectedCampusOldAddress=null;
+var selectedCampusOldLocation=null;
+
+function editButton(campusID, campusName, lat, lng, zoom) {
+	selectedCampusForEdit=campusID;
+	disableAllButtons(true);
+	editNameError = false;
+	editLocationError = false;
+	editAddressError = false;
+	updateSaveEditButton();
+	selectedCampusOldName=$("#editCampusNameInput"+selectedCampusForEdit).val();
+	selectedCampusOldAddress=null;
+	selectedCampusOldLocation=null;	
+	$("#view"+campusID).hide();
+	$("#edit"+campusID).show();
+	initializeMap(campusID, campusName, lat, lng, zoom);
+}
+
+var edited_map=null;
+
+function initializeMap(campusID, campusName, lat, lng, zoom) {
+	var myLatlng = new google.maps.LatLng(lat,lng);
+    var map_canvas = document.getElementById('map_canvas_'+campusID);
+    var map_options = {
+            center: myLatlng,
+            zoom: zoom,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          }
+    edited_map = new google.maps.Map(map_canvas, map_options);
+    var marker = new google.maps.Marker({
+    	position: myLatlng,
+    	title: campusName
+    });
+    marker.setMap(edited_map);
+}
+
+function saveEditCampus(campusID) {
+	if (edited_map!=null) {
+		$("#latitude"+campusID).val(edited_map.getCenter().lat());
+		$("#longitude"+campusID).val(edited_map.getCenter().lng());
+		$("#zoom"+campusID).val(edited_map.getZoom());
+	}
+	document.forms["form"+campusID].submit();
 }
 
 function cancelEditCampus(campusID) {
+	$("#editCampusNameInput"+campusID).val(selectedCampusOldName);
 	$("#edit"+campusID).hide();
 	$("#view"+campusID).show();
 	disableAllButtons(false);
@@ -134,10 +187,33 @@ function cancelEditCampus(campusID) {
 		if (allCampuses.isEmpty()) {
 	%>
 	<h1>No Campus Defined</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<%
 		} else {
 	%>
 	<h1>ALL CAMPUSES</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+	
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -146,77 +222,97 @@ function cancelEditCampus(campusID) {
 		</tr>
 		<%
 			for (CampusJdo campus : allCampuses) {
-				String campusName = campus.getName();
-				String campusID = campus.getStringID();
+					String campusName = campus.getName();
+					String campusID = campus.getStringID();
+					MapFigureJdo mapFig = campus.getGoogleMapFigure();
 		%>
 
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>)">Edit</button>
+					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
 			</td>
 
 			<td><div id="view<%=campusID%>"><%=campusName%></div>
 
-			<div id="edit<%=campusID%>" style="display: none">
-				<form action="/jdo/admin/updateCampusCommand" method="get">
-					<input type="hidden" value="<%=campusID%>" name="campusID" />
-					<table class="editTable">
-						<tr>
-							<td class="editTable" width=90>Name:</td>
-							<td class="editTable"><input type="text" class="editText"
-								value="<%=campusName%>" name="campusName" /></td>
-						</tr>
-						<tr>
-							<td class="editTable">Address:</td>
-							<td class="editTable"><input type="text" class="editText"
-								value="<%=campus.getAddress()%>" name="campusAddress" /></td>
-						</tr>
-						<tr>
-							<td class="editTable">Google Map:</td>
-							<td class="editTable"><input type="text" class="editText"
-								value="<%=campus.getGoogleMapLocation()%>"
-								name="googleMapLocation" /></td>
-						</tr>
-					</table>
-					<input type="submit" value="Save" />
-					<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
-				</form>
-			</div>
-			
+				<div id="edit<%=campusID%>" style="display: none">
+				
+					<form id="form<%=campusID%>"
+						action="/jdo/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+							id="latitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.latitude%>" name="latitude" /> <input
+							id="longitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.longitude%>" name="longitude" /> <input
+							id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>"
+							name="zoom" />
+						<table class="editTable">
+							<tr>
+								<td class="editTable" width=90>Name:</td>
+								<td class="editTable"><input type="text"
+									id="editCampusNameInput<%=campusID%>"
+									class="editCampusNameInput" value="<%=campusName%>"
+									name="campusName" />
+									<div id="editCampusNameError<%=campusID%>" class="error"
+										style="display: none">Invalid campus name (minimum 3
+										characters: letters, digits, spaces, -, ')</div></td>
+							</tr>
+							<tr>
+								<td class="editTable">Address:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=campus.getAddress()%>" name="campusAddress" /></td>
+							</tr>
+							<tr>
+								<td class="editTable">Google Map:</td>
+								<td class="editTable"><input type="text" class="editText"
+									value="<%=campus.getGoogleMapLocation()%>"
+									name="googleMapLocation" /></td>
+							</tr>
+						</table>
+						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
+
+						<button id="saveEditCampusButton<%=campusID%>" type="button"
+							onclick="saveEditCampus(<%=campusID%>)">Save</button>
+						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
+					</form>
+				</div>
 
 			<div id="delete<%=campusID%>" style="display: none">
 				Do you want to delete this campus?
 				<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
 				<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
 			</div>
-		</td>
-		
-		
+			</td>
+
+
 			<td>
-				<form action="/jdo/admin/campusLots.jsp" style="display:inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" />
-					<input type="submit" value="Lots">
+				<form action="/jdo/admin/campusLots.jsp" style="display: inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+						type="submit" value="Lots">
 				</form>
 			</td>
-		
+
 		</tr>
 
 		<%
 			}
 
-		}
+			}
 		%>
 
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form action="/jdo/admin/addCampusCommand" method="get">
-						New Campus: <input type="text" name="campusName" size="50" /> <input
-							id="addcampus" type="submit" value="Add" />
+					<form name="addCampusForm" action="/jdo/admin/addCampusCommand"
+						method="get">
+						New Campus: <input id="addCampusInput" type="text"
+							name="campusName" size="50" /> <input id="addCampusButton"
+							type="submit" value="Add" disabled="disabled" />
 					</form>
+					<div id="addCampusError" class="error" style="display: none">Invalid
+						campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>

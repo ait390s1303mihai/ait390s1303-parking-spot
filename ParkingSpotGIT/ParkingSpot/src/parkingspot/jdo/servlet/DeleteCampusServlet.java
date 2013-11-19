@@ -21,8 +21,6 @@ import parkingspot.jdo.db.CampusJdo;
 @SuppressWarnings("serial")
 public class DeleteCampusServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("Key: "+req.getParameter("campusID"));
-		
 		CampusJdo.deleteCampusCommand(req.getParameter("campusID"));
 		resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 	}
