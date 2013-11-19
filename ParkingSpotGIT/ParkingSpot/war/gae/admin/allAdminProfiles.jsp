@@ -167,10 +167,32 @@ function cancelEditAdminProfile(adminProfileID) {
 		if (allAdminProfiles.isEmpty()) {
 	%>
 	<h1>No Admin Profile Defined</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<%
 		} else {
 	%>
 	<h1>ALL ADMIN PROFILES</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -203,8 +225,7 @@ function cancelEditAdminProfile(adminProfileID) {
 							<tr>
 								<td class="editTable">Login ID:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=adminProfileLoginID%>"
-									name="adminProfileLoginID" /></td>
+									value="<%=adminProfileLoginID%>" name="adminProfileLoginID" /></td>
 							</tr>
 							<tr>
 								<td class="editTable" width=90>Name:</td>

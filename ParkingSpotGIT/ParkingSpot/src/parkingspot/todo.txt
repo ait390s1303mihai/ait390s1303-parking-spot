@@ -1,9 +1,10 @@
-Alex: ADMIN for each lot keep the permits allowed, and for each permit the lots where it can park
+Alex: ADMIN JDO finish the link between lots and permits
 
-Drew: ADMIN login and admin profile
+Drew: ADMIN JDO buildings with maps
 
-Min: admin MAP for all campuses
+Min: ADMIN JDO MAPs for all campuses and lots
 
-NEXT:
+Abdrew: USER JDO show map for an anonymous user and selected campus, permit and building
 
-user view: select campus from list, and type of permit (including visitor) - show lots to park (list - map)
+Jeff: USER JDO page 1 selection of campus, permit and building
+

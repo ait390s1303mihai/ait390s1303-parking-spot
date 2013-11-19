@@ -29,18 +29,6 @@
 
 <script>
 
-function initialize() {
-    var map_canvas = document.getElementById('map_canvas');
-    var map_options = {
-            center: new google.maps.LatLng(38.830376,-77.307143),
-            zoom: 14,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-    var map = new google.maps.Map(map_canvas, map_options);
-
-  }
-google.maps.event.addDomListener(window, 'load', initialize);
-
 var selectedCampusForEdit = null  
 var editNameError = false;
 var editLocationError = false;
@@ -139,7 +127,7 @@ var selectedCampusOldName=null;
 var selectedCampusOldAddress=null;
 var selectedCampusOldLocation=null;
 
-function editButton(campusID, lat, lng, zoom) {
+function editButton(campusID, campusName, lat, lng, zoom) {
 	selectedCampusForEdit=campusID;
 	disableAllButtons(true);
 	editNameError = false;
@@ -151,19 +139,25 @@ function editButton(campusID, lat, lng, zoom) {
 	selectedCampusOldLocation=null;	
 	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
-	initializeMap(campusID, lat, lng, zoom);
+	initializeMap(campusID, campusName, lat, lng, zoom);
 }
 
 var edited_map=null;
 
-function initializeMap(campusID, lat, lng, zoom) {
+function initializeMap(campusID, campusName, lat, lng, zoom) {
+	var myLatlng = new google.maps.LatLng(lat,lng);
     var map_canvas = document.getElementById('map_canvas_'+campusID);
     var map_options = {
-            center: new google.maps.LatLng(lat, lng),
+            center: myLatlng,
             zoom: zoom,
             mapTypeId: google.maps.MapTypeId.ROADMAP
           }
     edited_map = new google.maps.Map(map_canvas, map_options);
+    var marker = new google.maps.Marker({
+    	position: myLatlng,
+    	title: campusName
+    });
+    marker.setMap(edited_map);
 }
 
 function saveEditCampus(campusID) {
@@ -191,10 +185,33 @@ function cancelEditCampus(campusID) {
 		if (allCampuses.isEmpty()) {
 	%>
 	<h1>No Campus Defined</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
 	<%
 		} else {
 	%>
 	<h1>ALL CAMPUSES</h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/gae/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allPermits.jsp">Permits</a>
+		</div>
+		<div class="menu_item">
+			<a href="/gae/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -211,7 +228,7 @@ function cancelEditCampus(campusID) {
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>,<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
+					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
 			</td>
@@ -220,11 +237,15 @@ function cancelEditCampus(campusID) {
 
 				<div id="edit<%=campusID%>" style="display: none">
 
-					<form id="form<%=campusID%>" action="/gae/admin/updateCampusCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" />
-						<input id="latitude<%=campusID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
-						<input id="longitude<%=campusID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
-						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+					<form id="form<%=campusID%>"
+						action="/gae/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+							id="latitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.latitude%>" name="latitude" /> <input
+							id="longitude<%=campusID%>" type="hidden"
+							value="<%=mapFig.longitude%>" name="longitude" /> <input
+							id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>"
+							name="zoom" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
@@ -250,7 +271,8 @@ function cancelEditCampus(campusID) {
 						</table>
 						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
 
-						<button id="saveEditCampusButton<%=campusID%>"  type="button" onclick="saveEditCampus(<%=campusID%>)">Save</button>
+						<button id="saveEditCampusButton<%=campusID%>" type="button"
+							onclick="saveEditCampus(<%=campusID%>)">Save</button>
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>

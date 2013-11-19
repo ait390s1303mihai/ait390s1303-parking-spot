@@ -5,15 +5,19 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
+	<!-- GAE ADMIN FILTER: ADMIN LOGIN -->
+
 	<filter>
 		<filter-name>adminlogin</filter-name>
 		<filter-class>parkingspot.gae.servlet.AdminLoginFilter</filter-class>
 	</filter>
 
-    <filter-mapping>
-        <filter-name>adminlogin</filter-name>
-        <url-pattern>/gae/admin/*</url-pattern>
-    </filter-mapping>
+	<filter-mapping>
+		<filter-name>adminlogin</filter-name>
+		<url-pattern>/gae/admin/*</url-pattern>
+	</filter-mapping>
+
+	<!-- GAE ADMIN SERVLET: ADMIN PROFILE -->
 
 	<servlet>
 		<servlet-name>AddAdminProfileServlet</servlet-name>
@@ -22,24 +26,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>AddAdminProfileServlet</servlet-name>
 		<url-pattern>/gae/admin/addAdminProfileCommand</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>AddCampusServlet</servlet-name>
-		<servlet-class>parkingspot.gae.servlet.AddCampusServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AddCampusServlet</servlet-name>
-		<url-pattern>/gae/admin/addCampusCommand</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>AddLotServlet</servlet-name>
-		<servlet-class>parkingspot.gae.servlet.AddLotServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AddLotServlet</servlet-name>
-		<url-pattern>/gae/admin/addLotCommand</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -52,12 +38,53 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>UpdateAdminProfileServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.UpdateAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateAdminProfileServlet</servlet-name>
+		<url-pattern>/gae/admin/updateAdminProfileCommand</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- GAE ADMIN SERVLET: CAMPUS -->
+
+	<servlet>
+		<servlet-name>AddCampusServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.AddCampusServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddCampusServlet</servlet-name>
+		<url-pattern>/gae/admin/addCampusCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>DeleteCampusServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.DeleteCampusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteCampusServlet</servlet-name>
 		<url-pattern>/gae/admin/deleteCampusCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UpdateCampusServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.UpdateCampusServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateCampusServlet</servlet-name>
+		<url-pattern>/gae/admin/updateCampusCommand</url-pattern>
+	</servlet-mapping>
+
+	<!-- GAE ADMIN SERVLET: LOT -->
+
+	<servlet>
+		<servlet-name>AddLotServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.AddLotServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddLotServlet</servlet-name>
+		<url-pattern>/gae/admin/addLotCommand</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -70,24 +97,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>UpdateAdminProfileServlet</servlet-name>
-		<servlet-class>parkingspot.gae.servlet.UpdateAdminProfileServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UpdateAdminProfileServlet</servlet-name>
-		<url-pattern>/gae/admin/updateAdminProfileCommand</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>UpdateCampusServlet</servlet-name>
-		<servlet-class>parkingspot.gae.servlet.UpdateCampusServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UpdateCampusServlet</servlet-name>
-		<url-pattern>/gae/admin/updateCampusCommand</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
 		<servlet-name>UpdateLotServlet</servlet-name>
 		<servlet-class>parkingspot.gae.servlet.UpdateLotServlet</servlet-class>
 	</servlet>
@@ -96,6 +105,81 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/gae/admin/updateLotCommand</url-pattern>
 	</servlet-mapping>
 
+
+	<!-- GAE ADMIN SERVLET: PERMIT -->
+
+	<servlet>
+		<servlet-name>AddPermitServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.AddPermitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddPermitServlet</servlet-name>
+		<url-pattern>/gae/admin/addPermitCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeletePermitServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.DeletePermitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeletePermitServlet</servlet-name>
+		<url-pattern>/gae/admin/deletePermitCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UpdatePermitServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.UpdatePermitServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdatePermitServlet</servlet-name>
+		<url-pattern>/gae/admin/updatePermitCommand</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- JDO ADMIN FILTER: ADMIN LOGIN -->
+
+	<filter>
+		<filter-name>adminJDOlogin</filter-name>
+		<filter-class>parkingspot.jdo.servlet.AdminLoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>adminJDOlogin</filter-name>
+		<url-pattern>/jdo/admin/*</url-pattern>
+	</filter-mapping>
+
+	<!-- JDO ADMIN SERVLET: ADMIN PROFILE -->
+
+	<servlet>
+		<servlet-name>AddAdminProfileJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.AddAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddAdminProfileJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/addAdminProfileCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteAdminProfileJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.DeleteAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteAdminProfileJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/deleteAdminProfileCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UpdateAdminProfileJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.UpdateAdminProfileServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateAdminProfileJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/updateAdminProfileCommand</url-pattern>
+	</servlet-mapping>
+
+
+
+
+	<!-- JDO ADMIN SERVLET: CAMPUS -->
 
 	<servlet>
 		<servlet-name>AddCampusJDOServlet</servlet-name>
@@ -124,6 +208,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/jdo/admin/updateCampusCommand</url-pattern>
 	</servlet-mapping>
 
+	<!-- JDO ADMIN SERVLET: LOT -->
+
 	<servlet>
 		<servlet-name>AddLotJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.AddLotServlet</servlet-class>
@@ -150,7 +236,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdateLotJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updateLotCommand</url-pattern>
 	</servlet-mapping>
-	
+
+	<!-- JDO ADMIN SERVLET: PERMIT -->
+
 	<servlet>
 		<servlet-name>AddPermitJDOServlet</servlet-name>
 		<servlet-class>parkingspot.jdo.servlet.AddPermitServlet</servlet-class>
@@ -177,44 +265,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdatePermitJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updatePermitCommand</url-pattern>
 	</servlet-mapping>
-	
-	
-	<filter>
-		<filter-name>adminJDOlogin</filter-name>
-		<filter-class>parkingspot.jdo.servlet.AdminLoginFilter</filter-class>
-	</filter>
-    <filter-mapping>
-        <filter-name>adminJDOlogin</filter-name>
-        <url-pattern>/jdo/admin/*</url-pattern>
-    </filter-mapping>
 
-	<servlet>
-		<servlet-name>AddAdminProfileJDOServlet</servlet-name>
-		<servlet-class>parkingspot.jdo.servlet.AddAdminProfileServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>AddAdminProfileJDOServlet</servlet-name>
-		<url-pattern>/jdo/admin/addAdminProfileCommand</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>DeleteAdminProfileJDOServlet</servlet-name>
-		<servlet-class>parkingspot.jdo.servlet.DeleteAdminProfileServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DeleteAdminProfileJDOServlet</servlet-name>
-		<url-pattern>/jdo/admin/deleteAdminProfileCommand</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
-		<servlet-name>UpdateAdminProfileJDOServlet</servlet-name>
-		<servlet-class>parkingspot.jdo.servlet.UpdateAdminProfileServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UpdateAdminProfileJDOServlet</servlet-name>
-		<url-pattern>/jdo/admin/updateAdminProfileCommand</url-pattern>
-	</servlet-mapping>
-	
-	
-	
+
+
 </web-app>

@@ -159,6 +159,10 @@ public final class Campus {
 			return "";
 		return (String) val;
 	}
+	
+	//
+	// GOOGLE MAP FIGURE
+	//
 
 	private static final String GOOGLE_MAP_FIGURE = "google-map-figure";
 
@@ -173,10 +177,6 @@ public final class Campus {
 	public static void setGoogleMapFigure(Entity campus, double lat, double lng, int z) {
 		Blob blob = MapFigure.toBlob(new MapFigure(lat, lng, z));
 		campus.setProperty(GOOGLE_MAP_FIGURE, blob);
-	}
-
-	public static MapFigure getMapFigure(Entity campus) {
-		return new MapFigure(38.830376, -77.307143, 10);
 	}
 
 	//
