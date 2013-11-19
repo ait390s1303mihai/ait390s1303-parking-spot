@@ -8,8 +8,10 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Transaction;
+
 import parkingspot.jdo.db.LotJdo;
 
 
@@ -71,48 +73,17 @@ public class PermitJdo {
 	
 	public static PermitJdo createPermit(String permitName, String lotId) {  
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		javax.jdo.Transaction tx = pm.currentTransaction();
-		try
-		{
-		    tx.begin(); // Start the PM transaction
-
-		   // ... perform some persistence operations
-		   
-		    PermitJdo permit = new PermitJdo(permitName);
-		    
-		    System.out.println("permitName from object :"+ permit.name);
-		   
-		    System.out.println("permitName :"+permitName);
-	 
-	        String permitId = Long.toString(permit.key.getId());
-	        
-	        System.out.println("permitId :"+permitId);
-	        
-	        updateLotInPermitCommand(permitId , lotId);
-	        
-	        LotJdo.updatePermitsInLotsCommand(lotId, permitId);
-	        
-	        try {
-	            pm.makePersistent(permit);
-	        
-		    } finally {
-	            pm.close();
-	        }
-	       
-		    tx.commit(); // Commit the PM transaction
-			
-		    return permit;
-			
-		}
-		finally
-		{
-		    if (tx.isActive())
-		    {
-		        tx.rollback(); // Error occurred so rollback the PM transaction
-		        
-		        return null;
-		    }
-		}
+	    PermitJdo permit = new PermitJdo(permitName);
+	    try {
+       	 pm.makePersistent(permit);
+       }
+       finally {
+           pm.close();
+       }
+	    
+	   
+	    return permit;
+		
 		
 	}
 	
@@ -204,18 +175,61 @@ public class PermitJdo {
 	}
 	
 	
-	public static boolean updateLotInPermitCommand(String permitID, String lotId){
-		try{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			PermitJdo permit = getPermit(pm, permitID);
+	public static boolean updateLotInPermitCommand(PermitJdo permit, String lotId){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		javax.jdo.Transaction tx = pm.currentTransaction();
+		try
+			{
+				
+			    tx.begin(); // Start the PM transaction
+
+			   //  perform some persistence operations
+			    
+			    try{
+					
+					
+					String permitId = Long.toString(permit.key.getId());
+					
+					permit.lotIds.add(lotId);
+					
+					pm.makePersistent(permit);
+					
+					pm.close();
+					
+				} catch (Exception e){
+					return false;
+				}
+			    
+			    
+			    
+//			    System.out.println("new line");
+//					    
+//			    System.out.println("permitName from object :"+ permit.name);
+//			    System.out.println("permitName :"+permitName);
+//		        System.out.println("new line");
+//		        
+//		        System.out.println("permitId :"+permitId);
+
+			    
+		        LotJdo.updatePermitsInLotsCommand(lotId, permitId);
+		        
+		       
+			    tx.commit(); // Commit the PM transaction
+				
 			
-			permit.lotIds.add(lotId);
-			
-			pm.makePersistent(permit);
-			pm.close();
-		} catch (Exception e){
-			return false;
-		}
+				
+			}
+			finally
+			{
+			    if (tx.isActive())
+			    {
+			        tx.rollback(); // Error occurred so rollback the PM transaction
+			        
+			        
+			    }
+			    
+			}
+
 		
 		return true;
 	}

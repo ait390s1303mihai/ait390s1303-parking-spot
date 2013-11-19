@@ -28,5 +28,6 @@ public class AddPermitServlet extends HttpServlet {
 		System.out.println("AddPermitServlet");
 		PermitJdo.createPermit(permitName, lotId);
 		resp.sendRedirect("/jdo/admin/allPermits.jsp?lotId="+lotId);
+		
 	}
 }

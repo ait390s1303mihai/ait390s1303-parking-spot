@@ -134,15 +134,10 @@ public class LotJdo {
 
 		try {
 
-			
-			
 			results = (List<LotJdo>)q.execute(campusIdParam);		
-	
-	
+		
 		} catch (Exception e) {
-			
-
-			
+				
 		} finally {
 			q.closeAll();		
 		}
@@ -170,17 +165,18 @@ public class LotJdo {
 	}
 	
 	public static boolean updatePermitsInLotsCommand(String lotID, String permitId){
-		try{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-	        LotJdo lot = getLot(pm, lotID);
-	        
-	        lot.permitIds.add(permitId);
-	        pm.makePersistent(lot);
-	        pm.close();
-		} catch (Exception e){
-			return false;
-		}
 		
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			LotJdo lot = getLot(pm, lotID);
+	        try {
+	        	 lot.permitIds.add(permitId);
+	 	        
+	 	        pm.makePersistent(lot);
+	        }
+	        finally {
+	            pm.close();
+	        }
+	
 		return true;
 	}
 
