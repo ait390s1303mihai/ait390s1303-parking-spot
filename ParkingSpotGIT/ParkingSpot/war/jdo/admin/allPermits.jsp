@@ -11,7 +11,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Mihai Boicu, Min-Seop Kim
+   Authors: Alex Leone, Mihai Boicu, Min-Seop Kim
    
    Version 0.1 - Fall 2013
 -->
@@ -158,6 +158,7 @@ function cancelEditPermit(permitID) {
 </head>
 <body>
 	<%
+		String lotId = request.getParameter("lotId");
 		List<PermitJdo> allPermits = PermitJdo.getFirstPermits(100);
 		if (allPermits.isEmpty()) {
 	%>
@@ -233,6 +234,7 @@ function cancelEditPermit(permitID) {
 						New Permit: <input id="addPermitInput" type="text"
 							name="permitName" size="50" /> <input id="addPermitButton"
 							type="submit" value="Add" disabled="disabled" />
+							<input type="hidden" name="lotId" value="<%=lotId%>" />
 					</form>
 					<div id="addPermitError" class="error" style="display: none">Invalid
 						Permit name (minimum 3 characters: letters, digits, spaces, -, ')</div>

@@ -14,6 +14,7 @@ import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import parkingspot.jdo.db.PermitJdo;
 
 /**
@@ -24,7 +25,25 @@ import parkingspot.jdo.db.PermitJdo;
 public class AddPermitServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String permitName = req.getParameter("permitName");
-		PermitJdo.createPermit(permitName);
-		resp.sendRedirect("/jdo/admin/allPermits.jsp");
+		String lotId = req.getParameter("lotId");
+		
+		
+		System.out.println("AddPermitServlet");
+		
+		PermitJdo permit = PermitJdo.createPermit(permitName, lotId);
+		
+		
+		if (PermitJdo.updateLotInPermitCommand(permit, lotId) == true){
+			System.out.println("true");
+				
+		}else{	
+			
+			System.out.println("false");
+	
+		}
+
+		
+		resp.sendRedirect("/jdo/admin/allPermits.jsp?lotId="+lotId);
+		
 	}
 }

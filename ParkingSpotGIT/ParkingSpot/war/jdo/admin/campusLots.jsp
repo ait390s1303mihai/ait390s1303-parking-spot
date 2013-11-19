@@ -109,6 +109,7 @@ function cancelEditLot(lotId) {
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Lot Name</th>
+			<th>View</th>
 		</tr>
 		
 		<%
@@ -133,6 +134,7 @@ function cancelEditLot(lotId) {
 					<input type="hidden" value="<%=lotId%>" name="lotId" />
 					<table class="editTable">
 						<tr>
+						
 							<td class="editTable" width=90>Name:</td>
 							<td class="editTable"><input type="text" class="editText"
 								value="<%=lotName%>" name="lotName" /></td>
@@ -161,6 +163,15 @@ function cancelEditLot(lotId) {
 				<button type="button" onclick="cancelDeleteLot(<%=lotId%>)">Cancel</button>
 			</div>
 		</td>
+		
+			<td>
+				<form action="/jdo/admin/allPermits.jsp" style="display:inline">
+					<input type="hidden" value="<%=lotId%>" name="lotId" />
+					<input type="submit" value="Permits">
+				</form>
+			</td>
+
+		
 		</tr>
 
 		<%

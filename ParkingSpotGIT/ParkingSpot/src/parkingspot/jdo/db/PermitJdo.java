@@ -8,7 +8,13 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
+
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Transaction;
+
+import parkingspot.jdo.db.LotJdo;
+
+
 
 /**
  * 
@@ -41,12 +47,12 @@ public class PermitJdo {
 	@Persistent
 	private Boolean fuelEfficient;
 	@Persistent
-	private List<LotJdo> lots;
+	private List<String> lotIds;
 	
 	public PermitJdo(String name) {
 		this.name = name;
-		this.fuelEfficient = false;
-		this.lots = null;
+		this.fuelEfficient = false;		
+		this.lotIds = null;
 	}
 	
 	public Key getKey() {
@@ -65,18 +71,20 @@ public class PermitJdo {
 		return fuelEfficient;
 	}
 	
-	public static PermitJdo createPermit(String permitName) {  
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-
-        PermitJdo permit = new PermitJdo(permitName);
-
-        try {
-            pm.makePersistent(permit);
-        } finally {
-            pm.close();
-        }
+	public static PermitJdo createPermit(String permitName, String lotId) {  
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+	    PermitJdo permit = new PermitJdo(permitName);
+	    try {
+       	 pm.makePersistent(permit);
+       }
+       finally {
+           pm.close();
+       }
+	    
+	   
+	    return permit;
 		
-		return permit;
+		
 	}
 	
 	public static PermitJdo getPermit(String permitID){
@@ -97,11 +105,36 @@ public class PermitJdo {
 		try {
 			Query query = pm.newQuery(PermitJdo.class);
 			query.setOrdering("name asc");
+
 			results = (List<PermitJdo>)query.execute();
 		} catch (Exception e) {
 			
 		}
 		return results;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<PermitJdo> getFirstPermitsByLotId(int number, String lotIdParam) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<PermitJdo> results = null;
+		
+		Query q = pm.newQuery(PermitJdo.class);
+		q.setFilter("campusId == lotIdParam");
+		q.setOrdering("name asc");	
+		q.declareParameters("String lotIdParam");
+
+		try {
+
+			results = (List<PermitJdo>)q.execute(lotIdParam);	
+		
+		} catch (Exception e) {
+				
+		} finally {
+			q.closeAll();		
+		}		
+		
+		return results;
+		
 	}
 	
 
@@ -129,21 +162,7 @@ public class PermitJdo {
         }
 	}
 	
-	public static boolean updateLotsInPermitCommand(String permitID, LotJdo lot){
-		try{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			PermitJdo permit = getPermit(pm, permitID);
-			
-			permit.lots.add(lot);
-			
-			pm.makePersistent(permit);
-			pm.close();
-		} catch (Exception e){
-			return false;
-		}
-		
-		return true;
-	}
+	
 	
 	public static boolean updateLotsInPermitCommand(String permitId, String[] lotIds){
 		try{
@@ -151,9 +170,8 @@ public class PermitJdo {
 			PermitJdo permit = getPermit(pm, permitId);
 			
 			for (int i=0; i<lotIds.length; i++){
-				LotJdo lot = new LotJdo("", "", "", 0);
-				lot = LotJdo.getLot(lotIds[i]);
-				permit.lots.add(lot);
+				
+				permit.lotIds.add(lotIds[i]);
 			}
 			pm.makePersistent(permit);
 			pm.close();
@@ -163,4 +181,52 @@ public class PermitJdo {
 		
 		return true;
 	}
+	
+	
+	public static boolean updateLotInPermitCommand(PermitJdo permit, String lotId){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		javax.jdo.Transaction tx = pm.currentTransaction();
+		System.out.println("here a new line");
+		try
+			{
+				
+			    tx.begin(); // Start the PM transaction
+
+			   //  perform some persistence operations
+			    
+			    try{
+					
+					permit.lotIds.add(lotId);
+					
+					pm.makePersistent(permit);
+					
+					pm.close();
+					
+				} catch (Exception e){
+					
+					return false;
+				}
+			    
+			    System.out.println("new line");
+		       
+			    LotJdo.updatePermitsInLotsCommand(lotId, permit.getStringID());
+		        		
+		       
+			    tx.commit(); // Commit the PM transaction
+				
+			    return true;
+			}
+			finally
+			{
+			    if (tx.isActive())
+			    {
+			        tx.rollback(); // Error occurred so rollback the PM transaction
+			        
+			        
+			    }
+			    
+			}
+
+	}
+	
 }

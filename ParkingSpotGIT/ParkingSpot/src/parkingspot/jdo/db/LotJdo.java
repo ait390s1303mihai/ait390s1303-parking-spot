@@ -50,14 +50,14 @@ public class LotJdo {
 	private int spaces;
 	
 	@Persistent
-	private List<PermitJdo> acceptedPermits;
+	private List<String> permitIds;
 	
 	public LotJdo(String campusId, String name, String location, int spaces){
 		this.campusId = campusId;
 		this.name = name;
 		this.location = location;
 		this.spaces = spaces;
-		this.acceptedPermits = null;
+		this.permitIds = null;
 	}
 	public static LotJdo createLot(String campusId){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -101,7 +101,7 @@ public class LotJdo {
 	
 	public static void deleteLotCommand(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		System.out.println("Lot-----sKey: " + sKey);
+	
 		try {
 			LotJdo lot = getLot(pm, sKey);
             pm.deletePersistent(lot);
@@ -133,15 +133,11 @@ public class LotJdo {
 		q.declareParameters("String campusIdParam");
 
 		try {
-			System.out.println("campusIdParam: " + campusIdParam);
-			
+
 			results = (List<LotJdo>)q.execute(campusIdParam);		
-	
-	
+		
 		} catch (Exception e) {
-			
-			System.out.println("exception: " + e);
-			
+				
 		} finally {
 			q.closeAll();		
 		}
@@ -152,8 +148,7 @@ public class LotJdo {
 	public static boolean updateLotCommand(String lotID, String name, String googleMapLocation, int spaces, String campusId) {
 			try {
 	           PersistenceManager pm = PMF.get().getPersistenceManager();
-	           LotJdo lot = getLot(pm, lotID);
-	           System.out.println("Lot name: " + lot.name);
+	           LotJdo lot = getLot(pm, lotID);	           
 	           lot.name= name;
 	           lot.location= googleMapLocation;
 	           lot.spaces= spaces;
@@ -169,40 +164,41 @@ public class LotJdo {
 			       
 	}
 	
-	public static boolean updatePermitsInLotsCommand(String lotID, PermitJdo permit){
-		try{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-	        LotJdo lot = getLot(pm, lotID);
-	        
-	        lot.acceptedPermits.add(permit);
-	        pm.makePersistent(lot);
-	        pm.close();
-		} catch (Exception e){
-			return false;
-		}
+	public static boolean updatePermitsInLotsCommand(String lotID, String permitId){
 		
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			LotJdo lot = getLot(pm, lotID);
+	        try {
+	        	 lot.permitIds.add(permitId);
+	 	        
+	 	        pm.makePersistent(lot);
+	        }
+	        finally {
+	            pm.close();
+	        }
+	
 		return true;
 	}
 
-	public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
-		try{
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-	        LotJdo lot = getLot(pm, lotID);
-	        
-	        for (int i=0; i<permitIds.length; i++){
-	        	PermitJdo p = new PermitJdo("");
-	        	p = PermitJdo.getPermit(permitIds[i]);
-	        	lot.acceptedPermits.add(p);
-	        }
-	        pm.makePersistent(lot);
-	        pm.close();
-		} catch (Exception e){
-			return false;
-		}
-		
-		return true;
-	}
-	
+//	public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
+//		try{
+//			PersistenceManager pm = PMF.get().getPersistenceManager();
+//	        LotJdo lot = getLot(pm, lotID);
+//	        
+//	        for (int i=0; i<permitIds.length; i++){
+//	        	PermitJdo p = new PermitJdo("");
+//	        	p = PermitJdo.getPermit(permitIds[i]);
+//	        	lot.permitIds.add(p);
+//	        }
+//	        pm.makePersistent(lot);
+//	        pm.close();
+//		} catch (Exception e){
+//			return false;
+//		}
+//		
+//		return true;
+//	}
+//	
 		
 
 	public Key getKey(){
