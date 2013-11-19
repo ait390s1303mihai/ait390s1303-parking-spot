@@ -7,12 +7,15 @@
  */
 package parkingspot.jdo.db;
 
+import java.util.List;
+
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -66,7 +69,21 @@ public class BuildingJdo {
 	public String getLocation(){
 		return location;
 	}
-	
+	@SuppressWarnings("unchecked")
+	public static List<BuildingJdo> getFirstBuildings(int number) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<BuildingJdo> results = null;
+		try {
+			
+			Query q = pm.newQuery(BuildingJdo.class);
+			q.setOrdering("name asc");
+			
+			results = (List<BuildingJdo>)q.execute();
+		} catch (Exception e) {
+			
+		}
+		return results;
+	}
 	/**
 	 * CRUD Methods
 	 */
