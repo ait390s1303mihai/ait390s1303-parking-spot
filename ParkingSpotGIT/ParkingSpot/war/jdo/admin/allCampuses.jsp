@@ -213,7 +213,7 @@ function cancelEditCampus(campusID) {
 			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
 		</div>
 	</div>
-	
+
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -238,7 +238,7 @@ function cancelEditCampus(campusID) {
 			<td><div id="view<%=campusID%>"><%=campusName%></div>
 
 				<div id="edit<%=campusID%>" style="display: none">
-				
+
 					<form id="form<%=campusID%>"
 						action="/jdo/admin/updateCampusCommand" method="get">
 						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
@@ -279,18 +279,22 @@ function cancelEditCampus(campusID) {
 					</form>
 				</div>
 
-			<div id="delete<%=campusID%>" style="display: none">
-				Do you want to delete this campus?
-				<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
-				<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
-			</div>
-			</td>
+				<div id="delete<%=campusID%>" style="display: none">
+					Do you want to delete this campus?
+					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
+					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+				</div></td>
 
 
 			<td>
 				<form action="/jdo/admin/campusLots.jsp" style="display: inline">
 					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
 						type="submit" value="Lots">
+				</form>
+
+				<form action="/jdo/admin/campusBuildings.jsp" style="display: inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
+						type="submit" value="Buildings">
 				</form>
 			</td>
 
