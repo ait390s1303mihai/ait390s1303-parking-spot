@@ -1,5 +1,6 @@
 package parkingspot.jdo.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -32,7 +33,7 @@ import parkingspot.jdo.db.LotJdo;
  *		"Permit_Name" = "Faculty and Workers"
  *		"Fuel_Efficient" ="True"
  *
- *  Authors: Mihai Boicu, Min-Seop Kim, Drew Lorence
+ *  Authors: Mihai Boicu, Min-Seop Kim, Drew Lorence, Alex Leone
  *  
  */   
 
@@ -47,12 +48,12 @@ public class PermitJdo {
 	@Persistent
 	private Boolean fuelEfficient;
 	@Persistent
-	private List<String> lotIds;
+	private ArrayList<String> lotIds;
 	
 	public PermitJdo(String name) {
 		this.name = name;
 		this.fuelEfficient = false;		
-		this.lotIds = null;
+		this.lotIds = new ArrayList<String>();
 	}
 	
 	public Key getKey() {
@@ -119,7 +120,7 @@ public class PermitJdo {
 		List<PermitJdo> results = null;
 		
 		Query q = pm.newQuery(PermitJdo.class);
-		q.setFilter("campusId == lotIdParam");
+		q.setFilter("lotIds == lotIdParam");
 		q.setOrdering("name asc");	
 		q.declareParameters("String lotIdParam");
 
@@ -186,46 +187,36 @@ public class PermitJdo {
 	public static boolean updateLotInPermitCommand(PermitJdo permit, String lotId){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		javax.jdo.Transaction tx = pm.currentTransaction();
-		System.out.println("here a new line");
+		tx.begin(); // Start the PM transaction
 		try
 			{
+			   	//perform some persistence operations
+				//Add the lot id to permit 
+				permit.lotIds.add(lotId);
+					
+				pm.makePersistent(permit);
 				
-			    tx.begin(); // Start the PM transaction
-
-			   //  perform some persistence operations
-			    
-			    try{
-					
-					permit.lotIds.add(lotId);
-					
-					pm.makePersistent(permit);
-					
-					pm.close();
-					
-				} catch (Exception e){
-					
-					return false;
-				}
-			    
-			    System.out.println("new line");
-		       
-			    LotJdo.updatePermitsInLotsCommand(lotId, permit.getStringID());
-		        		
-		       
-			    tx.commit(); // Commit the PM transaction
-				
-			    return true;
+				//Add the permit id to lot 
+				LotJdo.updatePermitsInLotsCommand(lotId, permit.getStringID());
+			   
+			    tx.commit(); // Commit the PM transaction			
+			} 
+			catch (Exception e) 
+			{
+				System.out.println(e);
+				 if (tx.isActive())
+				    {
+					 	// Error occurred so rollback the PM transaction   
+					 	tx.rollback(); 
+				       
+				        return false;
+				    }    
 			}
 			finally
 			{
-			    if (tx.isActive())
-			    {
-			        tx.rollback(); // Error occurred so rollback the PM transaction
-			        
-			        
-			    }
-			    
+			    pm.close();
 			}
+		return true;
 
 	}
 	

@@ -1,5 +1,6 @@
 package parkingspot.jdo.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -50,15 +51,16 @@ public class LotJdo {
 	private int spaces;
 	
 	@Persistent
-	private List<String> permitIds;
+	private ArrayList<String> permitIds;
 	
 	public LotJdo(String campusId, String name, String location, int spaces){
 		this.campusId = campusId;
 		this.name = name;
 		this.location = location;
 		this.spaces = spaces;
-		this.permitIds = null;
+		this.permitIds = new ArrayList<String>();
 	}
+	
 	public static LotJdo createLot(String campusId){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
@@ -116,10 +118,11 @@ public class LotJdo {
 	}
 	
 	public static LotJdo getLot(PersistenceManager pm, String sKey){
-		long key = Long.parseLong(sKey);
-		LotJdo lot = pm.getObjectById(LotJdo.class, key);
-		return lot;
-	}
+        long k = Long.parseLong(sKey);
+        LotJdo lot = pm.getObjectById(LotJdo.class, k);
+        return lot;
+    }
+
 	
 
 	
@@ -165,39 +168,35 @@ public class LotJdo {
 	}
 	
 	public static boolean updatePermitsInLotsCommand(String lotID, String permitId){
-		
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			LotJdo lot = getLot(pm, lotID);
+			LotJdo lot = getLot(lotID);
 	        try {
-	        	 lot.permitIds.add(permitId);
-	 	        
-	 	        pm.makePersistent(lot);
+	        	 lot.permitIds.add(permitId);	        
 	        }
-	        finally {
-	            pm.close();
+	        catch(Exception e) {
+	        	 System.out.println("Exception in LotJdo.updatePermitsInLotsCommand: "+ e);
+	        	 return false;
 	        }
-	
 		return true;
 	}
 
-//	public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
-//		try{
-//			PersistenceManager pm = PMF.get().getPersistenceManager();
-//	        LotJdo lot = getLot(pm, lotID);
-//	        
+	public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
+		try{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+	        LotJdo lot = getLot(pm, lotID);
+	        
 //	        for (int i=0; i<permitIds.length; i++){
 //	        	PermitJdo p = new PermitJdo("");
 //	        	p = PermitJdo.getPermit(permitIds[i]);
 //	        	lot.permitIds.add(p);
 //	        }
-//	        pm.makePersistent(lot);
-//	        pm.close();
-//		} catch (Exception e){
-//			return false;
-//		}
-//		
-//		return true;
-//	}
+	        pm.makePersistent(lot);
+	        pm.close();
+		} catch (Exception e){
+			return false;
+		}
+		
+		return true;
+	}
 //	
 		
 
