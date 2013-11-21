@@ -12,7 +12,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Alex Leone, Min-Seop Kim
+   Authors: Alex Leone, Min-Seop Kim, Drew Lorence
    
    Version 0.1 - Fall 2013
 -->
@@ -128,7 +128,7 @@ function cancelEditLot(lotID) {
 <body>
 	<%
 		List<LotJdo> allLots = LotJdo.getFirstLots(100, campusID);
-		if (allLots.isEmpty()) {
+		if (allLots==null || allLots.isEmpty()) {
 	%>
 	<h1>
 		No Lots Defined in

@@ -1,5 +1,6 @@
 package parkingspot.jdo.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -9,7 +10,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -54,7 +54,7 @@ public class LotJdo {
 	private List<PermitJdo> acceptedPermits;
 
 	@Persistent
-	private List<String> permitIds;
+	private ArrayList<String> permitIds;
 
 	@Persistent
 	private MapFigureJdo mapFigure;
@@ -64,7 +64,7 @@ public class LotJdo {
 		this.name = name;
 		this.location = location;
 		this.spaces = spaces;
-		this.permitIds = null;
+		this.permitIds = new ArrayList<String>();
 	}
 
 	public static LotJdo createLot(String campusId) {
@@ -210,26 +210,24 @@ public class LotJdo {
 
 		return true;
 	}
-
-	// public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
-	// try{
-	// PersistenceManager pm = PMF.get().getPersistenceManager();
-	// LotJdo lot = getLot(pm, lotID);
-	//
-	// for (int i=0; i<permitIds.length; i++){
-	// PermitJdo p = new PermitJdo("");
-	// p = PermitJdo.getPermit(permitIds[i]);
-	// lot.permitIds.add(p);
-	// }
-	// pm.makePersistent(lot);
-	// pm.close();
-	// } catch (Exception e){
-	// return false;
-	// }
-	//
-	// return true;
-	// }
-	//
+	public static boolean updatePermitsInLotsCommand(String lotID, String[] permitIds){
+		try{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+	        LotJdo lot = getLot(pm, lotID);
+	        
+//	        for (int i=0; i<permitIds.length; i++){
+//	        	PermitJdo p = new PermitJdo("");
+//	        	p = PermitJdo.getPermit(permitIds[i]);
+//	        	lot.permitIds.add(p);
+//	        }
+	        pm.makePersistent(lot);
+	        pm.close();
+		} catch (Exception e){
+			return false;
+		}
+		
+		return true;
+	}
 
 	public Key getKey() {
 		return key;
