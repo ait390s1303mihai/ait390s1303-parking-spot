@@ -2,10 +2,12 @@
  * Copyright 2013 -
  * Licensed under the Academic Free License version 3.0
  * 
- * Authors: Jeff Diederiks
+  Authors: Drew Lorence, Alex Leone, Jeff Diederiks
  * Note: Modeled after CampusJdo.java (thank you)
  */
 package parkingspot.jdo.db;
+
+import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -13,6 +15,7 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
 import com.google.appengine.api.datastore.Key;
 
 /**
@@ -29,6 +32,8 @@ import com.google.appengine.api.datastore.Key;
  *		"Id" = 1003
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Johnson Center"
+ *
+ *	Authors: Jeff, Drew Lorence, Alex Leone
  *  
  */ 
 
@@ -45,13 +50,17 @@ public class BuildingJdo {
 	private String name;
 	@Persistent
 	private String location;
+	@Persistent
+	private String campusId;
+	
 	
 	/**
 	 * Constructor
 	 */
-	public BuildingJdo(String name, String location){
+	public BuildingJdo(String name, String location, String campusID){
 		this.name = name;
 		this.location = location;
+		this.campusId = campusID;
 	}
 	
 	/**
@@ -63,16 +72,20 @@ public class BuildingJdo {
 	public String getName(){
 		return name;
 	}
-	public String getLocation(){
+	public String getGoogleMapLocation(){
 		return location;
+	}
+	
+	public String getStringID() {
+		return Long.toString(getKey().getId());
 	}
 	
 	/**
 	 * CRUD Methods
 	 */
-	public static BuildingJdo createBuilding(String buildingName) {  
+	public static BuildingJdo createBuilding(String buildingName, String campusId) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        BuildingJdo building = new BuildingJdo(buildingName, "");
+        BuildingJdo building = new BuildingJdo(buildingName, "", campusId);
         try {
             pm.makePersistent(building);
         }
@@ -81,19 +94,65 @@ public class BuildingJdo {
         }
 		return building;
 	}
-	public static boolean deleteBuilding(String buildingName) {
+	
+	
+	public static void deleteBuildingCommand(String sKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+	
 		try {
-			// This is UNTESTED. I am not sure how to test it.
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			Query q = pm.newQuery(BuildingJdo.class, buildingName);
-			pm.deletePersistent(q);
-		}
-		catch (Exception e) {
-			return false;
-		}
-		return true;
+			BuildingJdo building = getBuilding(pm, sKey);
+            pm.deletePersistent(building);
+        } finally {
+            pm.close();
+        }
 	}
-	public static void updateBuilding(String buildingName) {
-		// I couldn't get this
+	
+	public static BuildingJdo getBuilding(String sKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		return getBuilding(pm, sKey);
+	}
+	
+	public static BuildingJdo getBuilding(PersistenceManager pm, String sKey){
+		long k = Long.parseLong(sKey);
+		BuildingJdo b = pm.getObjectById(BuildingJdo.class, k);
+		return b;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public static List<BuildingJdo> getFirstBuildings(int number, String campusIdParam) {
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		List<BuildingJdo> results = null;
+		Query q = pm.newQuery(BuildingJdo.class);
+		q.setFilter("campusId == campusIdParam");
+		q.setOrdering("name asc");	
+		q.declareParameters("String campusIdParam");
+
+		try {
+
+			results = (List<BuildingJdo>)q.execute(campusIdParam);		
+		
+		} catch (Exception e) {
+				
+		} finally {
+			q.closeAll();		
+		}		
+		
+		return results;
+	}	
+	
+	public static boolean updateBuildingCommand(String buildingId, String name, String location, String campusID) {
+		try{
+			PersistenceManager pm = PMF.get().getPersistenceManager();
+			BuildingJdo building = getBuilding(pm, buildingId);
+			building.name = name;
+			building.location = location;
+			building.campusId = campusID;
+			pm.makePersistent(building);
+			pm.close();
+		} catch(Exception e){
+			return false;
+			}
+		return true;
 	}
 }

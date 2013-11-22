@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Jeff Diederiks
+ * Authors: Drew Lorence, Alex Leone
  * Code taken from AddCampusServlet.java (Credit: Mihai Boicu)
  */
 
@@ -24,8 +24,10 @@ import parkingspot.jdo.db.BuildingJdo;
 @SuppressWarnings("serial")
 public class DeleteBuildingServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String buildingName = req.getParameter("buildingName");
-		BuildingJdo.deleteBuilding(buildingName);
-	    resp.sendRedirect("/jdo/admin/allCampuses.jsp");
+		String buildingID = req.getParameter("buildingID");
+		String campusId = req.getParameter("campusId");
+		BuildingJdo.deleteBuildingCommand(buildingID);
+//		System.out.println("HERE");
+	    resp.sendRedirect("/jdo/admin/allBuildings.jsp?campusId="+campusId+"PageRefresh=true");
 	}
 }

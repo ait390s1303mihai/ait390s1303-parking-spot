@@ -139,7 +139,7 @@ public class Lot {
 		Object val = lot.getProperty(TOTAL_SPACES_PROPERTY);
 		if (val == null)
 			return 0;
-		return (long) val;
+		return (Long) val;
 	}
 
 	//
@@ -173,13 +173,13 @@ public class Lot {
 	public static MapFigure getGoogleMapFigure(Entity lot) {
 		Object val = lot.getProperty(GOOGLE_MAP_FIGURE);
 		if (val == null)
-			return new MapFigure(38.830376, -77.307143, 10);
+			return new MapFigure(38.830376, -77.307143, 10, 38.830376, -77.307143);
 		Blob blob = (Blob) val;
 		return MapFigure.toMapFigure(blob);
 	}
 
-	public static void setGoogleMapFigure(Entity lot, double lat, double lng, int z) {
-		Blob blob = MapFigure.toBlob(new MapFigure(lat, lng, z));
+	public static void setGoogleMapFigure(Entity lot, double lat, double lng, int z, double mkLat, double mkLng) {
+		Blob blob = MapFigure.toBlob(new MapFigure(lat, lng, z, mkLat, mkLng));
 		lot.setProperty(GOOGLE_MAP_FIGURE, blob);
 	}
 
@@ -216,7 +216,7 @@ public class Lot {
 			MapFigure campusFigure = Campus.getGoogleMapFigure(campus);
 			lot = new Entity(ENTITY_KIND, campusKey);
 			lot.setProperty(NAME_PROPERTY, lotName);
-			setGoogleMapFigure(campus, campusFigure.latitude, campusFigure.longitude, campusFigure.zoom);
+			setGoogleMapFigure(campus, campusFigure.latitude, campusFigure.longitude, campusFigure.zoom, campusFigure.latitude, campusFigure.longitude);
 			datastore.put(lot);
 
 			txn.commit();
@@ -305,18 +305,20 @@ public class Lot {
 	 * @return true if succeed and false otherwise
 	 */
 	public static boolean updateLotCommand(String campusID, String lotId, String name, String totalSpaces,
-			String googleMapLocation, String latString, String lngString, String zoomString) {
+			String googleMapLocation, String latString, String lngString, String zoomString, String mkLatString, String mkLngString) {
 		Entity lot = null;
 		try {
 			double lat=Double.parseDouble(latString);
 			double lng=Double.parseDouble(lngString);
 			int zoom=Integer.parseInt(zoomString);
+			double mkLat=Double.parseDouble(mkLatString);
+			double mkLng=Double.parseDouble(mkLngString);
 			long numberOfTotalSpaces = Long.parseLong(totalSpaces);
 			lot = getLot(campusID, lotId);
 			lot.setProperty(NAME_PROPERTY, name);
 			lot.setProperty(TOTAL_SPACES_PROPERTY, numberOfTotalSpaces);
 			lot.setProperty(GOOGLE_MAP_LOCATION, googleMapLocation);
-			setGoogleMapFigure(lot, lat, lng, zoom);
+			setGoogleMapFigure(lot, lat, lng, zoom, mkLat, mkLng);
 			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 			datastore.put(lot);
 		} catch (Exception e) {

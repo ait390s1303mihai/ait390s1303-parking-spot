@@ -169,13 +169,13 @@ public final class Campus {
 	public static MapFigure getGoogleMapFigure(Entity campus) {
 		Object val = campus.getProperty(GOOGLE_MAP_FIGURE);
 		if (val == null)
-			return new MapFigure(38.830376, -77.307143, 10);
+			return new MapFigure(38.830376, -77.307143, 10, 38.830376, -77.307143);
 		Blob blob = (Blob) val;
 		return MapFigure.toMapFigure(blob);
 	}
 
-	public static void setGoogleMapFigure(Entity campus, double lat, double lng, int z) {
-		Blob blob = MapFigure.toBlob(new MapFigure(lat, lng, z));
+	public static void setGoogleMapFigure(Entity campus, double lat, double lng, int z, double mkLat, double mkLng) {
+		Blob blob = MapFigure.toBlob(new MapFigure(lat, lng, z, mkLat, mkLng));
 		campus.setProperty(GOOGLE_MAP_FIGURE, blob);
 	}
 
@@ -290,17 +290,19 @@ public final class Campus {
 	 * @return true if succeed and false otherwise
 	 */
 	public static boolean updateCampusCommand(String campusID, String name, String address, String googleMapLocation,
-			String latString, String lngString, String zoomString) {
+			String latString, String lngString, String zoomString, String mkLatString, String mkLngString) {
 		Entity campus = null;
 		try {
 			double lat=Double.parseDouble(latString);
 			double lng=Double.parseDouble(lngString);
 			int zoom=Integer.parseInt(zoomString);
+			double mkLat=Double.parseDouble(mkLatString);
+			double mkLng=Double.parseDouble(mkLngString);
 			campus = getCampus(campusID);
 			campus.setProperty(NAME_PROPERTY, name);
 			campus.setProperty(ADDRESS_PROPERTY, address);
 			campus.setProperty(GOOGLE_MAP_LOCATION, googleMapLocation);
-			setGoogleMapFigure(campus, lat, lng, zoom);
+			setGoogleMapFigure(campus, lat, lng, zoom, mkLat, mkLng);
 			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 			datastore.put(campus);
 		} catch (Exception e) {

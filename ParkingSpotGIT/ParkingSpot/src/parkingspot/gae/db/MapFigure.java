@@ -13,14 +13,19 @@ public class MapFigure implements Serializable {
 
 	private static final long serialVersionUID = 1578958842593159593L;
 
-	public double latitude;
-	public double longitude;
-	public int zoom;
+	public final double latitude;
+	public final double longitude;
+	public final int zoom;
+	
+	public final double markerLatitude;
+	public final double markerLongitude;
 
-	public MapFigure(double lat, double lng, int z) {
+	public MapFigure(double lat, double lng, int z, double mkLat, double mkLng) {
 		latitude = lat;
 		longitude = lng;
 		zoom = z;
+		markerLatitude = mkLat;
+		markerLongitude = mkLng;
 	}
 
 	public static Blob toBlob(MapFigure mapFigure) {

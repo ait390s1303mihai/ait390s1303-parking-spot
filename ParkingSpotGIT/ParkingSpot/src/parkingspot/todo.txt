@@ -1,10 +1,55 @@
+TODO: 
+ =====================================================================================
+
+CAMPUS MANAGEMENT (JDO ADMIN) - Min  K.
+
+A. CampusJdo
+A.1. Comments for public functions
+A.2. All parameters of public functions must be checked (text only accepted)
+A.3. Log all errors but escape them.
+
+B. Servlets for campus (add, delete, update)
+B.1. Comments for public functions, including expected parameters.
+
+C. allCampuses.jsp
+C.1. Checks for read fields. 
+C.2. Map improvements related to the markers. (set the marker, set the marker text)
+
+=====================================================================================
+
+LOTS and PERMITS management - Alex and Drew
+
 Alex: ADMIN JDO finish the link between lots and permits
 
 Drew: ADMIN JDO buildings with maps
 
-Min: ADMIN JDO MAPs for all campuses and lots
+=====================================================================================
 
-Abdrew: USER JDO show map for an anonymous user and selected campus, permit and building
+USER MAP DISPLAY PAGE -  Andrew
 
-Jeff: USER JDO page 1 selection of campus, permit and building
+A. parkingMap.jsp
+
+Assume you will receive as parameters: permitID, campusID, buildingID.
+
+Show a map with all lots in the campus. The lots and building must be marked on the map. Use the campus zoom level and position for the map. 
+
+=====================================================================================
+
+USER SELECTION PAGE - Jeff D.
+ 
+A. index.jsp
+ A.1. Create a hidden selector for buildings for each campus, with the buildings in that campus.
+ A.2. When a selection is made, show the selector for that selection. If the selection is changed, change also the buildings shown. (HIDE PREVIOUS ONE, SHOW CURRENT ONE).  
+ A.3. Add a permit selection, independent of the previous two selections. (You may specify this one to be the first one).
+ A.4. Add a SHOW MAP button that will call the display of the map (you may include that as a frame in your html). The name of the file must be parkingMap.jsp
+ 
+
+
+
+
+
+
+
+
+
 

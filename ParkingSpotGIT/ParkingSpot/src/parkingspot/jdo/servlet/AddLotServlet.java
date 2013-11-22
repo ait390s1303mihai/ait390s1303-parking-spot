@@ -34,7 +34,7 @@ public class AddLotServlet extends HttpServlet {
                 //TODO check if the lot location or name is already used
                 
                 //TODO if used return an error
-                System.out.print("addlotservlet");
+                
                 LotJdo.createLot(campusId, lotName, lotLocation, lotSpaces);
             resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+campusId);
         }
