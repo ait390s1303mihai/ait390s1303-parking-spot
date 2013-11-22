@@ -20,11 +20,9 @@
 
 <title>All Campuses</title>
 <!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	href="/stylesheets/parkingspot.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
 
-<script
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script>
@@ -127,7 +125,7 @@ var selectedCampusOldName=null;
 var selectedCampusOldAddress=null;
 var selectedCampusOldLocation=null;
 
-function editButton(campusID, campusName, lat, lng, zoom) {
+function editButton(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
 	selectedCampusForEdit=campusID;
 	disableAllButtons(true);
 	editNameError = false;
@@ -139,12 +137,13 @@ function editButton(campusID, campusName, lat, lng, zoom) {
 	selectedCampusOldLocation=null;	
 	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
-	initializeMap(campusID, campusName, lat, lng, zoom);
+	initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng);
 }
 
 var edited_map=null;
+var edited_marker=null;
 
-function initializeMap(campusID, campusName, lat, lng, zoom) {
+function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
 	var myLatlng = new google.maps.LatLng(lat,lng);
     var map_canvas = document.getElementById('map_canvas_'+campusID);
     var map_options = {
@@ -153,11 +152,17 @@ function initializeMap(campusID, campusName, lat, lng, zoom) {
             mapTypeId: google.maps.MapTypeId.ROADMAP
           }
     edited_map = new google.maps.Map(map_canvas, map_options);
-    var marker = new google.maps.Marker({
-    	position: myLatlng,
-    	title: campusName
+    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+    edited_marker = new google.maps.Marker({
+    	position: markerLatlng,
+    	title: campusName,
+    	draggable:true
     });
-    marker.setMap(edited_map);
+    edited_marker.setMap(edited_map);
+}
+
+function centerMarker() {
+	edited_marker.setPosition(edited_map.getCenter());
 }
 
 function saveEditCampus(campusID) {
@@ -165,6 +170,8 @@ function saveEditCampus(campusID) {
 		$("#latitude"+campusID).val(edited_map.getCenter().lat());
 		$("#longitude"+campusID).val(edited_map.getCenter().lng());
 		$("#zoom"+campusID).val(edited_map.getZoom());
+		$("#markerLatitude"+campusID).val(edited_marker.getPosition().lat());
+		$("#markerLongitude"+campusID).val(edited_marker.getPosition().lng());
 	}
 	document.forms["form"+campusID].submit();
 }
@@ -228,51 +235,44 @@ function cancelEditCampus(campusID) {
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
-				<button class="deletebutton" type="button"
-					onclick="deleteButton(<%=campusID%>)">Delete</button>
+					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>,<%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>)">Edit</button>
+				<button class="deletebutton" type="button" onclick="deleteButton(<%=campusID%>)">Delete</button>
 			</td>
 
 			<td><div id="view<%=campusID%>"><%=campusName%></div>
 
 				<div id="edit<%=campusID%>" style="display: none">
 
-					<form id="form<%=campusID%>"
-						action="/gae/admin/updateCampusCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-							id="latitude<%=campusID%>" type="hidden"
-							value="<%=mapFig.latitude%>" name="latitude" /> <input
-							id="longitude<%=campusID%>" type="hidden"
-							value="<%=mapFig.longitude%>" name="longitude" /> <input
-							id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>"
-							name="zoom" />
+					<form id="form<%=campusID%>" action="/gae/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						<input id="latitude<%=campusID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
+						<input id="longitude<%=campusID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
+						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+						<input id="markerLatitude<%=campusID%>" type="hidden" value="<%=mapFig.markerLatitude%>" name="markerLatitude" />
+						<input id="markerLongitude<%=campusID%>" type="hidden" value="<%=mapFig.markerLongitude%>" name="markerLongitude" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
-								<td class="editTable"><input type="text"
-									id="editCampusNameInput<%=campusID%>"
-									class="editCampusNameInput" value="<%=campusName%>"
-									name="campusName" />
-									<div id="editCampusNameError<%=campusID%>" class="error"
-										style="display: none">Invalid campus name (minimum 3
-										characters: letters, digits, spaces, -, ')</div></td>
+								<td class="editTable"><input type="text" id="editCampusNameInput<%=campusID%>" class="editCampusNameInput"
+										value="<%=campusName%>" name="campusName" />
+									<div id="editCampusNameError<%=campusID%>" class="error" style="display: none">Invalid campus name
+										(minimum 3 characters: letters, digits, spaces, -, ')</div></td>
 							</tr>
 							<tr>
 								<td class="editTable">Address:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=Campus.getAddress(campus)%>" name="campusAddress" /></td>
+								<td class="editTable"><input type="text" class="editText" value="<%=Campus.getAddress(campus)%>"
+										name="campusAddress" /></td>
 							</tr>
 							<tr>
 								<td class="editTable">Google Map:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=Campus.getGoogleMapLocation(campus)%>"
-									name="googleMapLocation" /></td>
+								<td class="editTable"><input type="text" class="editText" value="<%=Campus.getGoogleMapLocation(campus)%>"
+										name="googleMapLocation" /></td>
 							</tr>
 						</table>
 						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
 
-						<button id="saveEditCampusButton<%=campusID%>" type="button"
-							onclick="saveEditCampus(<%=campusID%>)">Save</button>
+						<button type="button" onclick="centerMarker()">Center Marker</button>
+						<button id="saveEditCampusButton<%=campusID%>" type="button" onclick="saveEditCampus(<%=campusID%>)">Save</button>
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
@@ -285,8 +285,8 @@ function cancelEditCampus(campusID) {
 
 			<td>
 				<form action="/gae/admin/allLots.jsp" style="display: inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-						type="submit" value="Lots">
+					<input type="hidden" value="<%=campusID%>" name="campusID" />
+					<input type="submit" value="Lots">
 				</form>
 			</td>
 		</tr>
@@ -300,14 +300,13 @@ function cancelEditCampus(campusID) {
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form name="addCampusForm" action="/gae/admin/addCampusCommand"
-						method="get">
-						New Campus: <input id="addCampusInput" type="text"
-							name="campusName" size="50" /> <input id="addCampusButton"
-							type="submit" value="Add" disabled="disabled" />
+					<form name="addCampusForm" action="/gae/admin/addCampusCommand" method="get">
+						New Campus:
+						<input id="addCampusInput" type="text" name="campusName" size="50" />
+						<input id="addCampusButton" type="submit" value="Add" disabled="disabled" />
 					</form>
-					<div id="addCampusError" class="error" style="display: none">Invalid
-						campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
+					<div id="addCampusError" class="error" style="display: none">Invalid campus name (minimum 3 characters:
+						letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>

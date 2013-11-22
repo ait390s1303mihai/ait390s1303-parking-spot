@@ -26,7 +26,8 @@ public class UpdateLotServlet extends HttpServlet {
 		String campusID = req.getParameter("campusID");
 		Lot.updateLotCommand(campusID, req.getParameter("lotID"), req.getParameter("lotName"),
 				req.getParameter("totalSpaces"), req.getParameter("googleMapLocation"), req.getParameter("latitude"),
-				req.getParameter("longitude"), req.getParameter("zoom"));
+				req.getParameter("longitude"), req.getParameter("zoom"), 
+				req.getParameter("markerLatitude"), req.getParameter("markerLongitude"));
 
 		resp.sendRedirect("/gae/admin/allLots.jsp?campusID=" + campusID);
 	}

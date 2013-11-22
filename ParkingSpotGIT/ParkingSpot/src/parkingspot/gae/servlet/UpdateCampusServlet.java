@@ -24,7 +24,8 @@ public class UpdateCampusServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Campus.updateCampusCommand(req.getParameter("campusID"), req.getParameter("campusName"),
 				req.getParameter("campusAddress"), req.getParameter("googleMapLocation"), 
-				req.getParameter("latitude"), req.getParameter("longitude"), req.getParameter("zoom"));
+				req.getParameter("latitude"), req.getParameter("longitude"), req.getParameter("zoom"), 
+				req.getParameter("markerLatitude"), req.getParameter("markerLongitude"));
 
 		resp.sendRedirect("/gae/admin/allCampuses.jsp");
 	}
