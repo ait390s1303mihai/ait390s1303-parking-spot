@@ -27,11 +27,9 @@
 
 <title>All Lots in <%=campusName%></title>
 <!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	href="/stylesheets/parkingspot.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
 
-<script
-	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script>
 
@@ -93,6 +91,7 @@ function checkLotName(name) {
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
+	$(".permitButton").attr("disabled", (value)?"disabled":null);
 	if (value)
 		$("#addLotButton").attr("disabled", (value)?"disabled":null);
 }
@@ -134,7 +133,7 @@ var selectedLotOldName=null;
 var selectedLotOldAddress=null;
 var selectedLotOldLocation=null;
 
-function editButton(lotID, lat, lng, zoom) {
+function editButton(lotID, lotName, lat, lng, zoom, mkLat, mkLng) {
 	selectedLotForEdit=lotID;
 	disableAllButtons(true);
 	editNameError = false;
@@ -146,12 +145,13 @@ function editButton(lotID, lat, lng, zoom) {
 	selectedLotOldLocation=null;	
 	$("#view"+lotID).hide();
 	$("#edit"+lotID).show();
-	initializeMap(lotID, lat, lng, zoom);
+	initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng);
 }
 
 var edited_map=null;
+var edited_marker=null;
 
-function initializeMap(lotID, lat, lng, zoom) {
+function initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng) {
     var map_canvas = document.getElementById('map_canvas_'+lotID);
     var map_options = {
             center: new google.maps.LatLng(lat, lng),
@@ -159,6 +159,18 @@ function initializeMap(lotID, lat, lng, zoom) {
             mapTypeId: google.maps.MapTypeId.ROADMAP
           }
     edited_map = new google.maps.Map(map_canvas, map_options);
+    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+    edited_marker = new google.maps.Marker({
+    	position: markerLatlng,
+    	title: lotName,
+    	draggable:true,
+    	icon: '/images/parkinglot.png'
+    });
+    edited_marker.setMap(edited_map);
+}
+
+function centerMarker() {
+	edited_marker.setPosition(edited_map.getCenter());
 }
 
 function saveEditLot(lotID) {
@@ -166,6 +178,9 @@ function saveEditLot(lotID) {
 		$("#latitude"+lotID).val(edited_map.getCenter().lat());
 		$("#longitude"+lotID).val(edited_map.getCenter().lng());
 		$("#zoom"+lotID).val(edited_map.getZoom());
+		$("#markerLatitude"+lotID).val(edited_marker.getPosition().lat());
+		$("#markerLongitude"+lotID).val(edited_marker.getPosition().lng());
+
 	}
 	document.forms["form"+lotID].submit();
 }
@@ -232,52 +247,46 @@ function cancelEditLot(lotID) {
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=lotID%>,<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
-				<button class="deletebutton" type="button"
-					onclick="deleteButton(<%=lotID%>)">Delete</button>
+					onclick="editButton(<%=lotID%>, '<%=lotName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>,<%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>)">Edit</button>
+				<button class="deletebutton" type="button" onclick="deleteButton(<%=lotID%>)">Delete</button>
 			</td>
 
 			<td><div id="view<%=lotID%>"><%=lotName%></div>
 
 				<div id="edit<%=lotID%>" style="display: none">
 
-					<form id="form<%=lotID%>" action="/gae/admin/updateLotCommand"
-						method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-							type="hidden" value="<%=lotID%>" name="lotID" /> <input
-							id="latitude<%=lotID%>" type="hidden"
-							value="<%=mapFig.latitude%>" name="latitude" /> <input
-							id="longitude<%=lotID%>" type="hidden"
-							value="<%=mapFig.longitude%>" name="longitude" /> <input
-							id="zoom<%=lotID%>" type="hidden" value="<%=mapFig.zoom%>"
-							name="zoom" />
+					<form id="form<%=lotID%>" action="/gae/admin/updateLotCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						<input type="hidden" value="<%=lotID%>" name="lotID" />
+						<input id="latitude<%=lotID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
+						<input id="longitude<%=lotID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
+						<input id="zoom<%=lotID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+						<input id="markerLatitude<%=lotID%>" type="hidden" value="<%=mapFig.markerLatitude%>" name="markerLatitude" />
+						<input id="markerLongitude<%=lotID%>" type="hidden" value="<%=mapFig.markerLongitude%>" name="markerLongitude" />
 
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
-								<td class="editTable"><input type="text"
-									id="editLotNameInput<%=lotID%>" class="editLotNameInput"
-									value="<%=lotName%>" name="lotName" />
-									<div id="editLotNameError<%=lotID%>" class="error"
-										style="display: none">Invalid lot name (minimum 3
+								<td class="editTable"><input type="text" id="editLotNameInput<%=lotID%>" class="editLotNameInput"
+										value="<%=lotName%>" name="lotName" />
+									<div id="editLotNameError<%=lotID%>" class="error" style="display: none">Invalid lot name (minimum 3
 										characters: letters, digits, spaces, -, ')</div></td>
 							</tr>
 							<tr>
 								<td class="editTable">Spaces:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=Lot.getTotalSpaces(lot)%>" name="totalSpaces" /></td>
+								<td class="editTable"><input type="text" class="editText" value="<%=Lot.getTotalSpaces(lot)%>"
+										name="totalSpaces" /></td>
 							</tr>
 							<tr>
 								<td class="editTable">Google Map:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=Lot.getGoogleMapLocation(lot)%>"
-									name="googleMapLocation" /></td>
+								<td class="editTable"><input type="text" class="editText" value="<%=Lot.getGoogleMapLocation(lot)%>"
+										name="googleMapLocation" /></td>
 							</tr>
 						</table>
-						<div id="map_canvas_<%=lotID%>" class="edit_map_canvas"></div>
+						<div id="map_canvas_<%=lotID%>" class="edit_lot_map_canvas"></div>
 
-						<button id="saveEditLotButton<%=campusID%>" type="button"
-							onclick="saveEditLot(<%=lotID%>)">Save</button>
+						<button type="button" onclick="centerMarker()">Center Marker</button>
+						<button id="saveEditLotButton<%=campusID%>" type="button" onclick="saveEditLot(<%=lotID%>)">Save</button>
 						<button type="button" onclick="cancelEditLot(<%=lotID%>)">Cancel</button>
 					</form>
 				</div>
@@ -289,11 +298,10 @@ function cancelEditLot(lotID) {
 				</div></td>
 
 			<td>
-				<form action="/gae/admin/allPermitsForLot.jsp"
-					style="display: inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-						type="hidden" value="<%=lotID%>" name="lotID" /> <input
-						type="submit" value="Permits">
+				<form action="/gae/admin/allPermitsForLot.jsp" style="display: inline">
+					<input type="hidden" value="<%=campusID%>" name="campusID" />
+					<input type="hidden" value="<%=lotID%>" name="lotID" />
+					<input class="permitButton" type="submit" value="Permits">
 				</form>
 			</td>
 		</tr>
@@ -307,15 +315,14 @@ function cancelEditLot(lotID) {
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form name="addLotForm" action="/gae/admin/addLotCommand"
-						method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" /> New
-						Lot: <input id="addLotInput" type="text" name="lotName" size="50" />
-						<input id="addLotButton" type="submit" value="Add"
-							disabled="disabled" />
+					<form name="addLotForm" action="/gae/admin/addLotCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
+						New Lot:
+						<input id="addLotInput" type="text" name="lotName" size="50" />
+						<input id="addLotButton" type="submit" value="Add" disabled="disabled" />
 					</form>
-					<div id="addLotError" class="error" style="display: none">Invalid
-						lot name (minimum 3 characters: letters, digits, spaces, -, ')</div>
+					<div id="addLotError" class="error" style="display: none">Invalid lot name (minimum 3 characters: letters,
+						digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>

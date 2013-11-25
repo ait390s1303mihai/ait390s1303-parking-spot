@@ -156,7 +156,8 @@ function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
     edited_marker = new google.maps.Marker({
     	position: markerLatlng,
     	title: campusName,
-    	draggable:true
+    	draggable:true,
+    	icon: '/images/campus.png'
     });
     edited_marker.setMap(edited_map);
 }
@@ -250,6 +251,7 @@ function cancelEditCampus(campusID) {
 						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
 						<input id="markerLatitude<%=campusID%>" type="hidden" value="<%=mapFig.markerLatitude%>" name="markerLatitude" />
 						<input id="markerLongitude<%=campusID%>" type="hidden" value="<%=mapFig.markerLongitude%>" name="markerLongitude" />
+						
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
