@@ -286,13 +286,9 @@ function cancelEditCampus(campusID) {
 				</div></td>
 
 			<td>
-				<form action="/gae/admin/campusLots.jsp" style="display: inline">
+				<form action="/gae/admin/allLots.jsp" style="display: inline">
 					<input type="hidden" value="<%=campusID%>" name="campusID" />
 					<input type="submit" value="Lots">
-				</form>
-				<form action="/gae/admin/campusBuildings.jsp" style="display: inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" />
-					<input type="submit" value="Buildings">
 				</form>
 			</td>
 		</tr>

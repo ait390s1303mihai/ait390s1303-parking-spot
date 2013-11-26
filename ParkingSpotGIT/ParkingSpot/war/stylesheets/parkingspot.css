@@ -55,12 +55,12 @@ h1 {
 }
 
 .edit_map_canvas {
-	width: 530px;
+	width: 565px;
 	height: 400px;
 	background-color: #CCC;
 }
 
-.edit_lot_map_canvas, .edit_building_map_canvas {
+.edit_lot_map_canvas {
 	width: 540px;
 	height: 400px;
 	background-color: #CCC;
@@ -78,7 +78,7 @@ h1 {
 }
 
 .editText,.editCampusNameInput, .editPermitNameInput {
-	width: 465px;
+	width: 475px;
 	height: 20px;
 }
 

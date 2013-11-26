@@ -28,6 +28,6 @@ public class AddLotServlet extends HttpServlet {
 		String campusID = req.getParameter("campusID");
 		String lotName = req.getParameter("lotName");
 		Lot.createLot(campusID, lotName);
-		resp.sendRedirect("/gae/admin/campusLots.jsp?campusID="+campusID);
+		resp.sendRedirect("/gae/admin/allLots.jsp?campusID="+campusID);
 	}
 }
