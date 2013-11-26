@@ -27,6 +27,6 @@ public class UpdateBuildingServlet extends HttpServlet {
 		BuildingJdo.updateBuildingCommand(req.getParameter("buildingID"), req.getParameter("buildingName"),
 				req.getParameter("googleMapLocation"), req.getParameter("campusId"));
 
-		resp.sendRedirect("/jdo/admin/allBuildings.jsp");
+		resp.sendRedirect("/jdo/admin/campusBuildings.jsp");
 	}
 }

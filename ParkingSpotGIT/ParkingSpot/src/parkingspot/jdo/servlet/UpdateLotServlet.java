@@ -24,8 +24,7 @@ public class UpdateLotServlet extends HttpServlet {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
                 LotJdo.updateLotCommand(req.getParameter("lotId"), req.getParameter("lotName"),
-                                req.getParameter("totalSpaces"), lotSpaces, req.getParameter("googleMapLocation"), req.getParameter("latitude"),
-                				req.getParameter("longitude"), req.getParameter("zoom"));
+                                req.getParameter("lotLocation"), lotSpaces, req.getParameter("campusId"));
                 
                 System.out.println("Update lot servlet");
                 

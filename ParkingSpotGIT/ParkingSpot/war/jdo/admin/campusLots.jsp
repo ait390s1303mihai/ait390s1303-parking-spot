@@ -1,6 +1,4 @@
-<%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="parkingspot.jdo.db.LotJdo"%>
-<%@ page import="parkingspot.jdo.db.CampusJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -12,7 +10,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Alex Leone, Min-Seop Kim, Drew Lorence
+   Authors: Alex Leone
    
    Version 0.1 - Fall 2013
 -->
@@ -21,13 +19,7 @@
 <html>
 <head>
 
-<%
-	String campusID = request.getParameter("campusID"); 
-	CampusJdo campus = CampusJdo.getCampus(campusID);
-	String campusName = campus.getName();
-%>
-
-<title>All Lots in <%=campusName%></title>
+<title>All Lots for a Campus</title>
 <!-- CSS -->
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
@@ -49,48 +41,21 @@ function disableAllButtons(value) {
 	$("#addlot").attr("disabled", (value)?"disabled":null);
 }
 
-function deleteButton(lotID) {
+function deleteButton(lotId) {
 	disableAllButtons(true);
-	$("#delete"+lotID).show();
+	$("#delete"+lotId).show();
 }
 
-function editButton(lotID, lotName, lat, lng, zoom) {
+function editButton(lotId) {
 	disableAllButtons(true);
-	$("#view"+lotID).hide();
-	$("#edit"+lotID).show();
-	initializeMap(lotID, lat, lng, zoom);
+	$("#view"+lotId).hide();
+	$("#edit"+lotId).show();
 }
 
-var edited_map=null;
-
-function initializeMap(lotID, lat, lng, zoom) {
-	var myLatlng = new google.maps.LatLng(lat,lng);
-    var map_canvas = document.getElementById('map_canvas_'+lotID);
-    var map_options = {
-            center: myLatlng,
-            zoom: zoom,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-    edited_map = new google.maps.Map(map_canvas, map_options);
-    var marker = new google.maps.Marker({
-    	position: myLatlng,
-    });
-    marker.setMap(edited_map);
-}
-
-function saveEditLot(lotID) {
-	if (edited_map!=null) {
-		$("#latitude"+lotID).val(edited_map.getCenter().lat());
-		$("#longitude"+lotID).val(edited_map.getCenter().lng());
-		$("#zoom"+lotID).val(edited_map.getZoom());
-	}
-	document.forms["form"+lotID].submit();
-}
-
-function confirmDeleteLot(lotID) {
-	selectedLot=lotID;
+function confirmDeleteLot(lotId) {
+	selectedLot=lotId;
 	$.post("/jdo/admin/deleteLotCommand", 
-			{lotID: lotID}, 
+			{lotId: lotId}, 
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
@@ -105,20 +70,20 @@ function confirmDeleteLot(lotID) {
 	
 }
 
-function cancelDeleteLot(lotID) {
-	$("#delete"+lotID).hide();
+function cancelDeleteLot(lotId) {
+	$("#delete"+lotId).hide();
 	disableAllButtons(false);
 }
 
-function cancelEditLot(lotID) {
-	$("#edit"+lotID).hide();
-	$("#view"+lotID).show();
+function cancelEditLot(lotId) {
+	$("#edit"+lotId).hide();
+	$("#view"+lotId).show();
 	disableAllButtons(false);
 }
 
-function cancelEditLot(lotID) {
-	$("#edit"+lotID).hide();
-	$("#view"+lotID).show();
+function cancelEditLot(lotId) {
+	$("#edit"+lotId).hide();
+	$("#view"+lotId).show();
 	disableAllButtons(false);
 }
 
@@ -127,114 +92,110 @@ function cancelEditLot(lotID) {
 </head>
 <body>
 	<%
-		List<LotJdo> allLots = LotJdo.getFirstLots(100, campusID);
-		if (allLots==null || allLots.isEmpty()) {
+		String campusId = request.getParameter("campusId");
+	
+		List<LotJdo> allLots = LotJdo.getFirstLots(100, campusId);
+		if (allLots.isEmpty()) {
 	%>
-	<h1>
-		No Lots Defined in
-		<%=campusName%></h1>
-	<p>
-		<a href="/jdo/admin/allCampuses.jsp">All campuses</a>
-	</p>
+	<h1>No Lots Are Defined For This Campus</h1>
 	<%
 		} else {
 	%>
-	<h1>
-		ALL LOTS IN
-		<%=campusName%></h1>
-	<p>
-		<a href="/jdo/admin/allCampuses.jsp">All campuses</a>
-	</p>
+	
+	<h1>ALL LOTS</h1>
+	<span class="backBtn" onclick="javascript:window.location='/jdo/admin/allCampuses.jsp';">Back</span>
 	<table id="main">
+		
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Lot Name</th>
+			<th>View</th>
 		</tr>
+		
 		<%
 			for (LotJdo lot : allLots) {
-				String lotID = lot.getStringID();
+				String lotId = lot.getStringID();
 				String lotName = lot.getName();
-				MapFigureJdo mapFig = LotJdo.getGoogleMapFigure(lot);
 		%>
 
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=lotID%>,<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
+					onclick="editButton(<%=lotId%>)">Edit</button>
 				<button class="deletebutton" type="button"
-					onclick="deleteButton(<%=lotID%>)">Delete</button>
+					onclick="deleteButton(<%=lotId%>)">Delete</button>
 			</td>
 
-			<td><div id="view<%=lotID%>"><%=lotName%></div>
+			<td><div id="view<%=lotId%>"><%=lotName%></div>
 
-				<div id="edit<%=lotID%>" style="display: none">
-
-					<form id="form<%=lotID%>" action="/jdo/admin/updateLotCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-							type="hidden" value="<%=lotID%>" name="lotID" />
-						<input id="latitude<%=lotID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
-						<input id="longitude<%=lotID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
-						<input id="zoom<%=lotID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+			<div id="edit<%=lotId%>" style="display: none">
+				<form action="/jdo/admin/updateLotCommand" method="get">
+					<input type="hidden" value="<%=campusId%>" name="campusId" />
+					<input type="hidden" value="<%=lotId%>" name="lotId" />
+					<table class="editTable">
+						<tr>
 						
-						<table class="editTable">
-							<tr>
-								<td class="editTable" width=90>Name:</td>
-								<td class="editTable"><input type="text"
-									id="editLotNameInput<%=lotID%>" class="editLotNameInput"
-									value="<%=lotName%>" name="lotName" />
-									<div id="editLotNameError<%=lotID%>" class="error"
-										style="display: none">Invalid lot name (minimum 3
-										characters: letters, digits, spaces, -, ')</div></td>
-							</tr>
-							<tr>
-								<td class="editTable">Spaces:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=lot.getSpaces()%>" name="totalSpaces" /></td>
-							</tr>
-							<tr>
-								<td class="editTable">Google Map:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=lot.getLocation()%>"
-									name="googleMapLocation" /></td>
-							</tr>
-						</table>
-						<div id="map_canvas_<%=lotID%>" class="edit_map_canvas"></div>
-						
-						<button id="saveEditLotButton<%=campusID%>"  type="button" onclick="saveEditLot(<%=lotID%>)">Save</button>
-						<button type="button" onclick="cancelEditLot(<%=lotID%>)">Cancel</button>
-					</form>
-				</div>
+							<td class="editTable" width=90>Name:</td>
+							<td class="editTable"><input type="text" class="editText"
+								value="<%=lotName%>" name="lotName" /></td>
+						</tr>
+						<tr>
+							<td class="editTable">Location:</td>
+							<td class="editTable"><input type="text" class="editText"
+								value="<%=lot.getLocation()%>" name="lotLocation" /></td>
+						</tr>
+						<tr>
+							<td class="editTable">Spaces:</td>
+							<td class="editTable"><input type="text" class="editText"
+								value="<%=lot.getSpaces()%>"
+								name="lotSpaces" /></td>
+						</tr>
+					</table>
+					<input type="submit" value="Save" />
+					<button type="button" onclick="cancelEditLot(<%=lotId%>)">Cancel</button>
+				</form>
+			</div>
+			
 
-				<div id="delete<%=lotID%>" style="display: none">
-					Do you want to delete this lot?
-					<button type="button" onclick="confirmDeleteLot(<%=lotID%>)">Delete</button>
-					<button type="button" onclick="cancelDeleteLot(<%=lotID%>)">Cancel</button>
-				</div></td>
+			<div id="delete<%=lotId%>" style="display: none">
+				Do you want to delete this lot?
+				<button type="button" onclick="confirmDeleteLot(<%=lotId%>)">Delete</button>
+				<button type="button" onclick="cancelDeleteLot(<%=lotId%>)">Cancel</button>
+			</div>
+		</td>
+		
+			<td>
+				<form action="/jdo/admin/allPermits.jsp" style="display:inline">
+					<input type="hidden" value="<%=lotId%>" name="lotId" />
+					<input type="submit" value="Permits">
+				</form>
+			</td>
+
+		
 		</tr>
 
 		<%
 			}
 
-			}
+		}
 		%>
 
 		<tfoot>
 			<tr>
 				<td colspan="2" class="footer">
-					<form name="addLotForm" action="/jdo/admin/addLotCommand"
-						method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" /> New
-						Lot: <input id="addLotInput" type="text" name="lotName" size="50" />
-						<input id="addLotButton" type="submit" value="Add"
-							disabled="disabled" />
+					 <form action="/jdo/admin/addLotCommand" method="get">
+						<input type="hidden" value="<%=campusId%>" name="campusId" />
+						New Lot Name: <input type="text" name="lotName" size="50" /> <br />
+						Lot Location: <input type="text" name="lotLocation" size="50" /> <br />
+						Lot Number of Spaces: <input type="text" name="lotSpaces" size="50" /> <br />
+						<input id="addLot" type="submit" value="Add" />
+						
 					</form>
-					<div id="addLotError" class="error" style="display: none">Invalid
-						lot name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 				</td>
 			</tr>
 		</tfoot>
 
 	</table>
-
+	
 </body>
 </html>

@@ -11,6 +11,7 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.Query;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Transaction;
 
 import parkingspot.jdo.db.LotJdo;
 
@@ -32,7 +33,7 @@ import parkingspot.jdo.db.LotJdo;
  *		"Permit_Name" = "Faculty and Workers"
  *		"Fuel_Efficient" ="True"
  *
- *  Authors: Mihai Boicu, Min-Seop Kim, Drew Lorence
+ *  Authors: Mihai Boicu, Min-Seop Kim, Drew Lorence, Alex Leone
  *  
  */   
 
@@ -170,7 +171,7 @@ public class PermitJdo {
 			PermitJdo permit = getPermit(pm, permitId);
 			
 			for (int i=0; i<lotIds.length; i++){
-
+				
 				permit.lotIds.add(lotIds[i]);
 			}
 			pm.makePersistent(permit);

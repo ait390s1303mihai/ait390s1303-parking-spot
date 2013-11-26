@@ -37,7 +37,7 @@ $.urlParam = function(name){
     return results[1] || 0;
 }
 
-var campusId = $.urlParam('campusId');
+var campusId = $.urlParam('campusID');
 
 
 var buildingNamePattern = /^[ \w-'',]{3,100}$/
