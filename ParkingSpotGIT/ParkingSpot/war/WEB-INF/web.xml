@@ -104,6 +104,35 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdateLotServlet</servlet-name>
 		<url-pattern>/gae/admin/updateLotCommand</url-pattern>
 	</servlet-mapping>
+	
+	<!-- GAE ADMIN SERVLET: BUILDING -->
+
+	<servlet>
+		<servlet-name>AddBuildingServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.AddBuildingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddBuildingServlet</servlet-name>
+		<url-pattern>/gae/admin/addBuildingCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteBuildingServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.DeleteBuildingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteBuildingServlet</servlet-name>
+		<url-pattern>/gae/admin/deleteBuildingCommand</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UpdateBuildingServlet</servlet-name>
+		<servlet-class>parkingspot.gae.servlet.UpdateBuildingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateBuildingServlet</servlet-name>
+		<url-pattern>/gae/admin/updateBuildingCommand</url-pattern>
+	</servlet-mapping>
 
 
 	<!-- GAE ADMIN SERVLET: PERMIT -->

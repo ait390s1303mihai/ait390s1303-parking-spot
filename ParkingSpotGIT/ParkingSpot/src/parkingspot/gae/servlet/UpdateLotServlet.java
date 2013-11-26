@@ -29,6 +29,6 @@ public class UpdateLotServlet extends HttpServlet {
 				req.getParameter("longitude"), req.getParameter("zoom"), 
 				req.getParameter("markerLatitude"), req.getParameter("markerLongitude"));
 
-		resp.sendRedirect("/gae/admin/allLots.jsp?campusID=" + campusID);
+		resp.sendRedirect("/gae/admin/campusLots.jsp?campusID=" + campusID);
 	}
 }
