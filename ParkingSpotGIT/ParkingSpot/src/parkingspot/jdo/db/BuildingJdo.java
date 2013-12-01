@@ -8,9 +8,12 @@
 package parkingspot.jdo.db;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -52,6 +55,9 @@ public class BuildingJdo {
 	private String location;
 	@Persistent
 	private String campusId;
+	@Persistent
+	@Embedded
+	private MapFigureJdo mapFigure;
 	
 	
 	/**
@@ -61,6 +67,7 @@ public class BuildingJdo {
 		this.name = name;
 		this.location = location;
 		this.campusId = campusID;
+		this.mapFigure = null;
 	}
 	
 	/**
@@ -80,19 +87,88 @@ public class BuildingJdo {
 		return Long.toString(getKey().getId());
 	}
 	
+	public MapFigureJdo getMapFigureJdo(){
+		return mapFigure;
+	}
+	
+	public static BuildingJdo getBuilding(String sKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		return getBuilding(pm, sKey);
+	}
+	
+	public static BuildingJdo getBuilding(PersistenceManager pm, String sKey){
+		long k = Long.parseLong(sKey);
+		BuildingJdo b = pm.getObjectById(BuildingJdo.class, k);
+		return b;
+	}
+	
+	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String name) {
+		BuildingJdo building = null;
+		try {
+
+			Query query = pm.newQuery(BuildingJdo.class);
+			query.setFilter("name == nameParam");
+			query.setOrdering("name asc");
+			query.declareParameters("String nameParam");
+			@SuppressWarnings("unchecked")
+			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(name);
+			
+			if (result != null && result.size() > 0) {
+				building = result.get(0);
+			}
+		} catch (Exception e) {
+			// TODO log the error
+		}
+		return building;
+	}
+	
+	public MapFigureJdo getGoogleMapFigure() {
+		if (mapFigure == null)
+			return new MapFigureJdo(0, 0, 0, 0, 0);
+		return mapFigure;
+	}
+	
+	/**
+	 * The regular expression pattern for the name of the campus.
+	 */
+	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[ \\w-'',]{3,100}\\Z");
+
+	/**
+	 * Check if the name is correct for a campus.
+	 * 
+	 * @param name The checked string.
+	 * @return true is the name is correct.
+	 */
+	public static boolean checkName(String name) {
+		Matcher matcher = NAME_PATTERN.matcher(name);
+		return matcher.find();
+	}
+	
 	/**
 	 * CRUD Methods
 	 */
 	public static BuildingJdo createBuilding(String buildingName, String campusId) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        BuildingJdo building = new BuildingJdo(buildingName, "", campusId);
+        
+        BuildingJdo building = null;
+        
         try {
-            pm.makePersistent(building);
-        }
-        finally {
-            pm.close();
-        }
-		return building;
+
+			if (!checkName(buildingName)) {
+				return null;
+			}
+			
+			building = getBuildingWithName(pm, buildingName);
+			if (building != null) {
+				return null;
+			}
+			
+			building = new BuildingJdo(buildingName, "", campusId);
+			pm.makePersistent(building);
+			return building;
+		} finally {
+			pm.close();
+		}
 	}
 	
 	
@@ -107,17 +183,10 @@ public class BuildingJdo {
         }
 	}
 	
-	public static BuildingJdo getBuilding(String sKey){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		return getBuilding(pm, sKey);
-	}
 	
-	public static BuildingJdo getBuilding(PersistenceManager pm, String sKey){
-		long k = Long.parseLong(sKey);
-		BuildingJdo b = pm.getObjectById(BuildingJdo.class, k);
-		return b;
+	public void setGoogleMapFigure(BuildingJdo building, double lat, double lng, int z, double mkLat, double mkLong ) {
+		mapFigure = new MapFigureJdo(lat, lng, z, mkLat, mkLong);
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public static List<BuildingJdo> getFirstBuildings(int number, String campusIdParam) {
@@ -141,13 +210,22 @@ public class BuildingJdo {
 		return results;
 	}	
 	
-	public static boolean updateBuildingCommand(String buildingId, String name, String location, String campusID) {
+	public static boolean updateBuildingCommand(String buildingId, String name, String location, String campusID, String latString, String lngString, String zoomString, String mkLatString, String mkLngString ) {
 		try{
 			PersistenceManager pm = PMF.get().getPersistenceManager();
 			BuildingJdo building = getBuilding(pm, buildingId);
 			building.name = name;
 			building.location = location;
 			building.campusId = campusID;
+			MapFigureJdo mapFigure = new MapFigureJdo(0, 0, 0, 0, 0);
+			mapFigure.latitude = Double.parseDouble(latString);
+			mapFigure.longitude = Double.parseDouble(lngString);
+			mapFigure.zoom = Integer.parseInt(zoomString);
+			mapFigure.markerLatitude = Double.parseDouble(mkLatString);
+			mapFigure.markerLongitude = Double.parseDouble(mkLngString);
+			
+			building.mapFigure = mapFigure;
+			
 			pm.makePersistent(building);
 			pm.close();
 		} catch(Exception e){
