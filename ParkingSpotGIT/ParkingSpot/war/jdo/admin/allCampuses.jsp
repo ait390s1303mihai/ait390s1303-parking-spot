@@ -128,7 +128,7 @@ var selectedCampusOldName=null;
 var selectedCampusOldAddress=null;
 var selectedCampusOldLocation=null;
 
-function editButton(campusID, campusName, lat, lng, zoom) {
+function editButton(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
 	selectedCampusForEdit=campusID;
 	disableAllButtons(true);
 	editNameError = false;
@@ -140,32 +140,81 @@ function editButton(campusID, campusName, lat, lng, zoom) {
 	selectedCampusOldLocation=null;	
 	$("#view"+campusID).hide();
 	$("#edit"+campusID).show();
-	initializeMap(campusID, campusName, lat, lng, zoom);
+	initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng);
 }
 
 var edited_map=null;
+var edited_marker=null;
 
-function initializeMap(campusID, campusName, lat, lng, zoom) {
+function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
+	var geocoder = new google.maps.Geocoder();
+	var infowindow = new google.maps.InfoWindow();
 	var myLatlng = new google.maps.LatLng(lat,lng);
-    var map_canvas = document.getElementById('map_canvas_'+campusID);
-    var map_options = {
-            center: myLatlng,
-            zoom: zoom,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-    edited_map = new google.maps.Map(map_canvas, map_options);
-    var marker = new google.maps.Marker({
-    	position: myLatlng,
-    	title: campusName
+	var map_canvas = document.getElementById('map_canvas_'+campusID);
+    var contentString = campusName + ' campus</br>' + mkLat.toFixed(6) + ',' + mkLng.toFixed(6);
+    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+    geocoder.geocode({ 'latLng': myLatlng }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+			var map_options = {
+            		center: myLatlng,
+            		zoom: zoom,
+            		mapTypeId: google.maps.MapTypeId.ROADMAP
+        	};
+		    edited_map = new google.maps.Map(map_canvas, map_options);
+		    edited_marker = new google.maps.Marker({
+		    	position: markerLatlng,
+		    	title: campusName,
+		    	draggable: true
+		    });
+		    edited_marker.setMap(edited_map);
+        	if(results[0]) {
+        		infowindow.setContent(campusName + 
+        				' campus</br>' + 
+        				results[0].formatted_address + 
+        				'</br>' + 
+        				mkLat.toFixed(6) + 
+        				',' + 
+        				mkLng.toFixed(6)
+        		);
+        	} else {
+        		infowindow.setContent(contentString);
+        	}
+            // infowindow display upon click of marker
+            google.maps.event.addListener(edited_marker, 'click', function() {
+                infowindow.open(edited_map,edited_marker);
+            });
+            // infowindow not displayed during marker drag
+            google.maps.event.addListener(edited_marker, "dragstart", function() {   
+                infowindow.close();
+            });
+            // infowindow display upon release of marker after dragging to new location
+            google.maps.event.addListener(edited_marker, "dragend", function() { 
+            	markerLatlng = new google.maps.LatLng(edited_marker.getPosition().lat(),edited_marker.getPosition().lng());
+				geocoder.geocode({ 'latLng': markerLatlng }, function(results) {
+					if(results[0]) {
+						infowindow = new google.maps.InfoWindow({content: campusName + ' campus</br>' + results[0].formatted_address + '</br>' + edited_marker.getPosition().lat().toFixed(6) + ',' + edited_marker.getPosition().lng().toFixed(6)});
+            	    } else {
+            	        infowindow.setContent(contentString);
+            	    }
+            	    infowindow.open(edited_map,edited_marker);	
+                    edited_map.setCenter(edited_marker.getPosition())
+	            });
+            });
+            infowindow.open(edited_map,edited_marker);
+		} else {
+			alert('Geocode not successful: ' + status);
+		}
     });
-    marker.setMap(edited_map);
 }
+
 
 function saveEditCampus(campusID) {
 	if (edited_map!=null) {
 		$("#latitude"+campusID).val(edited_map.getCenter().lat());
 		$("#longitude"+campusID).val(edited_map.getCenter().lng());
 		$("#zoom"+campusID).val(edited_map.getZoom());
+		$("#markerLatitude"+campusID).val(edited_marker.getPosition().lat());
+		$("#markerLongitude"+campusID).val(edited_marker.getPosition().lng());
 	}
 	document.forms["form"+campusID].submit();
 }
@@ -230,7 +279,8 @@ function cancelEditCampus(campusID) {
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>)">Edit</button>
+					onclick="editButton(<%=campusID%>,'<%=campusName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>,<%=mapFig.zoom%>,
+					 <%=mapFig.markerLatitude%>, <%=mapFig.markerLongitude%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=campusID%>)">Delete</button>
 			</td>
@@ -239,15 +289,13 @@ function cancelEditCampus(campusID) {
 
 				<div id="edit<%=campusID%>" style="display: none">
 
-					<form id="form<%=campusID%>"
-						action="/jdo/admin/updateCampusCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
-							id="latitude<%=campusID%>" type="hidden"
-							value="<%=mapFig.latitude%>" name="latitude" /> <input
-							id="longitude<%=campusID%>" type="hidden"
-							value="<%=mapFig.longitude%>" name="longitude" /> <input
-							id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>"
-							name="zoom" />
+					<form id="form<%=campusID%>" action="/jdo/admin/updateCampusCommand" method="get">
+						<input type="hidden" value="<%=campusID%>" name="campusID" /> 
+						<input id="latitude<%=campusID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" /> 
+						<input id="longitude<%=campusID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" /> 
+						<input id="zoom<%=campusID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+						<input id="markerLatitude<%=campusID%>" type="hidden" value="<%=mapFig.markerLatitude%>" name="markerLatitude" />
+						<input id="markerLongitude<%=campusID%>" type="hidden" value="<%=mapFig.markerLongitude%>" name="markerLongitude" />
 						<table class="editTable">
 							<tr>
 								<td class="editTable" width=90>Name:</td>
@@ -267,8 +315,8 @@ function cancelEditCampus(campusID) {
 							<tr>
 								<td class="editTable">Google Map:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=campus.getGoogleMapLocation()%>"
-									name="googleMapLocation" /></td>
+									value="<%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>"
+									name="googleMapLocation" readonly/></td>
 							</tr>
 						</table>
 						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
