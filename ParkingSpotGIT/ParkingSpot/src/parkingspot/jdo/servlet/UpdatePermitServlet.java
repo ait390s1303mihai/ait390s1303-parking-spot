@@ -19,7 +19,7 @@ import parkingspot.jdo.db.PermitJdo;
 public class UpdatePermitServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Boolean fuelEfficient;  
-		if(req.getParameter("fuelEfficient") == null) { 
+		if(req.getParameter("fuelEfficient") == "") { 
 			fuelEfficient = false; 
 		} else {
 			fuelEfficient = true; 

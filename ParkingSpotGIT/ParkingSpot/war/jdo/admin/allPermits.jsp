@@ -153,27 +153,47 @@ function cancelEditPermit(permitID) {
 	disableAllButtons(false);
 }
 
+
+function addPermitToLot(permitID, lotID){
+	alert(permitID);
+	alert(lotID);
+	$.get("/jdo/admin/AddPermitToLotCommand", 
+			{permitID: permitID}, 
+			{lotID: lotID},
+			function (data,status) {
+				//alert("Data "+data+" status "+status);
+				if (status="success") {
+					location.reload();
+				} else {
+					
+					alert("Something Went Wrong Sorry!")
+				}
+			}
+	);
+}
+
 </script>
 
 </head>
 <body>
 	<%
 		String lotId = request.getParameter("lotId");
-		List<PermitJdo> allPermits = PermitJdo.getFirstPermits(100);
-		if (allPermits.isEmpty()) {
+		String lotName = request.getParameter("lotName");
+		List<PermitJdo> lotPermits = PermitJdo.getFirstPermitsByLotId(100, lotId);
+		if (lotPermits.isEmpty()) {
 	%>
-	<h1>No Permits Defined</h1>
+	<h1>No Permits Defined For <%=lotName%></h1>
 	<%
 		} else {
 	%>
-	<h1>ALL PERMITS</h1>
+	<h1>ALL PERMITS FOR <%=lotName%></h1>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Permit Name</th>
 		</tr>
 		<%
-			for (PermitJdo permit : allPermits) {
+			for (PermitJdo permit : lotPermits) {
 					String permitName = permit.getName();
 					String permitID = permit.getStringID();
 		%>
@@ -242,6 +262,75 @@ function cancelEditPermit(permitID) {
 			</tr>
 		</tfoot>
 
+	</table>
+	
+	
+	<%
+		List<PermitJdo> allPermits = PermitJdo.getFirstPermits(100);
+		if (allPermits.isEmpty()) {
+	%>
+	<h1>No Permits Defined</h1>
+	<%
+		} else {
+	%>
+	<h1>ALL PERMITS</h1>
+	<table id="main">
+		<tr>
+			<th class="adminOperationsList">Operations</th>
+			<th>Permit Name</th>
+		</tr>
+		<%
+			for (PermitJdo permit : allPermits) {
+					String permitName = permit.getName();
+					String permitID = permit.getStringID();
+		%>
+		<tr>
+			<td class="adminOperationsList">
+					<button type="button" onclick="addPermitToLot(<%=permitID%>, <%=lotId%>)">Add Permit to Lot</button>
+			</td>
+
+			<td><div id="view<%=permitID%>"><%=permitName%></div>
+
+				<div id="edit<%=permitID%>" style="display: none">
+
+					<form action="/jdo/admin/updatePermitCommand" method="get">
+						<input type="hidden" value="<%=permitID%>" name="permitID" />
+						<table class="editTable">
+							<tr>
+								<td class="editTable" width=90>Name:</td>
+								<td class="editTable"><input type="text"
+									id="editPermitNameInput<%=permitID%>"
+									class="editPermitNameInput" value="<%=permitName%>"
+									name="permitName" />
+									<div id="editPermitNameError<%=permitID%>" class="error"
+										style="display: none">Invalid Permit name (minimum 3
+										characters: letters, digits, s paces, -, ')</div></td>
+							</tr>
+							<tr>
+								<td class="editTable">Fuel Efficient:</td>
+								<td class="editTable"><input type="checkbox" id="FuelEfficientCheckbox" value="<%=permit.isFuelEfficient()%>"class="editText" name="fuelEfficient" /></td>
+							</tr>
+						</table>
+						<input id="saveEditPermitButton<%=permitID%>" type="submit"
+							value="Save" />
+						<button type="button" onclick="cancelEditPermit(<%=permitID%>)">Cancel</button>
+					</form>
+				</div>
+
+				<div id="delete<%=permitID%>" style="display: none">
+					Do you want to delete this Permit?
+					<button type="button" onclick="confirmDeletePermit(<%=permitID%>)">Delete</button>
+					<button type="button" onclick="cancelDeletePermit(<%=permitID%>)">Cancel</button>
+				</div></td>
+		</tr>
+
+		<%
+			}
+
+			}
+		%>
+
+		
 	</table>
 
 	</body>

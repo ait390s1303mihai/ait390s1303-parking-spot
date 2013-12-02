@@ -61,10 +61,10 @@ public class LotJdo {
 		this.permitIds = new ArrayList<String>();
 	}
 	
-	public static LotJdo createLot(String campusId){
+	public static LotJdo createLot(String campusId, String lotName ){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
-		LotJdo lot = new LotJdo(campusId, "", "", 0);
+		LotJdo lot = new LotJdo(campusId, lotName, "", 0);
 		
 		try {
             pm.makePersistent(lot);

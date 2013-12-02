@@ -1,4 +1,5 @@
 <%@ page import="parkingspot.jdo.db.LotJdo"%>
+<%@ page import="parkingspot.jdo.db.CampusJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -93,16 +94,18 @@ function cancelEditLot(lotId) {
 <body>
 	<%
 		String campusId = request.getParameter("campusId");
-	
+		CampusJdo campus = CampusJdo.getCampus(campusId);
+		String campusName = campus.getName();
 		List<LotJdo> allLots = LotJdo.getFirstLots(100, campusId);
 		if (allLots.isEmpty()) {
 	%>
-	<h1>No Lots Are Defined For This Campus</h1>
+	<h1>No Lots Are Defined For The <%=campusName%> Campus</h1>
 	<%
 		} else {
+			
 	%>
 	
-	<h1>ALL LOTS</h1>
+	<h1>All Lots for <%=campusName%> Campus</h1>
 	<span class="backBtn" onclick="javascript:window.location='/jdo/admin/allCampuses.jsp';">Back</span>
 	<table id="main">
 		
@@ -167,6 +170,7 @@ function cancelEditLot(lotId) {
 			<td>
 				<form action="/jdo/admin/allPermits.jsp" style="display:inline">
 					<input type="hidden" value="<%=lotId%>" name="lotId" />
+					<input type="hidden" value="<%=lotName%>" name="lotName" />
 					<input type="submit" value="Permits">
 				</form>
 			</td>
@@ -185,9 +189,7 @@ function cancelEditLot(lotId) {
 				<td colspan="2" class="footer">
 					 <form action="/jdo/admin/addLotCommand" method="get">
 						<input type="hidden" value="<%=campusId%>" name="campusId" />
-						New Lot Name: <input type="text" name="lotName" size="50" /> <br />
-						Lot Location: <input type="text" name="lotLocation" size="50" /> <br />
-						Lot Number of Spaces: <input type="text" name="lotSpaces" size="50" /> <br />
+						New Lot Name: <input type="text" name="lotName" size="50" />
 						<input id="addLot" type="submit" value="Add" />
 						
 					</form>

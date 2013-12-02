@@ -294,6 +294,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdatePermitJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updatePermitCommand</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>AddPermitToLotJDOServlet</servlet-name>
+		<servlet-class>parkingspot.jdo.servlet.AddPermitToLotServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AddPermitToLotJDOServlet</servlet-name>
+		<url-pattern>/jdo/admin/AddPermitToLotCommand</url-pattern>
+	</servlet-mapping>
 
 	<!-- JDO ADMIN SERVLET: BUILDING -->
 
@@ -323,6 +332,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>UpdateBuildingJDOServlet</servlet-name>
 		<url-pattern>/jdo/admin/updateBuildingCommand</url-pattern>
 	</servlet-mapping>
-
 
 </web-app>
