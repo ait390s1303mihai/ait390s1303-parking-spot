@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Alex Leone, Mihai Boicu
+ * Authors: Alex Leone, Mihai Boicu, Min-Seop Kim
  */
 
 package parkingspot.jdo.servlet;
@@ -18,8 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 import parkingspot.jdo.db.CampusJdo;
 
 /**
- * Answer to the HTTP Servlet to add a campus. Redirect to the full editing page
- * for the campus. If error (e.g. duplicated name) show error page.
+ * Answer to the HTTP Servlet to add a campus.
+ * Redirects to the full editing page for the campus. 
+ * To-do: If error (e.g. duplicated name) show error page
  */
 @SuppressWarnings("serial")
 public class AddCampusServlet extends HttpServlet {
