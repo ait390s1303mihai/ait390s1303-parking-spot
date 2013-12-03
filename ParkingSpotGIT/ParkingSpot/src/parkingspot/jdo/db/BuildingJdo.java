@@ -129,12 +129,12 @@ public class BuildingJdo {
 	}
 	
 	/**
-	 * The regular expression pattern for the name of the campus.
+	 * The regular expression pattern for the name of the building.
 	 */
 	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[ \\w-'',]{3,100}\\Z");
 
 	/**
-	 * Check if the name is correct for a campus.
+	 * Check if the name is correct for a building.
 	 * 
 	 * @param name The checked string.
 	 * @return true is the name is correct.
@@ -147,6 +147,14 @@ public class BuildingJdo {
 	/**
 	 * CRUD Methods
 	 */
+	
+	/**
+	 * Creates a building object in the datastore and returns it.
+	 * 
+	 * @param buildingName - A string the the building name, campusId - A string with the campus ID (a long)
+	 * @return the creates building object
+	 */
+	
 	public static BuildingJdo createBuilding(String buildingName, String campusId) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
         
@@ -171,6 +179,12 @@ public class BuildingJdo {
 		}
 	}
 	
+	/**
+	 * Deletes a building in the datastore
+	 * 
+	 * @param sKey - a string version of the key of the building to be deleted
+	 * @return void
+	 */
 	
 	public static void deleteBuildingCommand(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -183,10 +197,24 @@ public class BuildingJdo {
         }
 	}
 	
+	/**
+	 * Sets the MapFigureJdo object 
+	 * 
+	 * @param lat - latitude of map, lng - longitude of map, z - zoom of map, mkLat - latitude of marker,
+	 * mkLng - longitude of marker
+	 * @return void
+	 */
 	
-	public void setGoogleMapFigure(BuildingJdo building, double lat, double lng, int z, double mkLat, double mkLong ) {
-		mapFigure = new MapFigureJdo(lat, lng, z, mkLat, mkLong);
+	public void setGoogleMapFigure(double lat, double lng, int z, double mkLat, double mkLng ) {
+		mapFigure = new MapFigureJdo(lat, lng, z, mkLat, mkLng);
 	}
+	
+	/**
+	 * Returns a list of buildingJdo objects based on a campusId
+	 * 
+	 * @param number - number of buildings to be returned, campusId - A string with the campus ID (a long)
+	 * @return A list of buildingJdo objects
+	 */
 	
 	@SuppressWarnings("unchecked")
 	public static List<BuildingJdo> getFirstBuildings(int number, String campusIdParam) {
@@ -209,6 +237,13 @@ public class BuildingJdo {
 		
 		return results;
 	}	
+	
+	/**
+	 * Updates a building
+	 * 
+	 * @param 
+	 * @return 
+	 */
 	
 	public static boolean updateBuildingCommand(String buildingId, String name, String location, String campusID, String latString, String lngString, String zoomString, String mkLatString, String mkLngString ) {
 		try{
