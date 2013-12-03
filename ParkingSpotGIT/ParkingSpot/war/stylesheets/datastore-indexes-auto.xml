@@ -1,0 +1,11 @@
+<!-- Indices written at Sun, 1 Dec 2013 15:03:07 EST -->
+
+<datastore-indexes>
+
+    <!-- Used 4 times in query history -->
+    <datastore-index kind="BuildingJdo" ancestor="false" source="auto">
+        <property name="campusId" direction="asc"/>
+        <property name="name" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>
