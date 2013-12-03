@@ -19,8 +19,7 @@
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 <title>Find a Parking Spot</title>
-<link rel="stylesheet" type="text/css"
-	href="/stylesheets/parkingspot.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
 <style type="text/css">
 #userHeading {
 	font-weight: bold;
@@ -55,6 +54,8 @@ h1 {
 		document.getElementById("buildingTr").style.display = "none";
 		document.getElementById("submitTr").style.display = "none";
 		document.getElementById("campusSelect").addEventListener("click",
+				hideAllBuildingSelectors, false);
+		document.getElementById("campusSelect").addEventListener("click",
 				showBuildingTr, false);
 		document.getElementById("buildingSelect").addEventListener("click",
 				showSubmitTr, false);
@@ -63,10 +64,24 @@ h1 {
 		document.getElementById("submitBtn").addEventListener("click",
 				passBuildingName, false);
 	}
+	
+	function campusSelect() {
+		var campusID = document.getElementById("campusSelect").value;
+		
+	}
+	
+	function hideAllBuildingSelectors() {
+		document.getElementsByName("campusSelectors").setAttribute("hidden",
+				"hidden");
+	}
+	
+	
 	function showBuildingTr() {
 		var campusName = document.getElementById("campusSelect").value;
 		if (campusName != "Select a campus...") {
+			var selectorName = campusName + "Buildings";
 			document.getElementById("buildingTr").style.display = "table-row";
+			document.getElementById(selectorName).style.display = "inline";
 		} else {
 			document.getElementById("buildingTr").style.display = "none";
 		}
@@ -97,6 +112,10 @@ h1 {
 </script>
 </head>
 <body>
+
+	<%
+		List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
+	%>
 	<h1>Find a Parking Space</h1>
 	<table id="userTable">
 		<tr>
@@ -105,46 +124,48 @@ h1 {
 		<tr>
 			<td>What campus are you going to?</td>
 			<td><select id="campusSelect">
-					<option>Select a campus...</option>
+					<option value="NONE">Select a campus...</option>
 					<%
-						// Will need a query in order to limit the buildings to the given campus
-						List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
 						for (CampusJdo campus : allCampuses) {
 							String campusName = campus.getName();
+							String campusID = campus.getStringID();
 					%>
-					<option><%=campusName%></option>
+					<option value="<%=campusID%>"><%=campusName%></option>
 					<%
 						}
 					%>
 			</select></td>
 		</tr>
-		<tr id="buildingTr">
+		<%
+			for (CampusJdo campus : allCampuses) {
+				String campusName = campus.getName();
+				String campusID = campus.getStringID();
+		%>
+		<tr id="buildingTr<%=campusID%>" hidden="hidden">
 			<td>What building are you going to?</td>
 			<td>
-				<!-- TODO: This <select> needs to only allow the buildings in the selected campus -->
-				<select id="buildingSelect">
+				<%
+					for (BuildingJdo building : BuildingJdo.getFirstBuildings(100, campusID)) {
+							String buildingName = building.getName();
+				%> <select id="<%=campusName%>Buildings" >
 					<option>Select a building...</option>
-					<%
-						//List<BuildingJdo> allBuildings = BuildingJdo.getFirstBuildings(number, campusIdParam);
-						//for (BuildingJdo building : allBuildings) {
-							String buildingName = "test"; //building.getName();
-					%>
 					<option><%=buildingName%></option>
-					<%
-					 //	}
-					%>
-			</select>
+			</select> <%
+ 	}
+ %>
 			</td>
 		</tr>
+		<%
+			}
+		%>
 		<tr id="submitTr">
 			<td colspan="2">
 				<!-- TODO: This <form> needs an action attribute that matches Andrew's file that is not done yet -->
 				<form>
-					<input id="campusVal" type="hidden" value=""> <input
-						id="buildingVal" type="hidden" value="">
+					<input id="campusVal" type="hidden" value="">
+					<input id="buildingVal" type="hidden" value="">
 					<!-- TODO: When Andrew finishes his file the type attribute for this <input> will be "submit" -->
-					<input id="submitBtn" type="button"
-						value="Find the Ideal Lot for Me!">
+					<input id="submitBtn" type="button" value="Find the Ideal Lot for Me!">
 				</form>
 			</td>
 		</tr>
