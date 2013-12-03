@@ -20,7 +20,7 @@ public class MapFigureJdo{
 	@Persistent
 	public double markerLatitude;
 	
-	@Persistent 
+	@Persistent
 	public double markerLongitude;
 	
 	public MapFigureJdo(double lat, double lng, int z, double mkLat, double mkLng) {
