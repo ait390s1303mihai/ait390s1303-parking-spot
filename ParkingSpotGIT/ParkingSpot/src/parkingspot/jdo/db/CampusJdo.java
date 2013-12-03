@@ -116,12 +116,12 @@ public class CampusJdo {
 	
 	public MapFigureJdo getGoogleMapFigure() {
 		if (mapFigure == null)
-			return new MapFigureJdo(38.830376, -77.307143, 10);
+			return new MapFigureJdo(38.830376, -77.307143, 10, 0, 0);
 		return mapFigure;
 	}
 	
-	public void setGoogleMapFigure(CampusJdo campus, double lat, double lng, int z) {
-		mapFigure = new MapFigureJdo(lat, lng, z);
+	public void setGoogleMapFigure(CampusJdo campus, double lat, double lng, int z, double mkLat, double mkLng) {
+		mapFigure = new MapFigureJdo(lat, lng, z, mkLat, mkLng);
 	}
 	
 	//
@@ -214,7 +214,7 @@ public class CampusJdo {
 			campus.name = name;
 			campus.address = address;
 			campus.location = googleMapLocation;
-			campus.setGoogleMapFigure(campus, lat, lng, zoom);
+			campus.setGoogleMapFigure(campus, lat, lng, zoom, 0, 0);
 			pm.close();
 
 		} catch (Exception e) {

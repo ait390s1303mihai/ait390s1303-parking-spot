@@ -17,10 +17,18 @@ public class MapFigureJdo{
 	@Persistent
 	public int zoom;
 	
-	public MapFigureJdo(double lat, double lng, int z) {
+	@Persistent
+	public double markerLatitude;
+	
+	@Persistent 
+	public double markerLongitude;
+	
+	public MapFigureJdo(double lat, double lng, int z, double mkLat, double mkLng) {
 		latitude = lat;
 		longitude = lng;
 		zoom = z;
+		markerLatitude = mkLat;
+		markerLongitude = mkLng;
 	}
 	
 }
