@@ -85,23 +85,69 @@ var edited_map=null;
 var edited_marker=null;
 
 function initializeMap(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng) {
+	var geocoder = new google.maps.Geocoder();
+	var infowindow = new google.maps.InfoWindow();
 	var myLatlng = new google.maps.LatLng(lat,lng);
     var map_canvas = document.getElementById('map_canvas_'+buildingID);
-    var map_options = {
-            center: myLatlng,
-            zoom: zoom,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-          }
-    edited_map = new google.maps.Map(map_canvas, map_options);
-    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
-    edited_marker = new google.maps.Marker({
-    	position: markerLatlng,
-    	title: buildingName,
-    	draggable:true,
-    	icon: '/images/building.png'
+    var contentString = buildingName + ' building</br>' + mkLat.toFixed(6) + ',' + mkLng.toFixed(6);
+    
+    geocoder.geocode({ 'latLng': myLatlng }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+			var map_options = {
+            		center: myLatlng,
+            		zoom: zoom,
+            		mapTypeId: google.maps.MapTypeId.ROADMAP
+        	};
+		    edited_map = new google.maps.Map(map_canvas, map_options);
+		    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+		    edited_marker = new google.maps.Marker({
+		    	position: markerLatlng,
+		    	title: buildingName,
+		    	draggable:true,
+		    	icon: '/images/building.png'
+		    });
+		    edited_marker.setMap(edited_map);
+        	if(results[0]) {
+        		infowindow.setContent(buildingName + 
+        				'</br>' + 
+        				results[0].formatted_address + 
+        				'</br>' + 
+        				mkLat.toFixed(6) + 
+        				',' + 
+        				mkLng.toFixed(6)
+        		);
+        	} else {
+        		infowindow.setContent(contentString);
+        	}
+            // infowindow display upon click of marker
+            google.maps.event.addListener(edited_marker, 'click', function() {
+                infowindow.open(edited_map,edited_marker);
+            });
+            // infowindow not displayed during marker drag
+            google.maps.event.addListener(edited_marker, "dragstart", function() {   
+                infowindow.close();
+            });
+            // infowindow display upon release of marker after dragging to new location
+            google.maps.event.addListener(edited_marker, "dragend", function() { 
+            	markerLatlng = new google.maps.LatLng(edited_marker.getPosition().lat(),edited_marker.getPosition().lng());
+				geocoder.geocode({ 'latLng': markerLatlng }, function(results) {
+					if(results[0]) {
+						infowindow = new google.maps.InfoWindow({content: buildingName + ' building</br>' + results[0].formatted_address + '</br>' + edited_marker.getPosition().lat().toFixed(6) + ',' + edited_marker.getPosition().lng().toFixed(6)});
+            	    } else {
+            	        infowindow.setContent(contentString);
+            	    }
+            	    infowindow.open(edited_map,edited_marker);	
+                    edited_map.setCenter(edited_marker.getPosition())
+	            });
+            });
+            infowindow.open(edited_map,edited_marker);
+		} else {
+			alert('Geocode not successful: ' + status);
+		}
     });
-    edited_marker.setMap(edited_map);
+   
 }
+
 
 function centerMarker() {
 	edited_marker.setPosition(edited_map.getCenter());
@@ -113,8 +159,7 @@ function confirmDeleteBuilding(buildingID) {
 	selectedBuildingForDelete=buildingID;
 	
 	$.post("/jdo/admin/deleteBuildingCommand", 
-			{buildingID: buildingID},
-			{campusId: campusId},
+			{buildingID: buildingID, campusId: campusId},
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
@@ -155,7 +200,7 @@ function cancelEditBuilding(buildingID) {
 }
 
 
-function saveEditBuilding(buildingID) {
+function saveEditBuilding(buildingID, campusId) {
 	if (edited_map!=null) {
 		$("#latitude"+buildingID).val(edited_map.getCenter().lat());
 		$("#longitude"+buildingID).val(edited_map.getCenter().lng());
@@ -164,6 +209,7 @@ function saveEditBuilding(buildingID) {
 		$("#markerLongitude"+buildingID).val(edited_marker.getPosition().lng());
 	}
 	document.forms["form"+buildingID].submit();
+	location.href = "/jdo/admin/campusBuildings.jsp?campusId=" + campusId;
 }
 
 $(document).ready(function(){ //test
@@ -281,7 +327,7 @@ $(document).ready(function(){ //test
 					<div id="map_canvas_<%=buildingID%>" class="edit_map_canvas"></div>
 
 					<button type="button" onclick="centerMarker()">Center Marker</button>
-					<button id="saveEditBuildingButton<%=buildingID%>" type="button" onclick="saveEditBuilding(<%=buildingID%>)">Save</button>
+					<button id="saveEditBuildingButton<%=buildingID%>" type="button" onclick="saveEditBuilding(<%=buildingID%>, <%=campusId%>)">Save</button>
 					<button type="button" onclick="cancelEditBuilding(<%=buildingID%>)">Cancel</button>
 				</form>
 			</div>

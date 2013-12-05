@@ -102,16 +102,17 @@ public class BuildingJdo {
 		return b;
 	}
 	
-	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String name) {
+	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String nameParam, String campusIdParam) {
 		BuildingJdo building = null;
 		try {
 
 			Query query = pm.newQuery(BuildingJdo.class);
 			query.setFilter("name == nameParam");
+			query.setFilter("campusId == campusIdParam");
 			query.setOrdering("name asc");
 			query.declareParameters("String nameParam");
 			@SuppressWarnings("unchecked")
-			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(name);
+			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(nameParam, campusIdParam);
 			
 			if (result != null && result.size() > 0) {
 				building = result.get(0);
@@ -164,7 +165,7 @@ public class BuildingJdo {
 				return null;
 			}
 			
-			building = getBuildingWithName(pm, buildingName);
+			building = getBuildingWithName(pm, buildingName, campusId);
 			if (building != null) {
 				return null;
 			}
