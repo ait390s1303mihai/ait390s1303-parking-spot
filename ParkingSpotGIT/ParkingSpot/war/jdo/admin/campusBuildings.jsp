@@ -1,4 +1,5 @@
 <%@ page import="parkingspot.jdo.db.BuildingJdo"%>
+<%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -25,7 +26,7 @@
 	href="/stylesheets/parkingspot.css">
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script>
 var selectedBuildingForEdit = null  
 var editNameError = false;
@@ -61,16 +62,57 @@ function deleteButton(buildingID) {
 	$("#delete"+buildingID).show();
 }
 
-function editButton(buildingID) {
+var selectedBuildingOldName=null;
+var selectedBuildingOldAddress=null;
+var selectedBuildingOldLocation=null;
+
+function editButton(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng) {
+	selectedBuildingForEdit=buildingID;
 	disableAllButtons(true);
+	editNameError = false;
+	editLocationError = false;
+	editAddressError = false;
+	updateSaveEditButton();
+	selectedBuildingOldName=$("#editBuildingNameInput"+selectedBuildingForEdit).val();
+	selectedBuildingOldAddress=null;
+	selectedBuildingOldLocation=null;	
 	$("#view"+buildingID).hide();
 	$("#edit"+buildingID).show();
+	initializeMap(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng);
 }
 
+var edited_map=null;
+var edited_marker=null;
+
+function initializeMap(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng) {
+	var myLatlng = new google.maps.LatLng(lat,lng);
+    var map_canvas = document.getElementById('map_canvas_'+buildingID);
+    var map_options = {
+            center: myLatlng,
+            zoom: zoom,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          }
+    edited_map = new google.maps.Map(map_canvas, map_options);
+    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+    edited_marker = new google.maps.Marker({
+    	position: markerLatlng,
+    	title: buildingName,
+    	draggable:true,
+    	icon: '/images/building.png'
+    });
+    edited_marker.setMap(edited_map);
+}
+
+function centerMarker() {
+	edited_marker.setPosition(edited_map.getCenter());
+}
+
+var selectedBuildingForDelete=null;
+
 function confirmDeleteBuilding(buildingID) {
-	selectedBuilding=buildingID;
+	selectedBuildingForDelete=buildingID;
 	
-	$.get("/jdo/admin/deleteBuildingCommand", 
+	$.post("/jdo/admin/deleteBuildingCommand", 
 			{buildingID: buildingID},
 			{campusId: campusId},
 			function (data,status) {
@@ -78,12 +120,25 @@ function confirmDeleteBuilding(buildingID) {
 				if (status="success") {
 					location.reload();
 				} else {
-					canceldeletebuilding(selectedBuilding);
+					cancelDeleteBuilding(selectedBuildingForDelete);
 					selectedBuilding=null;
 				}
 			}
-			
 	);
+	
+}
+
+function updateSaveEditButton() {
+	if (editNameError||editLocationError||editAddressError) {
+		$("#saveEditBuildingButton"+selectedBuildingForEdit).attr("disabled","disabled");
+	} else {
+		$("#saveEditBuildingButton"+selectedBuildingForEdit).attr("disabled",null);
+	}
+	if (editNameError) {
+		$("#editBuildingNameError"+selectedBuildingForEdit).show();
+	} else {
+		$("#editBuildingNameError"+selectedBuildingForEdit).hide();
+	}
 	
 }
 
@@ -93,15 +148,22 @@ function cancelDeleteBuilding(buildingID) {
 }
 
 function cancelEditBuilding(buildingID) {
-	$("#edit"+builidingID).hide();
+	$("#editBuildingNameInput"+buildingID).val(selectedBuildingOldName);
+	$("#edit"+buildingID).hide();
 	$("#view"+buildingID).show();
 	disableAllButtons(false);
 }
 
-function cancelEditBuilding(buildingID) {
-	$("#edit"+buildingID).hide();
-	$("#view"+buildingID).show();
-	disableAllButtons(false);
+
+function saveEditBuilding(buildingID) {
+	if (edited_map!=null) {
+		$("#latitude"+buildingID).val(edited_map.getCenter().lat());
+		$("#longitude"+buildingID).val(edited_map.getCenter().lng());
+		$("#zoom"+buildingID).val(edited_map.getZoom());
+		$("#markerLatitude"+buildingID).val(edited_marker.getPosition().lat());
+		$("#markerLongitude"+buildingID).val(edited_marker.getPosition().lng());
+	}
+	document.forms["form"+buildingID].submit();
 }
 
 $(document).ready(function(){ //test
@@ -143,10 +205,32 @@ $(document).ready(function(){ //test
 		if (allBuildings.isEmpty()) {
 	%>
 	<h1>No Building Defined</h1>
+	<div class="menu">
+	<div class="menu_item">
+		<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allPermits.jsp">Permits</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+	</div>
+</div>
 	<%
 		} else {
 	%>
 	<h1>ALL BUILDINGS</h1>
+	<div class="menu">
+	<div class="menu_item">
+		<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allPermits.jsp">Permits</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+	</div>
+</div>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -156,12 +240,13 @@ $(document).ready(function(){ //test
 			for (BuildingJdo building : allBuildings) {
 				String buildingName = building.getName();
 				String buildingID = building.getStringID();
+				MapFigureJdo mapFig = building.getGoogleMapFigure();
 		%>
 
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=buildingID%>)">Edit</button>
+					onclick="editButton(<%=buildingID%>, '<%=buildingName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>,<%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=buildingID%>)">Delete</button>
 			</td>
@@ -169,8 +254,16 @@ $(document).ready(function(){ //test
 			<td><div id="view<%=buildingID%>"><%=buildingName%></div>
 
 			<div id="edit<%=buildingID%>" style="display: none">
-				<form action="/jdo/admin/updateBuildingCommand" method="get">
+			
+				<form id="form<%=buildingID%>" action="/jdo/admin/updateBuildingCommand" method="get">
 					<input type="hidden" value="<%=buildingID%>" name="buildingID" />
+					<input type="hidden" value="<%=campusId%>" name="campusId" />
+					<input id="latitude<%=buildingID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
+					<input id="longitude<%=buildingID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
+					<input id="zoom<%=buildingID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+					<input id="markerLatitude<%=buildingID%>" type="hidden" value="<%=mapFig.markerLatitude%>" name="markerLatitude" />
+					<input id="markerLongitude<%=buildingID%>" type="hidden" value="<%=mapFig.markerLongitude%>" name="markerLongitude" />
+					
 					<table class="editTable">
 						<tr>
 							<td class="editTable" width=90>Name:</td>
@@ -184,7 +277,11 @@ $(document).ready(function(){ //test
 								name="googleMapLocation" /></td>
 						</tr>
 					</table>
-					<input type="submit" value="Save" />
+					
+					<div id="map_canvas_<%=buildingID%>" class="edit_map_canvas"></div>
+
+					<button type="button" onclick="centerMarker()">Center Marker</button>
+					<button id="saveEditBuildingButton<%=buildingID%>" type="button" onclick="saveEditBuilding(<%=buildingID%>)">Save</button>
 					<button type="button" onclick="cancelEditBuilding(<%=buildingID%>)">Cancel</button>
 				</form>
 			</div>
