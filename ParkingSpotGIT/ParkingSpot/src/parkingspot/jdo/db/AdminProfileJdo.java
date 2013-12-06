@@ -118,13 +118,13 @@ public class AdminProfileJdo {
 	
 	public static AdminProfileJdo getAdminProfileWithLoginID(PersistenceManager pm, String id) {
 		AdminProfileJdo adminProfile = null;
-		Query q = pm.newQuery(AdminProfileJdo.class);
-		q.setFilter("loginId == id");	
-		q.declareParameters("String id");
+		Query query = pm.newQuery(AdminProfileJdo.class);
+		query.setFilter("loginId == id");	
+		query.declareParameters("String id");
 
 		try {
 			
-			adminProfile = (AdminProfileJdo) q.execute(id);		
+			adminProfile = (AdminProfileJdo)query.execute(id);		
 	
 	
 		} catch (Exception e) {
@@ -132,7 +132,7 @@ public class AdminProfileJdo {
 			System.out.println("exception: " + e);
 			
 		} finally {
-			q.closeAll();		
+			query.closeAll();		
 		}
 			
 		return adminProfile;
@@ -143,12 +143,20 @@ public class AdminProfileJdo {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			adminProfile = getAdminProfileWithLoginID(pm, id);
+			if (adminProfile == null){
+				System.out.print("it null");
+			}
+
 			adminProfile.name = name;
 			adminProfile.loginId = id;
 			adminProfile.adminProfile = aProfileID;
+			pm.makePersistent(adminProfile);
 		
 		} catch (Exception e) {
 			return false;
+		}
+		finally{
+			pm.close();
 		}
 		return true;
 	}
@@ -180,15 +188,19 @@ public class AdminProfileJdo {
 	@SuppressWarnings("unchecked")
 	public static List<AdminProfileJdo> getFirstAdminProfiles(int number) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query q = pm.newQuery(AdminProfileJdo.class);
+		q.setOrdering("name asc");
+		
 		List<AdminProfileJdo> results = null;
 		try {
-			
-			Query q = pm.newQuery(AdminProfileJdo.class);
-			q.setOrdering("name asc");
 			
 			results = (List<AdminProfileJdo>)q.execute();
 		} catch (Exception e) {
 			
+		}
+		finally{
+			pm.close();
+			q.closeAll();
 		}
 		return results;
 	}

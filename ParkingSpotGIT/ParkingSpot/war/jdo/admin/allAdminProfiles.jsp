@@ -1,5 +1,5 @@
 <%@page import="parkingspot.jdo.db.AdminProfileJdo"%>
-<%@page import="com.google.appengine.api.datastore.Entity"%>
+<%@ page import="javax.jdo.Query"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <%@page import="java.util.List"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -164,16 +164,39 @@ function cancelEditAdminProfile(adminProfileID) {
 <body>
 	<%
 		List<AdminProfileJdo> allAdminProfiles = AdminProfileJdo.getFirstAdminProfiles(100);
-
+		
 		if (allAdminProfiles.isEmpty()) {
 		
 	
 	%>
 	<h1>No Admin Profile Defined</h1>
+	<div class="menu">
+	<div class="menu_item">
+		<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allPermits.jsp">Permits</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+	</div>
+</div>
+	
 	<%
 		} else {
 	%>
 	<h1>ALL ADMIN PROFILES</h1>
+	<div class="menu">
+	<div class="menu_item">
+		<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allPermits.jsp">Permits</a>
+	</div>
+	<div class="menu_item">
+		<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+	</div>
+</div>
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>

@@ -15,7 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import parkingspot.gae.db.AdminProfile;
+import parkingspot.jdo.db.AdminProfileJdo;
 
 /**
  * Answer to the HTTP Servlet to add an admin profile. Redirect to the list of admin profiles. If error (e.g.
@@ -26,7 +26,7 @@ public class AddAdminProfileServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String loginID = req.getParameter("adminProfileLoginID");
-		AdminProfile.createAdminProfile(loginID);
+		AdminProfileJdo.createAdminProfile(loginID);
 		resp.sendRedirect("/jdo/admin/allAdminProfiles.jsp");
 	}
 }
