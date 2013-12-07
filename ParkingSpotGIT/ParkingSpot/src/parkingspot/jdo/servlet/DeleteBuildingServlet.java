@@ -27,7 +27,6 @@ public class DeleteBuildingServlet extends HttpServlet {
 		String buildingID = req.getParameter("buildingID");
 		String campusID = req.getParameter("campusID");
 		BuildingJdo.deleteBuildingCommand(buildingID);
-//		System.out.println("HERE");
-	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusId="+campusID+"PageRefresh=true");
+	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusId="+campusID);
 	}
 }

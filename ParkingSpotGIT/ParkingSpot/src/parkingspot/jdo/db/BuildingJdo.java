@@ -155,7 +155,6 @@ public class BuildingJdo {
 	
 	public static BuildingJdo createBuilding(String buildingName, String campusID) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        System.out.print("I made it");
         BuildingJdo building = null;
         
         try {

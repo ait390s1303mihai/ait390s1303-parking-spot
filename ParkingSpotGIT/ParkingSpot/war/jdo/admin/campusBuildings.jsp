@@ -47,7 +47,7 @@ $.urlParam = function(name){
 var campusID = $.urlParam('campusID');
 
 
-var buildingNamePattern = "/^[ \w-'',]{3,100}$/";
+var buildingNamePattern = /^[ \w-'',]{3,100}$/
 buildingNamePattern.compile(buildingNamePattern)
 
 // check the syntax of the name of a building 
@@ -55,6 +55,30 @@ function checkBuildingName(name) {
 	return buildingNamePattern.test(name);
 }
 
+$(document).ready(function(){ 
+	// keypress event for Add button
+	$("#addBuildingInput").keyup(function() {
+	name=$("#addBuildingInput").val();
+	if (checkBuildingName(name)) {
+		$("#addBuildingButton").attr("disabled",null);
+		$("#addBuildingError").hide();
+	} else {
+		$("#addBuildingButton").attr("disabled","disabled");
+		if (name!=null && name.length>0) 
+			$("#addBuildingError").show();
+	}});
+	
+	$(".editBuildingNameInput").keyup(function() {
+		
+		alert("i am here");
+		if (selectedBuildingForEdit==null)
+			return;
+		name=$("#editBuildingNameInput"+selectedBuildingForEdit).val();
+		editNameError = ! checkBuildingName(name);
+		updateSaveEditButton();
+		});
+	
+});
 
 var selectedBuilding=null;
 
@@ -201,35 +225,7 @@ function saveEditBuilding(buildingID) {
 	}
 	document.forms["form"+buildingID].submit();
 }
-
-$(document).ready(function(){ //test
 	
-	if($.urlParam('PageRefresh')=="true"){
-		location.window.reload();
-	}
-	
-	// keypress event for Add button
-	$("#addBuildingInput").keyup(function() {
-	name=$("#addBuildingInput").val();
-	if (checkBuildingName(name)) {
-		$("#addBuildingButton").attr("disabled",null);
-		$("#addBuildingError").hide();
-	} else {
-		$("#addBuildingButton").attr("disabled","disabled");
-		if (name!=null && name.length>0) 
-			$("#addBuildingError").show();
-	}
-	});
-	
-	$(".editBuildingNameInput").keyup(function() {
-		if (selectedBuildingForEdit==null)
-			return;
-		name=$("#editBuildingNameInput"+selectedBuildingForEdit).val();
-		editNameError = ! checkBuildingName(name);
-		updateSaveEditButton();
-		});
-	
-});	
 
 </script>
 
@@ -246,9 +242,6 @@ $(document).ready(function(){ //test
 		<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
 	</div>
 	<div class="menu_item">
-		<a href="/jdo/admin/allPermits.jsp">Permits</a>
-	</div>
-	<div class="menu_item">
 		<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
 	</div>
 </div>
@@ -259,9 +252,6 @@ $(document).ready(function(){ //test
 	<div class="menu">
 	<div class="menu_item">
 		<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
-	</div>
-	<div class="menu_item">
-		<a href="/jdo/admin/allPermits.jsp">Permits</a>
 	</div>
 	<div class="menu_item">
 		<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
@@ -282,7 +272,7 @@ $(document).ready(function(){ //test
 		<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=buildingID%>, '<%=buildingName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>,<%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>)">Edit</button>
+					onclick="editButton(<%=buildingID%>, '<%=buildingName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>, <%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>)">Edit</button>
 				<button class="deletebutton" type="button"
 					onclick="deleteButton(<%=buildingID%>)">Delete</button>
 			</td>
@@ -290,11 +280,6 @@ $(document).ready(function(){ //test
 			<td><div id="view<%=buildingID%>"><%=buildingName%></div>
 
 			<div id="edit<%=buildingID%>" style="display: none">
-				
-				/**
-				 * A form that sends all building data to the UpdateBuildingServlet
-				 * to be saved in the object.
-				 */
 				
 				<form id="form<%=buildingID%>" action="/jdo/admin/updateBuildingCommand" method="get">
 					<input type="hidden" value="<%=buildingID%>" name="buildingID" />
@@ -326,7 +311,6 @@ $(document).ready(function(){ //test
 					<button type="button" onclick="cancelEditBuilding(<%=buildingID%>)">Cancel</button>
 				</form>
 			</div>
-			
 
 			<div id="delete<%=buildingID%>" style="display: none">
 				Do you want to delete this building?

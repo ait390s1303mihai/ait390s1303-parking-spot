@@ -26,9 +26,6 @@ public class AddBuildingServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String buildingName = req.getParameter("buildingName");
 		String campusIdParam = req.getParameter("campusIdParam");
-		
-		//TODO check if the building name is already used
-		//TODO if used return an error
 		BuildingJdo.createBuilding(buildingName, campusIdParam);
 	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusID="+campusIdParam);
 	}
