@@ -1,4 +1,4 @@
-<%@page import="parkingspot.jdo.db.AdminProfileJdo"%>
+	<%@page import="parkingspot.jdo.db.AdminProfileJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <%@page import="java.util.List"%>

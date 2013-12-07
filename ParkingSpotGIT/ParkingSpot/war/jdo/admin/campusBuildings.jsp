@@ -28,6 +28,12 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script>
+
+/*
+ * 
+ *Variable Declarations 
+ *
+ */
 var selectedBuildingForEdit = null  
 var editNameError = false;
 var editLocationError = false;
@@ -38,13 +44,13 @@ $.urlParam = function(name){
     return results[1] || 0;
 }
 
-var campusId = $.urlParam('campusID');
+var campusID = $.urlParam('campusID');
 
 
-var buildingNamePattern = /^[ \w-'',]{3,100}$/
-buildingNamePattern.compile(campusNamePattern)
+var buildingNamePattern = "/^[ \w-'',]{3,100}$/";
+buildingNamePattern.compile(buildingNamePattern)
 
-// check the syntax of the name of a campus 
+// check the syntax of the name of a building 
 function checkBuildingName(name) {
 	return buildingNamePattern.test(name);
 }
@@ -66,6 +72,13 @@ var selectedBuildingOldName=null;
 var selectedBuildingOldAddress=null;
 var selectedBuildingOldLocation=null;
 
+/**
+ * Sends building data to the initialize map function
+ * 
+ * @param A building ID, a name, a latitude, longitude, zoom, marker latitude and maker longitude variable
+ * @return void
+ */
+
 function editButton(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng) {
 	selectedBuildingForEdit=buildingID;
 	disableAllButtons(true);
@@ -83,6 +96,14 @@ function editButton(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng) {
 
 var edited_map=null;
 var edited_marker=null;
+
+/**
+ * Initializes a google map with specific building data 
+ * and displays it to the screen
+ * 
+ * @param A building ID, a name, a latitude, longitude, zoom, marker latitude and maker longitude variable
+ * @return void
+ */
 
 function initializeMap(buildingID, buildingName, lat, lng, zoom, mkLat, mkLng) {
 	var myLatlng = new google.maps.LatLng(lat,lng);
@@ -111,11 +132,18 @@ function centerMarker() {
 
 var selectedBuildingForDelete=null;
 
+/**
+ * Sends selected building to the servlet to be deleted.
+ * 
+ * @param A building ID
+ * @return void
+ */
+
 function confirmDeleteBuilding(buildingID) {
 	selectedBuildingForDelete=buildingID;
 	
 	$.post("/jdo/admin/deleteBuildingCommand", 
-			{buildingID: buildingID, campusId: campusId},
+			{buildingID: buildingID, campusID: campusID},
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
@@ -155,8 +183,15 @@ function cancelEditBuilding(buildingID) {
 	disableAllButtons(false);
 }
 
+/**
+ * Saves a the current position of the map to the
+ * building object.
+ * 
+ * @param A building ID
+ * @return void
+ */
 
-function saveEditBuilding(buildingID, campusId) {
+function saveEditBuilding(buildingID) {
 	if (edited_map!=null) {
 		$("#latitude"+buildingID).val(edited_map.getCenter().lat());
 		$("#longitude"+buildingID).val(edited_map.getCenter().lng());
@@ -165,7 +200,6 @@ function saveEditBuilding(buildingID, campusId) {
 		$("#markerLongitude"+buildingID).val(edited_marker.getPosition().lng());
 	}
 	document.forms["form"+buildingID].submit();
-	location.href = "/jdo/admin/campusBuildings.jsp?campusId=" + campusId;
 }
 
 $(document).ready(function(){ //test
@@ -202,8 +236,8 @@ $(document).ready(function(){ //test
 </head>
 <body>
 	<%
-		String campusId = request.getParameter("campusID");
-		List<BuildingJdo> allBuildings = BuildingJdo.getFirstBuildings(100, campusId);
+		String campusID = request.getParameter("campusID");
+		List<BuildingJdo> allBuildings = BuildingJdo.getFirstBuildings(100, campusID);
 		if (allBuildings.isEmpty()) {
 	%>
 	<h1>No Building Defined</h1>
@@ -256,10 +290,15 @@ $(document).ready(function(){ //test
 			<td><div id="view<%=buildingID%>"><%=buildingName%></div>
 
 			<div id="edit<%=buildingID%>" style="display: none">
-			
+				
+				/**
+				 * A form that sends all building data to the UpdateBuildingServlet
+				 * to be saved in the object.
+				 */
+				
 				<form id="form<%=buildingID%>" action="/jdo/admin/updateBuildingCommand" method="get">
 					<input type="hidden" value="<%=buildingID%>" name="buildingID" />
-					<input type="hidden" value="<%=campusId%>" name="campusId" />
+					<input type="hidden" value="<%=campusID%>" name="campusID" />
 					<input id="latitude<%=buildingID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
 					<input id="longitude<%=buildingID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
 					<input id="zoom<%=buildingID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
@@ -283,7 +322,7 @@ $(document).ready(function(){ //test
 					<div id="map_canvas_<%=buildingID%>" class="edit_map_canvas"></div>
 
 					<button type="button" onclick="centerMarker()">Center Marker</button>
-					<button id="saveEditBuildingButton<%=buildingID%>" type="button" onclick="saveEditBuilding(<%=buildingID%>, <%campusId%>)">Save</button>
+					<button id="saveEditBuildingButton<%=buildingID%>" type="button" onclick="saveEditBuilding(<%=buildingID%>)">Save</button>
 					<button type="button" onclick="cancelEditBuilding(<%=buildingID%>)">Cancel</button>
 				</form>
 			</div>
@@ -312,7 +351,7 @@ $(document).ready(function(){ //test
 					<form action="/jdo/admin/addBuildingCommand" method="get">
 						New Building: <input type="text" name="buildingName" size="50" /> <input
 							id="addbuilding" type="submit" value="Add" />
-							<input type="hidden" name="campusIdParam" value="<%=campusId%>" />
+							<input type="hidden" name="campusIdParam" value="<%=campusID%>" />
 					</form>
 				</td>
 			</tr>

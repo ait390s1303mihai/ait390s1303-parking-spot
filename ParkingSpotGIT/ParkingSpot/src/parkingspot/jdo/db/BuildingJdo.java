@@ -102,16 +102,16 @@ public class BuildingJdo {
 		return b;
 	}
 	
-	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String nameParam) {
+	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String nameParam, String campusID) {
 		BuildingJdo building = null;
 		try {
 
 			Query query = pm.newQuery(BuildingJdo.class);
-			query.setFilter("name == nameParam");
+			query.setFilter("name == nameParam && campusId == campusID");
 			query.setOrdering("name asc");
-			query.declareParameters("String nameParam");
+			query.declareParameters("String nameParam, String campusID");
 			@SuppressWarnings("unchecked")
-			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(nameParam);
+			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(nameParam, campusID);
 			
 			if (result != null && result.size() > 0) {
 				building = result.get(0);
@@ -153,9 +153,9 @@ public class BuildingJdo {
 	 * @return the creates building object
 	 */
 	
-	public static BuildingJdo createBuilding(String buildingName, String campusId) {  
+	public static BuildingJdo createBuilding(String buildingName, String campusID) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        
+        System.out.print("I made it");
         BuildingJdo building = null;
         
         try {
@@ -164,14 +164,14 @@ public class BuildingJdo {
 				return null;
 			}
 			
-			building = getBuildingWithName(pm, buildingName);
+			building = getBuildingWithName(pm, buildingName, campusID);
 			if (building != null) {
 				return null;
 			}
 			
-			CampusJdo campus = CampusJdo.getCampus(pm, campusId);
+			CampusJdo campus = CampusJdo.getCampus(pm, campusID);
 			
-			building = new BuildingJdo(buildingName, "", campusId, campus.getGoogleMapFigure());
+			building = new BuildingJdo(buildingName, "", campusID, campus.getGoogleMapFigure());
 			pm.makePersistent(building);
 			return building;
 		} finally {

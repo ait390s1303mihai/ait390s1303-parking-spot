@@ -30,6 +30,6 @@ public class AddBuildingServlet extends HttpServlet {
 		//TODO check if the building name is already used
 		//TODO if used return an error
 		BuildingJdo.createBuilding(buildingName, campusIdParam);
-	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusId="+campusIdParam);
+	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusID="+campusIdParam);
 	}
 }

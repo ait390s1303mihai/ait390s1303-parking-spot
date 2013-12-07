@@ -25,9 +25,9 @@ public class UpdateBuildingServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		BuildingJdo.updateBuildingCommand(req.getParameter("buildingID"), req.getParameter("buildingName"),
-				req.getParameter("googleMapLocation"), req.getParameter("campusId"), req.getParameter("latitude"), req.getParameter("longitude"), req.getParameter("zoom"), 
+				req.getParameter("googleMapLocation"), req.getParameter("campusID"), req.getParameter("latitude"), req.getParameter("longitude"), req.getParameter("zoom"), 
 				req.getParameter("markerLatitude"), req.getParameter("markerLongitude"));
 
-		resp.sendRedirect("/jdo/admin/campusBuildings.jsp");
+		resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusID=" + req.getParameter("campusID"));
 	}
 }
