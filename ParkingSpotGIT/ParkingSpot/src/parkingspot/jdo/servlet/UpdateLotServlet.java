@@ -22,12 +22,34 @@ import parkingspot.jdo.db.LotJdo;
 // It is going through the catch every time
 public class UpdateLotServlet extends HttpServlet {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
-                LotJdo.updateLotCommand(req.getParameter("lotId"), req.getParameter("lotName"),
-                                req.getParameter("lotLocation"), lotSpaces, req.getParameter("campusId"));
+               String lotID = req.getParameter("lotID");
+               int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
+               String lotName = req.getParameter("lotName");
+               String campusID = req.getParameter("campusID");
+               String latitude =  req.getParameter("latitude");
+               String longitude = req.getParameter("longitude");
+               String zoom = req.getParameter("zoom"); 
+       		   String markerLatitude = req.getParameter("markerLatitude");
+       		   String markerLongitude = req.getParameter("markerLongitude");
+       		   String googleMapLocation = req.getParameter("googleMapLocation"); 
+       		
+              
+       		  if (LotJdo.updateLotCommand(lotID, lotName, googleMapLocation, lotSpaces, campusID, latitude, longitude, zoom, markerLatitude, markerLongitude)){
+       			  System.out.println("lotID"+lotID);
+                  System.out.println("lotSpaces"+lotSpaces);
+                  System.out.println("lotName"+lotName);
+                  System.out.println("campusID"+campusID);
+                  System.out.println("latitude"+latitude);
+                  System.out.println("longitude"+longitude);
+                  System.out.println("zoom"+zoom);          
+                  System.out.println("markerLatitude"+markerLatitude);
+                  System.out.println("markerLongitude"+markerLongitude);
+                  System.out.println("googleMapLocation"+googleMapLocation);
+                  
+       		  }
                 
-                System.out.println("Update lot servlet");
+              
                 
-                resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
+                resp.sendRedirect("/jdo/admin/campusLots.jsp?campusID="+req.getParameter("campusID"));
         }
 }

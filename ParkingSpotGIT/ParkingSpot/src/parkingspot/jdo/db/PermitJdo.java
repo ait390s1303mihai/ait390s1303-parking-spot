@@ -3,6 +3,7 @@ package parkingspot.jdo.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -40,6 +41,10 @@ import parkingspot.jdo.db.LotJdo;
 @PersistenceCapable
 public class PermitJdo {
 	
+	/*
+	 * Persistent Variables
+	 * 
+	 */
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
@@ -50,29 +55,59 @@ public class PermitJdo {
 	@Persistent
 	private ArrayList<String> lotIds;
 	
-	public PermitJdo(String name) {
+	/**
+	 * Constructor for the Permit
+	 * 
+	 * @param name A string with the name of the Permit (String).
+	 */
+	private PermitJdo(String name) {
 		this.name = name;
 		this.fuelEfficient = false;		
 		this.lotIds = new ArrayList<String>();
 	}
 	
+	/**
+	 * Return the key of the Permit Object
+	 * 
+	 * @return key A Key unique for each Permit
+	 */
 	public Key getKey() {
 		return key;
 	}
-	
+	/**
+	 * Return the String Id  of the permit.
+	 * 
+	 * @return StringID the String of the Key 
+	 */
 	public String getStringID() {
 		return Long.toString(getKey().getId());
 	}
-	
+	/**
+	 * Return the name of the permit.
+	 * 
+	 * @return name A String with the name of the Permit 
+	 */
 	public String getName() {
 		return name;
 	}
+	/**
+	 * Return if true or false if the permit is fuel efficient.
+	 * 
+	 * @return True or False if permit is fuel efficent. 
+	 */
 	
 	public Boolean isFuelEfficient() {
 		return fuelEfficient;
 	}
 	
-	public static PermitJdo createPermit(String permitName, String lotId) {  
+	/**
+	 * Create and Return the permit object by name.
+	 * 
+	 * @param permitName The String for name of the Permit
+	 * @return the Permit object
+	 */
+	
+	public static PermitJdo createPermit(String permitName) {  
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 	    PermitJdo permit = new PermitJdo(permitName);
 	    try {
@@ -82,9 +117,7 @@ public class PermitJdo {
            pm.close();
        }
 	    
-	   
 	    return permit;
-		
 		
 	}
 	
@@ -94,6 +127,13 @@ public class PermitJdo {
 	}
 	
 	public static PermitJdo getPermit(PersistenceManager pm, String permitID){
+		long id = Long.parseLong(permitID);
+		PermitJdo permit = pm.getObjectById(PermitJdo.class, id);
+		pm.close();
+		return permit;
+	}
+
+	public static PermitJdo getPermitWithPM(PersistenceManager pm, String permitID){
 		long id = Long.parseLong(permitID);
 		PermitJdo permit = pm.getObjectById(PermitJdo.class, id);
 		return permit;
@@ -129,7 +169,7 @@ public class PermitJdo {
 			results = (List<PermitJdo>)q.execute(lotIdParam);	
 		
 		} catch (Exception e) {
-				
+				return null;			
 		} finally {
 			q.closeAll();		
 		}		
@@ -140,46 +180,61 @@ public class PermitJdo {
 	
 
 	public static boolean updatePermitCommand(String permitID, String name, Boolean fuelEfficient) {
-        try {
-			PersistenceManager pm = PMF.get().getPersistenceManager();
-			PermitJdo permit = getPermit(pm, permitID);
+		PermitJdo permit = getPermit(permitID);
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			
 			permit.name= name;
 			permit.fuelEfficient= fuelEfficient;
-		    pm.close();
-			
+		  
         } catch (Exception e) {
         	return false;			
+	    } finally{	
+	    	  pm.close();
 	    }
         return true;
 	}
 	
-	public static void deletePermitCommand(String permitID){
+	
+	public static void deletePermitCommand(String permitID, String lotID){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			PermitJdo permit = getPermit(pm, permitID);
-            pm.deletePersistent(permit);
+			PermitJdo permit = getPermitWithPM(pm, permitID);
+			pm.deletePersistent(permit);	
         } finally {
             pm.close();
         }
 	}
+
+	public static void removePermitIdFromLot(String permitID, String lotID){
+		
+			LotJdo lot = LotJdo.getLot(lotID);
+			LotJdo.removePermitId(permitID, lot);
+		
+	}
 	
 	
 	
-	public static boolean updateLotInPermitCommand(PermitJdo permit, String lotId){
+	public static boolean updateLotInPermitCommand(String lotID, String permitID){
+		System.out.println("permitID:    ------"+permitID);
+		System.out.println("lotID:    ------"+lotID);
+		PermitJdo permit = PermitJdo.getPermit(permitID);
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		javax.jdo.Transaction tx = pm.currentTransaction();
 		tx.begin(); // Start the PM transaction
 		try
 			{
+				
+				System.out.println("permit:    ------");
 			   	//perform some persistence operations
 				//Add the lot id to permit 
-				permit.lotIds.add(lotId);
-					
+				permit.lotIds.add(lotID);
+				System.out.println("add:    ------");	
 				pm.makePersistent(permit);
-				
+				System.out.println("makePersistent:    ------");	
 				//Add the permit id to lot 
-				LotJdo.updatePermitsInLotsCommand(lotId, permit.getStringID());
-			   
+				LotJdo.updatePermitsInLotsCommand(lotID, permitID);
+				System.out.println("update:    ------");	
 			    tx.commit(); // Commit the PM transaction			
 			} 
 			catch (Exception e) 

@@ -1,5 +1,6 @@
 <%@ page import="parkingspot.jdo.db.LotJdo"%>
 <%@ page import="parkingspot.jdo.db.CampusJdo"%>
+<%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -26,15 +27,33 @@
 	href="/stylesheets/parkingspot.css">
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script>
+var selectedLotForEdit = null  
+var editNameError = false;
+var editAddressError = false;
+
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 }
 
 var selectedLot=null;
-var selectedCampus = getURLParameter('campusId');
+var selectedCampus = getURLParameter('campusID');
 
+function updateSaveEditButton() {
+	if (editNameError||editLocationError||editAddressError) {
+		$("#saveEditLotButton"+selectedLotForEdit).attr("disabled","disabled");
+	} else {
+		$("#saveEditLotButton"+selectedLotForEdit).attr("disabled",null);
+	}
+	if (editNameError) {
+		$("#editLotNameError"+selectedLotForEdit).show();
+	} else {
+		$("#editLotNameError"+selectedLotForEdit).hide();
+	}
+	
+}
 
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
@@ -42,27 +61,37 @@ function disableAllButtons(value) {
 	$("#addlot").attr("disabled", (value)?"disabled":null);
 }
 
-function deleteButton(lotId) {
+function deleteButton(lotID) {
 	disableAllButtons(true);
-	$("#delete"+lotId).show();
+	$("#delete"+lotID).show();
 }
 
-function editButton(lotId) {
+var selectedLotOldName=null;
+var selectedLotOldLocation=null;
+
+function editButton(lotID,lotName, lat, lng, zoom, mkLat, mkLng) {	
+	selectedLotForEdit=lotID;
 	disableAllButtons(true);
-	$("#view"+lotId).hide();
-	$("#edit"+lotId).show();
+	editNameError = false;
+	editLocationError = false;
+	updateSaveEditButton();
+	selectedLotOldName=$("#editLotNameInput"+selectedLotForEdit).val();
+	selectedBuildingOldLocation=null;	
+	$("#view"+lotID).hide();
+	$("#edit"+lotID).show();
+	initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng);
 }
 
-function confirmDeleteLot(lotId) {
-	selectedLot=lotId;
+function confirmDeleteLot(lotID) {
+	selectedLot=lotID;
 	$.post("/jdo/admin/deleteLotCommand", 
-			{lotId: lotId}, 
+			{lotID: lotID, campusID: selectedCampus},
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
 					location.reload();
 				} else {
-					canceldeletelot(selectedLot);
+					cancelDeleteLot(selectedLot);
 					selectedLot = null;
 				}
 			}
@@ -71,32 +100,113 @@ function confirmDeleteLot(lotId) {
 	
 }
 
-function cancelDeleteLot(lotId) {
-	$("#delete"+lotId).hide();
+function cancelDeleteLot(lotID) {
+	$("#delete"+lotID).hide();
 	disableAllButtons(false);
 }
 
-function cancelEditLot(lotId) {
-	$("#edit"+lotId).hide();
-	$("#view"+lotId).show();
+function cancelEditLot(lotID) {
+	$("#edit"+lotID).hide();
+	$("#view"+lotID).show();
 	disableAllButtons(false);
 }
 
-function cancelEditLot(lotId) {
-	$("#edit"+lotId).hide();
-	$("#view"+lotId).show();
-	disableAllButtons(false);
+
+
+var edited_map=null;
+var edited_marker=null;
+
+function initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng) {
+	var myLatlng = new google.maps.LatLng(lat,lng);
+    var map_canvas = document.getElementById('map_canvas_'+lotID);
+    var map_options = {
+            center: myLatlng,
+            zoom: zoom,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          }
+    edited_map = new google.maps.Map(map_canvas, map_options);
+    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+    edited_marker = new google.maps.Marker({
+    	position: markerLatlng,
+    	title: lotName,
+    	draggable:true,
+    	icon: '/images/building.png'
+    });
+    edited_marker.setMap(edited_map);
 }
+
+function saveEditLot(lotID) {
+	if (edited_map!=null) {
+		$("#latitude"+lotID).val(edited_map.getCenter().lat());
+		$("#longitude"+lotID).val(edited_map.getCenter().lng());
+		$("#zoom"+lotID).val(edited_map.getZoom());
+		$("#markerLatitude"+lotID).val(edited_marker.getPosition().lat());
+		$("#markerLongitude"+lotID).val(edited_marker.getPosition().lng());
+	}
+	document.forms["form"+lotID].submit();
+}
+
+
+function centerMarker() {
+	edited_marker.setPosition(edited_map.getCenter());
+}
+
+var lotNamePattern = /^[ \w-'',]{3,100}$/
+	lotNamePattern.compile(lotNamePattern)
+
+// check the syntax of the name of a campus 
+function checkLotName(name) {
+	return lotNamePattern.test(name);
+}
+
+var selectedLotToEdit = null
+var editNameError = false;
+
+
+$(document).ready(function() {
+	
+	// keypress event for Add button
+	$("#addLotInput").keyup(function() {
+	name=$("#addLotInput").val();
+	if (checkLotName(name)) {
+		$("#addLotButton").attr("disabled",null);
+		$("#addLotError").hide();
+	} else {
+		$("#addLotButton").attr("disabled","disabled");
+		if (name!=null && name.length>0) 
+			$("#addLotError").show();
+	}
+	});
+	
+	// keypress event for Edit button
+	$(".editLottNameInput").keyup(function() {
+		if (selectedPermitForEdit==null)
+			return;
+		name=$("#editLotNameInput"+selectedLotForEdit).val();
+		// insert 'checked' property on checkbox if true
+	    if($('#FuelEfficientCheckbox').val()== "true"){
+
+	         $("input:checkbox").prop('checked', true);
+	    } else {
+	        $("input:checkbox").prop('checked', false);
+	    }
+		editNameError = ! checkLotName(name);
+		updateSaveEditButton();
+	});
+	
+});	
+
+
 
 </script>
 
 </head>
 <body>
 	<%
-		String campusId = request.getParameter("campusId");
-		CampusJdo campus = CampusJdo.getCampus(campusId);
+		String campusID = request.getParameter("campusID");
+		CampusJdo campus = CampusJdo.getCampus(campusID);
 		String campusName = campus.getName();
-		List<LotJdo> allLots = LotJdo.getFirstLots(100, campusId);
+		List<LotJdo> allLots = LotJdo.getFirstLots(100, campusID);
 		if (allLots.isEmpty()) {
 	%>
 	<h1>No Lots Are Defined For The <%=campusName%> Campus</h1>
@@ -106,7 +216,15 @@ function cancelEditLot(lotId) {
 	%>
 	
 	<h1>All Lots for <%=campusName%> Campus</h1>
-	<span class="backBtn" onclick="javascript:window.location='/jdo/admin/allCampuses.jsp';">Back</span>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+	
 	<table id="main">
 		
 		<tr>
@@ -117,35 +235,42 @@ function cancelEditLot(lotId) {
 		
 		<%
 			for (LotJdo lot : allLots) {
-				String lotId = lot.getStringID();
+				String lotID = lot.getStringID();
 				String lotName = lot.getName();
+				MapFigureJdo mapFig = lot.getGoogleMapFigure();
 		%>
-
-		<tr>
+			<tr>
 			<td class="adminOperationsList">
 				<button class="editbutton" type="button"
-					onclick="editButton(<%=lotId%>)">Edit</button>
+					onclick="editButton(<%=lotID%>, '<%=lotName%>',<%=mapFig.latitude%>,<%=mapFig.longitude%>, <%=mapFig.zoom%>,<%=mapFig.markerLatitude%>,<%=mapFig.markerLongitude%>)">Edit</button>
 				<button class="deletebutton" type="button"
-					onclick="deleteButton(<%=lotId%>)">Delete</button>
+					onclick="deleteButton(<%=lotID%>)">Delete</button>
 			</td>
-
-			<td><div id="view<%=lotId%>"><%=lotName%></div>
-
-			<div id="edit<%=lotId%>" style="display: none">
-				<form action="/jdo/admin/updateLotCommand" method="get">
-					<input type="hidden" value="<%=campusId%>" name="campusId" />
-					<input type="hidden" value="<%=lotId%>" name="lotId" />
+			
+			<td><div id="view<%=lotID%>"><%=lotName%></div>
+				
+			<div id="edit<%=lotID%>" style="display: none">
+				<form id="form<%=lotID%>" action="/jdo/admin/updateLotCommand" method="get">
+					<input type="hidden" value="<%=lotID%>" name="lotID" />
+					<input type="hidden" value="<%=campusID%>" name="campusID"/>
+					<input type="hidden" value="" name="googleMapLocation"/>
+					<input id="latitude<%=lotID%>" type="hidden" value="<%=mapFig.latitude%>" name="latitude" />
+					<input id="longitude<%=lotID%>" type="hidden" value="<%=mapFig.longitude%>" name="longitude" />
+					<input id="zoom<%=lotID%>" type="hidden" value="<%=mapFig.zoom%>" name="zoom" />
+					<input id="markerLatitude<%=lotID%>" type="hidden" value="<%=mapFig.markerLatitude%>" name="markerLatitude" />
+					<input id="markerLongitude<%=lotID%>" type="hidden" value="<%=mapFig.markerLongitude%>" name="markerLongitude" />
+					
 					<table class="editTable">
 						<tr>
-						
 							<td class="editTable" width=90>Name:</td>
 							<td class="editTable"><input type="text" class="editText"
 								value="<%=lotName%>" name="lotName" /></td>
 						</tr>
 						<tr>
-							<td class="editTable">Location:</td>
+							<td class="editTable">Google Map:</td>
 							<td class="editTable"><input type="text" class="editText"
-								value="<%=lot.getLocation()%>" name="lotLocation" /></td>
+								value="<%=lot.getGoogleMapLocation()%>"
+								name="googleMapLocation" /></td>
 						</tr>
 						<tr>
 							<td class="editTable">Spaces:</td>
@@ -154,27 +279,33 @@ function cancelEditLot(lotId) {
 								name="lotSpaces" /></td>
 						</tr>
 					</table>
-					<input type="submit" value="Save" />
-					<button type="button" onclick="cancelEditLot(<%=lotId%>)">Cancel</button>
+					
+					<div id="map_canvas_<%=lotID%>" class="edit_map_canvas"></div>
+
+					<button type="button" onclick="centerMarker()">Center Marker</button>
+					<button id="saveEditLotButton<%=lotID%>" type="button" onclick="saveEditLot(<%=lotID%>)">Save</button>
+					<button type="button" onclick="cancelEditLot(<%=lotID%>)">Cancel</button>
+					
+		
 				</form>
 			</div>
 			
 
-			<div id="delete<%=lotId%>" style="display: none">
+			<div id="delete<%=lotID%>" style="display: none">
 				Do you want to delete this lot?
-				<button type="button" onclick="confirmDeleteLot(<%=lotId%>)">Delete</button>
-				<button type="button" onclick="cancelDeleteLot(<%=lotId%>)">Cancel</button>
+				<button type="button" onclick="confirmDeleteLot(<%=lotID%>)">Delete</button>
+				<button type="button" onclick="cancelDeleteLot(<%=lotID%>)">Cancel</button>
 			</div>
 		</td>
 		
 			<td>
 				<form action="/jdo/admin/allPermits.jsp" style="display:inline">
-					<input type="hidden" value="<%=lotId%>" name="lotId" />
+					<input type="hidden" value="<%=lotID%>" name="lotID" />
 					<input type="hidden" value="<%=lotName%>" name="lotName" />
 					<input type="submit" value="Permits">
 				</form>
 			</td>
-
+	
 		
 		</tr>
 
@@ -188,16 +319,19 @@ function cancelEditLot(lotId) {
 			<tr>
 				<td colspan="2" class="footer">
 					 <form action="/jdo/admin/addLotCommand" method="get">
-						<input type="hidden" value="<%=campusId%>" name="campusId" />
-						New Lot Name: <input type="text" name="lotName" size="50" />
-						<input id="addLot" type="submit" value="Add" />
+						<input type="hidden" value="<%=campusID%>" name="campusID" />
 						
+						New Lot Name: <input type="text" name="lotName" id="addLotInput" size="50" />
+						<input id="addLotButton" type="submit" value="Add" disabled="disabled"  />
+						<div id="addLotError" class="error" style="display: none">Invalid
+							Permit name (minimum 3 characters: letters, digits, spaces, -, ')</div>
 					</form>
 				</td>
 			</tr>
 		</tfoot>
 
 	</table>
+	
 	
 </body>
 </html>

@@ -62,7 +62,15 @@ $(document).ready(function() {
 		updateSaveEditButton();
 	});
 	
-});	
+});
+
+$.urlParam = function(name){
+    var results = new RegExp('[\\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+    return results[1] || 0;
+}
+
+var lotID = $.urlParam('lotID');
+var lotName = $.urlParam('lotName');
 
 function updateSaveEditButton() {
 	if (editNameError||editFuelEfficientError) {
@@ -112,7 +120,7 @@ var selectedPermitForDelete=null;
 function confirmDeletePermit(permitID) {
 	selectedPermitForDelete=permitID;
 	$.post("/jdo/admin/deletePermitCommand", 
-			{permitID: permitID}, 
+			{permitID: permitID, lotID: lotID}, 
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
@@ -155,15 +163,14 @@ function cancelEditPermit(permitID) {
 
 
 function addPermitToLot(permitID, lotID){
-	alert(permitID);
-	alert(lotID);
-	$.get("/jdo/admin/AddPermitToLotCommand", 
-			{permitID: permitID}, 
-			{lotID: lotID},
+	$.post("/jdo/admin/AddPermitToLotCommand", 
+			{lotID: lotID, permitID: permitID},
 			function (data,status) {
 				//alert("Data "+data+" status "+status);
 				if (status="success") {
+					alert("success");
 					location.reload();
+					
 				} else {
 					
 					alert("Something Went Wrong Sorry!")
@@ -177,16 +184,34 @@ function addPermitToLot(permitID, lotID){
 </head>
 <body>
 	<%
-		String lotId = request.getParameter("lotId");
+		String lotID = request.getParameter("lotID");
 		String lotName = request.getParameter("lotName");
-		List<PermitJdo> lotPermits = PermitJdo.getFirstPermitsByLotId(100, lotId);
+		List<PermitJdo> lotPermits = PermitJdo.getFirstPermitsByLotId(100, lotID);
 		if (lotPermits.isEmpty()) {
 	%>
 	<h1>No Permits Defined For <%=lotName%></h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+	
 	<%
 		} else {
 	%>
-	<h1>ALL PERMITS FOR <%=lotName%></h1>
+	<h1>ALL PERMITS FOR <%=lotName%> </h1>
+	<div class="menu">
+		<div class="menu_item">
+			<a href="/jdo/admin/allCampuses.jsp">Campuses</a>
+		</div>
+		<div class="menu_item">
+			<a href="/jdo/admin/allAdminProfiles.jsp">Admin Profiles</a>
+		</div>
+	</div>
+	
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
@@ -254,7 +279,7 @@ function addPermitToLot(permitID, lotID){
 						New Permit: <input id="addPermitInput" type="text"
 							name="permitName" size="50" /> <input id="addPermitButton"
 							type="submit" value="Add" disabled="disabled" />
-							<input type="hidden" name="lotId" value="<%=lotId%>" />
+							<input type="hidden" name="lotID" value="<%=lotID%>" />
 					</form>
 					<div id="addPermitError" class="error" style="display: none">Invalid
 						Permit name (minimum 3 characters: letters, digits, spaces, -, ')</div>
@@ -274,19 +299,30 @@ function addPermitToLot(permitID, lotID){
 		} else {
 	%>
 	<h1>ALL PERMITS</h1>
+
 	<table id="main">
 		<tr>
 			<th class="adminOperationsList">Operations</th>
 			<th>Permit Name</th>
 		</tr>
 		<%
+			boolean result = true;
 			for (PermitJdo permit : allPermits) {
+				System.out.println(permit.getName());
+				for(PermitJdo lotPermit: lotPermits){
+					System.out.println(lotPermit.getName());
+					if (permit.getStringID() == lotPermit.getStringID()){
+						System.out.println(lotPermit.getName()+"false");
+						result = false;
+					}
+				}
+				if (result == true){
 					String permitName = permit.getName();
 					String permitID = permit.getStringID();
 		%>
 		<tr>
 			<td class="adminOperationsList">
-					<button type="button" onclick="addPermitToLot(<%=permitID%>, <%=lotId%>)">Add Permit to Lot</button>
+					<button type="button" onclick="addPermitToLot(<%=permitID%>, <%=lotID%>)">Add Permit to Lot</button>
 			</td>
 
 			<td><div id="view<%=permitID%>"><%=permitName%></div>
@@ -325,6 +361,7 @@ function addPermitToLot(permitID, lotID){
 		</tr>
 
 		<%
+				}
 			}
 
 			}

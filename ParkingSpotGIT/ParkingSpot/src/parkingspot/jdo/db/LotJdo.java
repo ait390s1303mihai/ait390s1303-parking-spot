@@ -2,6 +2,8 @@ package parkingspot.jdo.db;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -53,20 +55,48 @@ public class LotJdo {
 	@Persistent
 	private ArrayList<String> permitIds;
 	
-	public LotJdo(String campusId, String name, String location, int spaces){
+	@Persistent
+	private MapFigureJdo mapFigure;
+	
+	public LotJdo(String campusId, String name, String location, int spaces,  MapFigureJdo initMap){
 		this.campusId = campusId;
 		this.name = name;
 		this.location = location;
 		this.spaces = spaces;
 		this.permitIds = new ArrayList<String>();
+		this.mapFigure = initMap;
+	}
+	
+	public MapFigureJdo getGoogleMapFigure() {
+		return mapFigure;
+	}
+	
+	
+	public String getGoogleMapLocation(){
+		return location;
+	}
+	/**
+	 * The regular expression pattern for the name of the building.
+	 */
+	private static final Pattern NAME_PATTERN = Pattern.compile("\\A[ \\w-'',]{3,100}\\Z");
+
+	/**
+	 * Check if the name is correct for a building.
+	 * 
+	 * @param name The checked string.
+	 * @return true is the name is correct.
+	 */
+	public static boolean checkName(String name) {
+		Matcher matcher = NAME_PATTERN.matcher(name);
+		return matcher.find();
 	}
 	
 	public static LotJdo createLot(String campusId, String lotName ){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
-		LotJdo lot = new LotJdo(campusId, lotName, "", 0);
-		
+		LotJdo lot = null;
 		try {
+			CampusJdo campus = CampusJdo.getCampus(pm, campusId);
+			lot = new LotJdo(campusId, lotName, "", 0, campus.getGoogleMapFigure());
             pm.makePersistent(lot);
         } finally {
             pm.close();
@@ -75,31 +105,7 @@ public class LotJdo {
 		return lot;
 	}
 	
-	public static LotJdo createLot(String campusId, String lotName, String location, int spaces){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
-		LotJdo lot = new LotJdo(campusId, lotName, lotName, spaces);
-		
-		try {
-            pm.makePersistent(lot);
-        } finally {
-            pm.close();
-        }
-		
-		return lot;
-	}
-	
-	
-	public static void deleteLot(LotJdo lot){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
-		try {
-            pm.deletePersistent(lot);
-        } finally {
-            pm.close();
-        }
-		
-	}
+
 	
 	public static void deleteLotCommand(String sKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -122,8 +128,11 @@ public class LotJdo {
         LotJdo lot = pm.getObjectById(LotJdo.class, k);
         return lot;
     }
-
 	
+	public static void removePermitId(String permitID, LotJdo lot){
+
+		lot.permitIds.remove(permitID);
+	}
 
 	
 	@SuppressWarnings("unchecked")
@@ -148,22 +157,33 @@ public class LotJdo {
 		return results;
 	}
    
-	public static boolean updateLotCommand(String lotID, String name, String googleMapLocation, int spaces, String campusId) {
-			try {
-	           PersistenceManager pm = PMF.get().getPersistenceManager();
+	public static boolean updateLotCommand(String lotID, String name, String googleMapLocation, int spaces, String campusId, String latString, String lngString, String zoomString, String mkLatString, String mkLngString) {
+		 PersistenceManager pm = PMF.get().getPersistenceManager();
+		 try {
+	           
 	           LotJdo lot = getLot(pm, lotID);	           
 	           lot.name= name;
 	           lot.location= googleMapLocation;
 	           lot.spaces= spaces;
 	       	   lot.campusId = campusId;
-	       	   
-	           pm.close();
+		       	MapFigureJdo mapFigure = new MapFigureJdo(0, 0, 0, 0, 0);
+				mapFigure.latitude = Double.parseDouble(latString);
+				mapFigure.longitude = Double.parseDouble(lngString);
+				mapFigure.zoom = Integer.parseInt(zoomString);
+				mapFigure.markerLatitude = Double.parseDouble(mkLatString);
+				mapFigure.markerLongitude = Double.parseDouble(mkLngString);
+				  
+			lot.mapFigure = mapFigure;
+			
+			pm.makePersistent(lot);
 			               
 			} catch (Exception e) {
 			       return false;                        
-			   }
-			
-			       return true;
+			} finally{
+		 		
+		 		 pm.close();
+		 	}
+		 	return true;
 			       
 	}
 	

@@ -21,8 +21,8 @@ import parkingspot.jdo.db.LotJdo;
 @SuppressWarnings("serial")
 public class DeleteLotServlet extends HttpServlet {
         protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                
-                LotJdo.deleteLotCommand(req.getParameter("lotId"));
-            resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
+                LotJdo.deleteLotCommand(req.getParameter("lotID"));
+           
+                resp.sendRedirect("/jdo/admin/campusLots.jsp?campusID="+req.getParameter("campusID"));
         }
 }

@@ -20,8 +20,9 @@ import parkingspot.jdo.db.PermitJdo;
 public class DeletePermitServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-		 PermitJdo.deletePermitCommand(req.getParameter("permitID"));
+		String permitID = req.getParameter("permitID");
+			
+		 PermitJdo.deletePermitCommand(permitID, req.getParameter("lotID"));
 		 resp.sendRedirect("/jdo/admin/allPermits.jsp");
 	}
 }

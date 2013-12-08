@@ -336,12 +336,12 @@ function cancelEditCampus(campusID) {
 
 			<td>
 				<form action="/jdo/admin/campusLots.jsp" style="display: inline">
-					<input type="hidden" value="<%=campusID%>" name="campusId" /> <input
+					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
 						type="submit" value="Lots">
 				</form>
 
 				<form action="/jdo/admin/campusBuildings.jsp" style="display: inline">
-					<input type="hidden" value="<%=campusID%>" name="campusId" /> <input
+					<input type="hidden" value="<%=campusID%>" name="campusID" /> <input
 						type="submit" value="Buildings">
 				</form>
 			</td>
