@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Min-Seop Kim, Mihai Boicu, ...
+ * Authors: Alex Leone, Min-Seop Kim, Mihai Boicu
  */
 
 package parkingspot.jdo.servlet;

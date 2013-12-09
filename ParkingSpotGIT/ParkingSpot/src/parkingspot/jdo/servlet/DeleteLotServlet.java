@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.jdo.db.LotJdo;
 
-//TOOD comments
-
+/**
+ * 
+ * Answer to the HTTP Servlet. 
+ * Delete the Lot object by Key ID
+ */
 @SuppressWarnings("serial")
 public class DeleteLotServlet extends HttpServlet {
         protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

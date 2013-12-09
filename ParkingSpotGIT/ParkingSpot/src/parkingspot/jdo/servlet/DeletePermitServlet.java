@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Min-Seop Kim, Mihai Boicu, ...
+ * Authors: Alex Leone
  */
 package parkingspot.jdo.servlet;
 
@@ -15,7 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.jdo.db.PermitJdo;
-
+/**
+ * 
+ * Answer to the HTTP Servlet. 
+ * Delete the Permit object by Key ID
+ */
 @SuppressWarnings("serial")
 public class DeletePermitServlet extends HttpServlet {
 
@@ -23,6 +27,6 @@ public class DeletePermitServlet extends HttpServlet {
 		String permitID = req.getParameter("permitID");
 			
 		 PermitJdo.deletePermitCommand(permitID, req.getParameter("lotID"));
-		 resp.sendRedirect("/jdo/admin/allPermits.jsp");
+		 resp.sendRedirect("/jdo/admin/allPermits.jsp?lotID="+req.getParameter("lotID"));
 	}
 }

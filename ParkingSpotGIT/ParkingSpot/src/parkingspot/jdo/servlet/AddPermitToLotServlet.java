@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import parkingspot.jdo.db.PermitJdo;
 
+
+/**
+ * Answer to the HTTP Servlet. 
+ * Add the Permit ID to the Appropriate Lot by Post Action
+ */
 @SuppressWarnings("serial")
 public class AddPermitToLotServlet  extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -22,21 +27,13 @@ public class AddPermitToLotServlet  extends HttpServlet {
 		String lotID = req.getParameter("lotID");
 		String permitID = req.getParameter("permitID");
 		
-		System.out.println("permitID "+ permitID);
-		System.out.println("lotID "+ lotID);
-		
-//		PermitJdo permit = PermitJdo.getPermit(permitID);
-		System.out.println("after getPermit");
-		
 		if (PermitJdo.updateLotInPermitCommand(lotID, permitID) == true){
-			System.out.println("TRUE");
+
 			resp.sendRedirect("/jdo/admin/allPermits.jsp?lotID="+lotID);
 		}else{	
-			System.out.println("FALSE");
+
 			resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 		}
-		
-		System.out.println("after update");
-
+	
 	}
 }

@@ -30,17 +30,32 @@
 <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 <script>
+/*
+ * Variables to hold which permit is being interacted with. 
+ */
 var selectedLotForEdit = null  
 var editNameError = false;
 var editAddressError = false;
 
+/*
+ * Get Url Param
+ * 
+ */
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 }
 
 var selectedLot=null;
+/*
+ * Get Url Param campusID
+ * 
+ */
 var selectedCampus = getURLParameter('campusID');
 
+/*
+ * Used to Hide and Disable other buttons when editing and saving
+ * 
+ */
 function updateSaveEditButton() {
 	if (editNameError||editLocationError||editAddressError) {
 		$("#saveEditLotButton"+selectedLotForEdit).attr("disabled","disabled");
@@ -54,13 +69,19 @@ function updateSaveEditButton() {
 	}
 	
 }
-
+/*
+ * Disable all buttons exacept the one being used
+ * 
+ */
 function disableAllButtons(value) {
 	$(".deletebutton").attr("disabled", (value)?"disabled":null);
 	$(".editbutton").attr("disabled", (value)?"disabled":null);
 	$("#addlot").attr("disabled", (value)?"disabled":null);
 }
-
+/*
+ * Open the confirm delete box
+ * 
+ */
 function deleteButton(lotID) {
 	disableAllButtons(true);
 	$("#delete"+lotID).show();
@@ -81,7 +102,10 @@ function editButton(lotID,lotName, lat, lng, zoom, mkLat, mkLng) {
 	$("#edit"+lotID).show();
 	initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng);
 }
-
+/*
+ * Ajax call to delete the lot 
+ * 
+ */
 function confirmDeleteLot(lotID) {
 	selectedLot=lotID;
 	$.post("/jdo/admin/deleteLotCommand", 
@@ -99,12 +123,18 @@ function confirmDeleteLot(lotID) {
 	);
 	
 }
-
+/*
+ * Close the confirm delete box
+ * 
+ */
 function cancelDeleteLot(lotID) {
 	$("#delete"+lotID).hide();
 	disableAllButtons(false);
 }
-
+/*
+ * Close the confirm edit box
+ * 
+ */
 function cancelEditLot(lotID) {
 	$("#edit"+lotID).hide();
 	$("#view"+lotID).show();
@@ -112,10 +142,16 @@ function cancelEditLot(lotID) {
 }
 
 
-
+/*
+ * Maps Vars
+ * 
+ */
 var edited_map=null;
 var edited_marker=null;
-
+/*
+ * Get the map default stuff to show the map
+ * 
+ */
 function initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng) {
 	var myLatlng = new google.maps.LatLng(lat,lng);
     var map_canvas = document.getElementById('map_canvas_'+lotID);
@@ -134,7 +170,10 @@ function initializeMap(lotID, lotName, lat, lng, zoom, mkLat, mkLng) {
     });
     edited_marker.setMap(edited_map);
 }
-
+/*
+ * Save the lot by having it submit the form
+ * 
+ */
 function saveEditLot(lotID) {
 	if (edited_map!=null) {
 		$("#latitude"+lotID).val(edited_map.getCenter().lat());
@@ -146,7 +185,9 @@ function saveEditLot(lotID) {
 	document.forms["form"+lotID].submit();
 }
 
-
+/*
+ * Center the map maker in the middle of the map
+ */
 function centerMarker() {
 	edited_marker.setPosition(edited_map.getCenter());
 }

@@ -16,7 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.jdo.db.LotJdo;
 
-//TODO comments
+/**
+ * 
+ * Answer to the HTTP Servlet. 
+ * Get the new Lot info and update the lot through the Get Action
+ */
 @SuppressWarnings("serial")
 // NOTE: It is passing the new value the campus was renamed to
 // It is going through the catch every time
@@ -35,21 +39,10 @@ public class UpdateLotServlet extends HttpServlet {
        		
               
        		  if (LotJdo.updateLotCommand(lotID, lotName, googleMapLocation, lotSpaces, campusID, latitude, longitude, zoom, markerLatitude, markerLongitude)){
-       			  System.out.println("lotID"+lotID);
-                  System.out.println("lotSpaces"+lotSpaces);
-                  System.out.println("lotName"+lotName);
-                  System.out.println("campusID"+campusID);
-                  System.out.println("latitude"+latitude);
-                  System.out.println("longitude"+longitude);
-                  System.out.println("zoom"+zoom);          
-                  System.out.println("markerLatitude"+markerLatitude);
-                  System.out.println("markerLongitude"+markerLongitude);
-                  System.out.println("googleMapLocation"+googleMapLocation);
-                  
+       
+                  resp.sendRedirect("/jdo/admin/campusLots.jsp?campusID="+req.getParameter("campusID"));
+
        		  }
-                
-              
-                
-                resp.sendRedirect("/jdo/admin/campusLots.jsp?campusID="+req.getParameter("campusID"));
+            
         }
 }
