@@ -27,14 +27,18 @@ import com.google.appengine.api.datastore.Key;
  *	PARENT: Campus
  *	KEY: A building Id
  *	FEATURES:
- *		Name: "Id" Type: int
+ *		Name: "Id" Type: Key
  *		Name: "Name" Type: String
  *		Name: "Location" Type: String
+ *		Name: "Campus ID" Type: String
+ *		Name: "Map Figure" Type: MapFigureJdo
  *	Examples:
  *	Campus("Johnson Center")
- *		"Id" = 1003
+ *		"Id" = 1003AN78QOJD0892K
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Johnson Center"
+ *		"Campus Id" = 837DK3JS80DLK2
+ *		"Map Figure" = MapFigureJdo object
  *
  *	Authors: Jeff, Drew Lorence, Alex Leone
  *  
