@@ -17,102 +17,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-<title>Find a Parking Spot</title>
-<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
-<style type="text/css">
-#userHeading {
-	font-weight: bold;
-	text-align: center;
-}
-
-#userTable {
-	width: 510px;
-}
-
-body {
-	width: 510px;
-	padding: 3px;
-	border: 3px solid #006600;
-	margin: 0px auto;
-	background-color: #E9FFE9;
-	text-align: center;
-}
-
-h1 {
-	width: 500px;
-	padding: 5px;
-	margin: 0px;
-	background-color: #006600;
-	color: #E9FFE9;
-	text-align: center;
-	margin-bottom: 3px;
-}
-</style>
-<script type="text/javascript">
-	function start() {
-		document.getElementById("buildingTr").style.display = "none";
-		document.getElementById("submitTr").style.display = "none";
-		document.getElementById("campusSelect").addEventListener("click",
-				hideAllBuildingSelectors, false);
-		document.getElementById("campusSelect").addEventListener("click",
-				showBuildingTr, false);
-		document.getElementById("buildingSelect").addEventListener("click",
-				showSubmitTr, false);
-		document.getElementById("submitBtn").addEventListener("click",
-				passCampusName, false);
-		document.getElementById("submitBtn").addEventListener("click",
-				passBuildingName, false);
-	}
-	
-	function campusSelect() {
-		var campusID = document.getElementById("campusSelect").value;
-		
-	}
-	
-	function hideAllBuildingSelectors() {
-		document.getElementsByName("campusSelectors").setAttribute("hidden",
-				"hidden");
-	}
-	
-	
-	function showBuildingTr() {
-		var campusName = document.getElementById("campusSelect").value;
-		if (campusName != "Select a campus...") {
-			var selectorName = campusName + "Buildings";
-			document.getElementById("buildingTr").style.display = "table-row";
-			document.getElementById(selectorName).style.display = "inline";
-		} else {
-			document.getElementById("buildingTr").style.display = "none";
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<title>Find a Parking Spot</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/parkingspot.css">
+	<style type="text/css">
+		#userHeading {
+			font-weight: bold;
+			text-align: center;
 		}
-	}
-	function showSubmitTr() {
-		var buildingName = document.getElementById("buildingSelect").value;
-		if (buildingName != "Select a building...") {
-			document.getElementById("submitTr").style.display = "table-row";
-		} else {
+		#userTable {
+			width: 510px;
+		}
+		body {
+			width: 510px;
+			padding: 3px;
+			border: 3px solid #006600;
+			margin: 0px auto;
+			background-color: #E9FFE9;
+			text-align: center;
+		}
+		h1 {
+			width: 500px;
+			padding: 5px;
+			margin: 0px;
+			background-color: #006600;
+			color: #E9FFE9;
+			text-align: center;
+			margin-bottom: 3px;
+		}
+	</style>
+	<script type="text/javascript">
+		var lastTr = "NONE";
+		var lastSelector = "NONE";
+		function start() {
 			document.getElementById("submitTr").style.display = "none";
+			document.getElementById("campusSelect").addEventListener("click", showBuildingTr, false);
+			if (lastSelector != "NONE") {
+				
+			}
+			document.getElementById("submitBtn").addEventListener("click", passCampusName, false);
+			document.getElementById("submitBtn").addEventListener("click", passBuildingName, false);
 		}
-	}
-	function passCampusName() {
-		var campusName = null;
-		if (campusName != "Select a campus...") {
-			campusName = document.getElementById("campusSelect").value;
+		function campusSelect() {
+			var campusID = document.getElementById("campusSelect").value;
 		}
-		document.getElementById("campusVal").value = campusName;
-	}
-	function passBuildingName() {
-		var buildingName = mull;
-		if (buildingName != "Select a building...") {
-			buildingName = document.getElementById("buildingSelect").value;
+		function showBuildingTr() {
+			var campusID = document.getElementById("campusSelect").value;
+			if (campusID != "NONE") {
+				var trName = "buildingTr" + campusID;
+				var selectorName = campusID + "Buildings";
+				if (lastTr != "NONE") {
+					document.getElementById(lastTr).style.display = "none";
+					document.getElementById(selectorName).style.display = "none";
+				}
+				document.getElementById(trName).style.display = "table-row";
+				document.getElementById(selectorName).style.display = "inline";
+				lastTr = trName;
+				lastSelector = selectorName;
+				document.getElementById(lastSelector).addEventListener("click", showSubmitTr, false);
+			}
+			else {
+				if (lastTr != "NONE") {
+					document.getElementById(lastTr).style.display = "none";
+					// document.getElementById(lastSelector).value = "Select a building...";
+					document.getElementById(lastSelector).style.display = "none";
+				}
+			}
 		}
-		document.getElementById("buildingVal").value = buildingName;
-	}
-	window.addEventListener("load", start, false);
-</script>
+		function showSubmitTr() {
+			var buildingName = document.getElementById(lastSelector).value;
+			if (buildingName != "Select a building...") {
+				document.getElementById("submitTr").style.display = "table-row";
+			}
+			else {
+				document.getElementById("submitTr").style.display = "none";
+			}
+		}
+		function passCampusName() {
+			var campusName = "";
+			if (campusName != "Select a campus...") {
+				campusName = document.getElementById("campusSelect").value;
+			}
+			// document.getElementById("campusVal").value = campusName;
+			alert(campusName);
+		}
+		function passBuildingName() {
+			var buildingName = null;
+			if (buildingName != "Select a building...") {
+				buildingName = document.getElementById(lastSelector).value;
+			}
+			document.getElementById("buildingVal").value = buildingName;
+		}
+		window.addEventListener("load", start, false);
+	</script>
 </head>
 <body>
-
 	<%
 		List<CampusJdo> allCampuses = CampusJdo.getFirstCampuses(100);
 	%>
@@ -123,41 +122,45 @@ h1 {
 		</tr>
 		<tr>
 			<td>What campus are you going to?</td>
-			<td><select id="campusSelect">
+			<td>
+				<select id="campusSelect">
 					<option value="NONE">Select a campus...</option>
-					<%
+	<%
 						for (CampusJdo campus : allCampuses) {
 							String campusName = campus.getName();
 							String campusID = campus.getStringID();
-					%>
-					<option value="<%=campusID%>"><%=campusName%></option>
-					<%
+	%>
+							<option value="<%=campusID%>"><%=campusName%></option>
+	<%
 						}
-					%>
-			</select></td>
+	%>
+				</select>
+			</td>
 		</tr>
-		<%
+	<%
 			for (CampusJdo campus : allCampuses) {
 				String campusName = campus.getName();
 				String campusID = campus.getStringID();
-		%>
-		<tr id="buildingTr<%=campusID%>" hidden="hidden">
-			<td>What building are you going to?</td>
-			<td>
-				<%
-					for (BuildingJdo building : BuildingJdo.getFirstBuildings(100, campusID)) {
-							String buildingName = building.getName();
-				%> <select id="<%=campusName%>Buildings" >
-					<option>Select a building...</option>
-					<option><%=buildingName%></option>
-			</select> <%
- 	}
- %>
-			</td>
-		</tr>
-		<%
+	%>
+				<tr id="buildingTr<%=campusID%>" hidden="hidden">
+					<td>What building are you going to?</td>
+					<td>
+						<select id="<%=campusID%>Buildings">
+							<option>Select a building...</option>
+	<%
+							for (BuildingJdo building : BuildingJdo.getFirstBuildings(100, campusID)) {
+								String buildingName = building.getName();
+	%>
+								<option><%=buildingName%></option>
+	<%
+ 							}
+	%>
+						</select>
+					</td>
+				</tr>
+	<%
 			}
-		%>
+	%>
 		<tr id="submitTr">
 			<td colspan="2">
 				<!-- TODO: This <form> needs an action attribute that matches Andrew's file that is not done yet -->
