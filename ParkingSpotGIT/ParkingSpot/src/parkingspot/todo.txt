@@ -1,5 +1,38 @@
+
 TODO: 
+
+Final delivery:
+
+1. Your last working version of the code. Saturday night post. 
+2. A document that will list all the contributions you did for the project.
+3. Prepare a demo with your main contributions.
+4. NEXT STEPS
+5. All assignments done
+
  =====================================================================================
+
+Min K. (CAMPUS)
+- use address field in the info box for marker
+- do not delete a campus with lots and buildings
+- test all admin operations
+- google map field - not editable
+
+Drew: (BUILDINGS)
+- correct campus ID for reload
+- fix delete button
+- info for markers
+- check name just for the current campus
+- test all admin operations
+
+Alex: (LOTS and PERMITS management)
+- test all admin operations
+- test/improve maps for lots 
+
+Jeff: 
+- test selector
+- add permit
+
+
 
 CAMPUS MANAGEMENT (JDO ADMIN) - Min  K.
 
@@ -21,7 +54,7 @@ LOTS and PERMITS management - Alex and Drew
 
 Alex: ADMIN JDO finish the link between lots and permits
 
-Drew: ADMIN JDO buildings with maps
+
 
 =====================================================================================
 

@@ -1,3 +1,4 @@
+<%@page import="parkingspot.gae.db.Building"%>
 <%@page import="com.google.appengine.api.datastore.Entity"%>
 <%@page import="parkingspot.gae.db.Campus"%>
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
@@ -9,7 +10,7 @@
    Licensed under the Academic Free License version 3.0
    http://opensource.org/licenses/AFL-3.0
 
-   Authors: Andrew Tsai, Mihai Boicu 
+   Authors: Mihai Boicu 
    
    Version 0.1 - Fall 2013
 -->
@@ -17,239 +18,107 @@
 <html>
 <head>
 
-<title>All Campuses</title>
+<title>View allowed parking spaces</title>
 <!-- CSS -->
 <link rel="stylesheet" type="text/css"
 	href="/stylesheets/parkingspot.css">
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
-<script>
 
-var selectedCampusForEdit = null  
-var editNameError = false;
-var editLocationError = false;
-var editAddressError = false;
+<script type="text/javascript">
+function campusSelect() {
+	var campusID = document.getElementById("campusSelect").value;
+	hideAllBuildingSelectors();
+	showBuildingTr(campusID);
+	$("#campusVal").val(campusID);
+}
 
-$(document).ready(function(){ //test
-	
-	// keypress event for Add button
-	$("#addCampusInput").keyup(function() {
-	name=$("#addCampusInput").val();
-	if (checkCampusName(name)) {
-		$("#addCampusButton").attr("disabled",null);
-		$("#addCampusError").hide();
-	} else {
-		$("#addCampusButton").attr("disabled","disabled");
-		if (name!=null && name.length>0) 
-			$("#addCampusError").show();
+function hideAllBuildingSelectors() {
+	$(".buildingTr").hide();
+	$("#submitTr").hide();
+}
+
+function showBuildingTr(campusID) {
+	if (campusID != null && campusID != "NONE") {
+		$("#buildingTr" + campusID).show();
 	}
-	});
-	
-	$(".editCampusNameInput").keyup(function() {
-		if (selectedCampusForEdit==null)
-			return;
-		name=$("#editCampusNameInput"+selectedCampusForEdit).val();
-		editNameError = ! checkCampusName(name);
-		updateSaveEditButton();
-		});
-	
-});	
+}
 
-
-
-function updateSaveEditButton() {
-	if (editNameError||editLocationError||editAddressError) {
-		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled","disabled");
-	} else {
-		$("#saveEditCampusButton"+selectedCampusForEdit).attr("disabled",null);
+function buildingSelect(campusID) {
+	var buildingID = document
+			.getElementById("selectbuildingfor" + campusID).value;
+	$("#buildingVal").val(buildingID);
+	if (buildingID != null && buildingID != "NONE") {
+		$("#submitTr").show();
 	}
-	if (editNameError) {
-		$("#editCampusNameError"+selectedCampusForEdit).show();
-	} else {
-		$("#editCampusNameError"+selectedCampusForEdit).hide();
-	}
-	
 }
-
-
-
-var campusNamePattern = /^[ \w-'',]{3,100}$/
-campusNamePattern.compile(campusNamePattern)
-
-// check the syntax of the name of a campus 
-function checkCampusName(name) {
-	return campusNamePattern.test(name);
-}
-
-
-function disableAllButtons(value) {
-	$(".deletebutton").attr("disabled", (value)?"disabled":null);
-	$(".editbutton").attr("disabled", (value)?"disabled":null);
-	if (value)
-		$("#addCampusButton").attr("disabled", (value)?"disabled":null);
-}
-
-function deleteButton(campusID) {
-	disableAllButtons(true);
-	$("#delete"+campusID).show();
-}
-
-var selectedCampusForDelete=null;
-
-function confirmDeleteCampus(campusID) {
-	selectedCampusForDelete=campusID;
-	$.post("/gae/admin/deleteCampusCommand", 
-			{campusID: campusID}, 
-			function (data,status) {
-				//alert("Data "+data+" status "+status);
-				if (status="success") {
-					location.reload();
-				} else {
-					canceldeletecampus(selectedCampusForDelete);
-					selectedCampus=null;
-				}
-			}
-			
-	);
-	
-}
-
-function cancelDeleteCampus(campusID) {
-	$("#delete"+campusID).hide();
-	disableAllButtons(false);
-}
-
-var selectedCampusOldName=null;
-var selectedCampusOldAddress=null;
-var selectedCampusOldLocation=null;
-
-function editButton(campusID) {
-	selectedCampusForEdit=campusID;
-	disableAllButtons(true);
-	editNameError = false;
-	editLocationError = false;
-	editAddressError = false;
-	updateSaveEditButton();
-	selectedCampusOldName=$("#editCampusNameInput"+selectedCampusForEdit).val();
-	selectedCampusOldAddress=null;
-	selectedCampusOldLocation=null;	
-	$("#view"+campusID).hide();
-	$("#edit"+campusID).show();
-}
-
-
-function cancelEditCampus(campusID) {
-	$("#editCampusNameInput"+selectedCampusForEdit).val(selectedCampusOldName);
-	$("#edit"+campusID).hide();
-	$("#view"+campusID).show();
-	disableAllButtons(false);
-}
-
 </script>
-
 </head>
 <body>
+
+<%
+	List<Entity> allCampuses = Campus.getFirstCampuses(100);
+%>
+<h1>Find a Parking Space</h1>
+<table id="userTable">
+
+	<tr>
+		<td>CAMPUS:</td>
+		<td>
+			<select id="campusSelect" onchange="campusSelect()">
+				<option value="NONE">Select a campus...</option>
+				<%
+					for (Entity campus : allCampuses) {
+						String campusName = Campus.getName(campus);
+						String campusID = Campus.getStringID(campus);
+				%>
+				<option value="<%=campusID%>"><%=campusName%></option>
+				<%
+					}
+				%>
+			</select>
+		</td>
+	</tr>
 	<%
-		List<Entity> allCampuses = Campus.getFirstCampuses(100);
-		if (allCampuses.isEmpty()) {
+		for (Entity campus : allCampuses) {
+			String campusName = Campus.getName(campus);
+			String campusID = Campus.getStringID(campus);
 	%>
-	<h1>No Campus Defined</h1>
+	<tr id="buildingTr<%=campusID%>" class="buildingTr" hidden="hidden">
+		<td>BUILDING:</td>
+		<td>
+			<select id="selectbuildingfor<%=campusID%>" onchange="buildingSelect('<%=campusID%>')">
+				<option value="NONE">Select a building...</option>
+				<%
+					for (Entity building : Building.getFirstBuildings(campusID, 100)) {
+							String buildingID = Building.getStringID(building);
+							String buildingName = Building.getName(building);
+				%>
+
+				<option value="<%=buildingID%>"><%=buildingName%></option>
+
+				<%
+					}
+				%>
+			</select>
+
+		</td>
+	</tr>
 	<%
-		} else {
+		}
 	%>
-	<h1>ALL CAMPUSES</h1>
-	<table id="main">
-		<tr>
-			<th class="adminOperationsList">Operations</th>
-			<th>Campus Name</th>
-			<th>View</th>
-		</tr>
-		<%
-			for (Entity campus : allCampuses) {
-					String campusName = Campus.getName(campus);
-					String campusID = Campus.getStringID(campus);
-		%>
-
-		<tr>
-			<td class="adminOperationsList">
-				<button class="editbutton" type="button"
-					onclick="editButton(<%=campusID%>)">Edit</button>
-				<button class="deletebutton" type="button"
-					onclick="deleteButton(<%=campusID%>)">Delete</button>
-			</td>
-
-			<td><div id="view<%=campusID%>"><%=campusName%></div>
-
-				<div id="edit<%=campusID%>" style="display: none">
-
-					<form action="/gae/admin/updateCampusCommand" method="get">
-						<input type="hidden" value="<%=campusID%>" name="campusID" />
-						<table class="editTable">
-							<tr>
-								<td class="editTable" width=90>Name:</td>
-								<td class="editTable"><input type="text"
-									id="editCampusNameInput<%=campusID%>"
-									class="editCampusNameInput" value="<%=campusName%>"
-									name="campusName" />
-									<div id="editCampusNameError<%=campusID%>" class="error"
-										style="display: none">Invalid campus name (minimum 3
-										characters: letters, digits, spaces, -, ')</div></td>
-							</tr>
-							<tr>
-								<td class="editTable">Address:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=Campus.getAddress(campus)%>" name="campusAddress" /></td>
-							</tr>
-							<tr>
-								<td class="editTable">Google Map:</td>
-								<td class="editTable"><input type="text" class="editText"
-									value="<%=Campus.getGoogleMapLocation(campus)%>"
-									name="googleMapLocation" /></td>
-							</tr>
-						</table>
-						<input id="saveEditCampusButton<%=campusID%>" type="submit"
-							value="Save" />
-						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
-					</form>
-				</div>
-
-				<div id="delete<%=campusID%>" style="display: none">
-					Do you want to delete this campus?
-					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
-					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
-				</div></td>
-				
-				<td>
-				<form action="/gae/admin/campusLots.jsp" style="display:inline">
-					<input type="hidden" value="<%=campusID%>" name="campusID" />
-					<input type="submit" value="Lots">
-				</form>
-				</td>
-		</tr>
-
-		<%
-			}
-
-			}
-		%>
-
-		<tfoot>
-			<tr>
-				<td colspan="2" class="footer">
-					<form name="addCampusForm" action="/gae/admin/addCampusCommand"
-						method="get">
-						New Campus: <input id="addCampusInput" type="text"
-							name="campusName" size="50" /> <input id="addCampusButton"
-							type="submit" value="Add" disabled="disabled" />
-					</form>
-					<div id="addCampusError" class="error" style="display: none">Invalid
-						campus name (minimum 3 characters: letters, digits, spaces, -, ')</div>
-				</td>
-			</tr>
-		</tfoot>
-
-	</table>
+	<tr id="submitTr" hidden="hidden">
+		<td colspan="2">
+			<form>
+				<input id="campusVal" type="hidden" value="">
+				<input id="buildingVal" type="hidden" value="">
+				<input id="submitBtn" type="button" value="SHOW MAP">
+			</form>
+		</td>
+	</tr>
+</table>
+<div 
 
 </body>
 </html>
