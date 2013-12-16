@@ -1,5 +1,6 @@
 <%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="parkingspot.jdo.db.CampusJdo"%>
+<%@ page import="parkingspot.jdo.db.LotJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -168,6 +169,7 @@ function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
 		    });
 		    edited_marker.setMap(edited_map);
         	if(results[0]) {
+        		document.getElementById('markerAddress').value = results[0].formatted_address;
         		infowindow.setContent(campusName + 
         				' campus</br>' + 
         				results[0].formatted_address + 
@@ -175,6 +177,24 @@ function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
         				mkLat.toFixed(6) + 
         				',' + 
         				mkLng.toFixed(6)
+        			/**
+        			 + '<table>
+        				   <tr>
+        			        <th>Lot</th>
+        			        <th>Spaces</th>
+        			    	</tr>
+        					<c:forEach var="lot" items="${allLots}" >
+        			    		<tr>
+        							<td>
+        								<c:out value="${lot.name}" />
+        			       			</td>
+        			        		<td>
+        			           			<c:out value="${lot.spaces}" />
+        			        		</td>
+        			   			</tr>
+        					</c:forEach>
+        				</table>'
+        			*/
         		);
         	} else {
         		infowindow.setContent(contentString);
@@ -310,7 +330,7 @@ function cancelEditCampus(campusID) {
 							<tr>
 								<td class="editTable">Address:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=campus.getAddress()%>" name="campusAddress" /></td>
+									id="markerAddress" value="" name="campusAddress" readonly/></td>
 							</tr>
 							<tr>
 								<td class="editTable">Google Map:</td>
