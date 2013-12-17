@@ -16,18 +16,33 @@ import javax.servlet.http.HttpServletResponse;
 
 import parkingspot.jdo.db.LotJdo;
 
-//TODO comments
+/**
+ * 
+ * Answer to the HTTP Servlet. 
+ * Get the new Lot info and update the lot through the Get Action
+ */
 @SuppressWarnings("serial")
 // NOTE: It is passing the new value the campus was renamed to
 // It is going through the catch every time
 public class UpdateLotServlet extends HttpServlet {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
-                LotJdo.updateLotCommand(req.getParameter("lotId"), req.getParameter("lotName"),
-                                req.getParameter("lotLocation"), lotSpaces, req.getParameter("campusId"));
-                
-                System.out.println("Update lot servlet");
-                
-                resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+req.getParameter("campusId"));
+               String lotID = req.getParameter("lotID");
+               int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
+               String lotName = req.getParameter("lotName");
+               String campusID = req.getParameter("campusID");
+               String latitude =  req.getParameter("latitude");
+               String longitude = req.getParameter("longitude");
+               String zoom = req.getParameter("zoom"); 
+       		   String markerLatitude = req.getParameter("markerLatitude");
+       		   String markerLongitude = req.getParameter("markerLongitude");
+       		   String googleMapLocation = req.getParameter("googleMapLocation"); 
+       		
+              
+       		  if (LotJdo.updateLotCommand(lotID, lotName, googleMapLocation, lotSpaces, campusID, latitude, longitude, zoom, markerLatitude, markerLongitude)){
+       
+                  resp.sendRedirect("/jdo/admin/campusLots.jsp?campusID="+req.getParameter("campusID"));
+
+       		  }
+            
         }
 }

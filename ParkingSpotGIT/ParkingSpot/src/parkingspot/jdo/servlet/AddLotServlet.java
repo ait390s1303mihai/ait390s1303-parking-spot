@@ -27,15 +27,14 @@ import parkingspot.jdo.db.LotJdo;
 @SuppressWarnings("serial")
 public class AddLotServlet extends HttpServlet {
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                String campusId = req.getParameter("campusId");
+                String campusID = req.getParameter("campusID");
                 String lotName = req.getParameter("lotName");
-                String lotLocation = req.getParameter("lotLocation");
-                int lotSpaces = Integer.parseInt(req.getParameter("lotSpaces"));
+         
                 //TODO check if the lot location or name is already used
                 
                 //TODO if used return an error
-                
-                LotJdo.createLot(campusId, lotName, lotLocation, lotSpaces);
-            resp.sendRedirect("/jdo/admin/campusLots.jsp?campusId="+campusId);
+               
+                LotJdo.createLot(campusID, lotName);
+            resp.sendRedirect("/jdo/admin/campusLots.jsp?campusID="+campusID);
         }
 }

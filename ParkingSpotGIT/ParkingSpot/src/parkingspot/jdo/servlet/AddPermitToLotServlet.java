@@ -13,20 +13,27 @@ import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import parkingspot.jdo.db.PermitJdo;
+
+
 /**
- * 
  * Answer to the HTTP Servlet. 
- * Delete the Permit object by Key ID
+ * Add the Permit ID to the Appropriate Lot by Post Action
  */
 @SuppressWarnings("serial")
-public class DeletePermitServlet extends HttpServlet {
-
+public class AddPermitToLotServlet  extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		String lotID = req.getParameter("lotID");
 		String permitID = req.getParameter("permitID");
-			
-		 PermitJdo.deletePermitCommand(permitID, req.getParameter("lotID"));
-		 resp.sendRedirect("/jdo/admin/allPermits.jsp?lotID="+req.getParameter("lotID"));
+		
+		if (PermitJdo.updateLotInPermitCommand(lotID, permitID) == true){
+
+			resp.sendRedirect("/jdo/admin/allPermits.jsp?lotID="+lotID);
+		}else{	
+
+			resp.sendRedirect("/jdo/admin/allCampuses.jsp");
+		}
+	
 	}
 }

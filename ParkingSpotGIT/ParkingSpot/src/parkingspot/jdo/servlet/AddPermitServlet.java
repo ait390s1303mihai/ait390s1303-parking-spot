@@ -3,7 +3,7 @@
  * Licensed under the Academic Free License version 3.0
  * http://opensource.org/licenses/AFL-3.0
  * 
- * Authors: Min-Seop Kim, Mihai Boicu, ...
+ * Authors: Alex Leone, Min-Seop Kim, Mihai Boicu
  */
 
 package parkingspot.jdo.servlet;
@@ -25,25 +25,26 @@ import parkingspot.jdo.db.PermitJdo;
 public class AddPermitServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String permitName = req.getParameter("permitName");
-		String lotId = req.getParameter("lotId");
+		String lotID = req.getParameter("lotID");
+
+		System.out.println("lotID:    ------"+lotID);
+		System.out.println("permitName:    ------"+permitName);
 		
+		PermitJdo permit = PermitJdo.createPermit(permitName);
 		
-		System.out.println("AddPermitServlet");
+		String permitID = permit.getStringID();
 		
-		PermitJdo permit = PermitJdo.createPermit(permitName, lotId);
+		if (PermitJdo.updateLotInPermitCommand(lotID, permitID) == true){
+	
+			resp.sendRedirect("/jdo/admin/allPermits.jsp?lotID="+lotID);
 		
-		
-		if (PermitJdo.updateLotInPermitCommand(permit, lotId) == true){
-			System.out.println("true");
-				
 		}else{	
 			
-			System.out.println("false");
-	
+			resp.sendRedirect("/jdo/admin/allCampuses.jsp");
 		}
 
 		
-		resp.sendRedirect("/jdo/admin/allPermits.jsp?lotId="+lotId);
+		
 		
 	}
 }
