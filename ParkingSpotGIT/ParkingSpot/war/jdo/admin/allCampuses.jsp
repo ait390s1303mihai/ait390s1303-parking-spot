@@ -323,7 +323,7 @@ function cancelEditCampus(campusID) {
 									name="googleMapLocation" readonly/></td>
 							</tr>
 						</table>
-						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
+						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div> 
 
 						<button id="saveEditCampusButton<%=campusID%>" type="button"
 							onclick="saveEditCampus(<%=campusID%>)">Save</button>
