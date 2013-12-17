@@ -1,0 +1,35 @@
+@CHARSET "ISO-8859-1";
+/*  
+   Copyright 2013 - 
+   Licensed under the Academic Free License version 3.0
+   http://opensource.org/licenses/AFL-3.0
+   Authors: Jeff Diederiks, Mihai Boicu
+   Version 0.1 - Fall 2013
+*/
+#userHeading {
+	font-weight: bold;
+	text-align: center;
+}
+#userTable {
+	width: 510px;
+}
+body {
+	width: 510px;
+	padding: 3px;
+	border: 3px solid #006600;
+	margin: 0px auto;
+	background-color: #E9FFE9;
+	text-align: center;
+}
+h1 {
+	width: 500px;
+	padding: 5px;
+	margin: 0px;
+	background-color: #006600;
+	color: #E9FFE9;
+	text-align: center;
+	margin-bottom: 3px;
+}
+#submitTd {
+	text-align: center;
+}
