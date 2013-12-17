@@ -165,7 +165,8 @@ function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
 		    edited_marker = new google.maps.Marker({
 		    	position: markerLatlng,
 		    	title: campusName,
-		    	draggable: true
+		    	draggable: true,
+		    	icon: '/images/campus.png'
 		    });
 		    edited_marker.setMap(edited_map);
         	if(results[0]) {
@@ -177,24 +178,6 @@ function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
         				mkLat.toFixed(6) + 
         				',' + 
         				mkLng.toFixed(6)
-        			/**
-        			 + '<table>
-        				   <tr>
-        			        <th>Lot</th>
-        			        <th>Spaces</th>
-        			    	</tr>
-        					<c:forEach var="lot" items="${allLots}" >
-        			    		<tr>
-        							<td>
-        								<c:out value="${lot.name}" />
-        			       			</td>
-        			        		<td>
-        			           			<c:out value="${lot.spaces}" />
-        			        		</td>
-        			   			</tr>
-        					</c:forEach>
-        				</table>'
-        			*/
         		);
         	} else {
         		infowindow.setContent(contentString);
@@ -390,6 +373,5 @@ function cancelEditCampus(campusID) {
 		</tfoot>
 
 	</table>
-
 </body>
 </html>
