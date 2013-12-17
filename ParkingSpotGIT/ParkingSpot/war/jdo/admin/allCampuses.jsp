@@ -1,5 +1,7 @@
 <%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="parkingspot.jdo.db.CampusJdo"%>
+<%@ page import="parkingspot.jdo.db.LotJdo"%>
+<%@ page import="parkingspot.jdo.db.BuildingJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -164,10 +166,12 @@ function initializeMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
 		    edited_marker = new google.maps.Marker({
 		    	position: markerLatlng,
 		    	title: campusName,
-		    	draggable: true
+		    	draggable: true,
+		    	icon: '/images/campus.png'
 		    });
 		    edited_marker.setMap(edited_map);
         	if(results[0]) {
+        		document.getElementById('markerAddress').value = results[0].formatted_address;
         		infowindow.setContent(campusName + 
         				' campus</br>' + 
         				results[0].formatted_address + 
@@ -310,7 +314,7 @@ function cancelEditCampus(campusID) {
 							<tr>
 								<td class="editTable">Address:</td>
 								<td class="editTable"><input type="text" class="editText"
-									value="<%=campus.getAddress()%>" name="campusAddress" /></td>
+									id="markerAddress" value="" name="campusAddress" readonly/></td>
 							</tr>
 							<tr>
 								<td class="editTable">Google Map:</td>
@@ -319,19 +323,29 @@ function cancelEditCampus(campusID) {
 									name="googleMapLocation" readonly/></td>
 							</tr>
 						</table>
-						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div>
+						<div id="map_canvas_<%=campusID%>" class="edit_map_canvas"></div> 
 
 						<button id="saveEditCampusButton<%=campusID%>" type="button"
 							onclick="saveEditCampus(<%=campusID%>)">Save</button>
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
-
+				<% 
+				List<LotJdo> allLots = LotJdo.getFirstLots(100, campusID);
+				List<BuildingJdo> allBuildings = BuildingJdo.getFirstBuildings(100, campusID);
+				if (allLots.isEmpty() && allBuildings.isEmpty()) {
+				%>
 				<div id="delete<%=campusID%>" style="display: none">
 					Do you want to delete this campus?
 					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
 					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
 				</div></td>
+				<% } else { %>
+					<div id="delete<%=campusID%>" style="display: none">
+						Delete not possible: Lots and Buildings exist for this campus!
+						<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+					</div></td>
+				<%} %>
 
 
 			<td>
@@ -370,6 +384,5 @@ function cancelEditCampus(campusID) {
 		</tfoot>
 
 	</table>
-
 </body>
 </html>
