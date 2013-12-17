@@ -225,6 +225,21 @@ function addPermitToLot(permitID, lotID){
 			}
 	);
 }
+
+function addNewPermitToLot(lotID){
+	$.post("/jdo/admin/AddPermitToLotCommand", 
+			{lotID: lotID, permitID: document.getElementById("addPermitInput").value},
+			function (data,status) {
+				if (status="success") {
+					location.reload();
+					
+				} else {
+					
+					alert("Something Went Wrong Sorry!")
+				}
+			}
+	);
+}
 /*
  * Ajax call to delete the permitID for the lot 
  * 
@@ -341,7 +356,7 @@ function confirmRemovePermitIDFromLot(permitID, lotID){
 						method="get">
 						New Permit: <input id="addPermitInput" type="text"
 							name="permitName" size="50" /> <input id="addPermitButton"
-							type="submit" value="Add" disabled="disabled" />
+							type="submit" value="Add" disabled="disabled" onclick="addNewPermitToLot(<%=lotID%>)"/>
 							<input type="hidden" name="lotID" value="<%=lotID%>" />
 					</form>
 					<div id="addPermitError" class="error" style="display: none">Invalid

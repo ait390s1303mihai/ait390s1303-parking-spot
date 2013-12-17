@@ -271,6 +271,11 @@ public class LotJdo {
 	public MapFigureJdo getGoogleMapFigure() {
 		return mapFigure;
 	}
+	
+	public ArrayList<String> getPermitIdsInLot(){
+		return permitIds;
+	}
+	
 	/**
 	 * Return the location of the Lot.
 	 * 

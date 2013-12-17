@@ -196,9 +196,10 @@
 	<%
 						for (BuildingJdo building : BuildingJdo.getFirstBuildings(100, campusID)) {
 							String buildingName = building.getName();
+							String buildingID = building.getStringID();
 	%>
 							<!-- Create an <option> for each BuildingJdo object in current campus -->
-							<option><%=buildingName%></option>
+							<option value="<%=buildingID%>"><%=buildingName%></option>
 	<%
  						}
 	%>
@@ -218,8 +219,9 @@
 	<%
 					for (PermitJdo permit : allPermits) {
 						String permitName = permit.getName();
+						String permitID = permit.getStringID();
 	%>
-						<option><%=permitName%></option>
+						<option value="<%=permitID%>"><%=permitName%></option>
 	<%
 					}
 	%>
@@ -229,14 +231,12 @@
 		<!-- Table-row with form that passes selector values with submit button -->
 		<tr id="submitTr">
 			<td id="submitTd" colspan="2">
-				<!-- TODO: This <form> needs an action attribute that matches Andrew's file that is not done yet -->
-				<form>
+				<form action="parkingMap.jsp">
 					<!-- Hidden fields that contain the selected values of the selectors above the form -->
-					<input id="campusVal" type="hidden" value="">
-					<input id="buildingVal" type="hidden" value="">
-					<input id="permitVal" type="hidden" value="">
-					<!-- TODO: When Andrew finishes his file the type attribute for this <input> will be "submit" -->
-					<input id="submitBtn" type="button" value="Show Map">
+					<input id="campusVal" type="hidden" name="campusID" value="">
+					<input id="buildingVal" type="hidden" name="buildingID" value="">
+					<input id="permitVal" type="hidden" name="permitID" value="">
+					<input id="submitBtn" type="submit" value="Show Map">
 				</form>
 			</td>
 		</tr>
