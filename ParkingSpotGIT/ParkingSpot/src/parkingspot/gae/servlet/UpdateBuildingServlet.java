@@ -29,6 +29,6 @@ public class UpdateBuildingServlet extends HttpServlet {
 				req.getParameter("longitude"), req.getParameter("zoom"), 
 				req.getParameter("markerLatitude"), req.getParameter("markerLongitude"));
 
-		resp.sendRedirect("/gae/admin/allBuildings.jsp?campusID=" + campusID);
+		resp.sendRedirect("/gae/admin/campusBuildings.jsp?campusID=" + campusID);
 	}
 }
