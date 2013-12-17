@@ -37,6 +37,8 @@ import javax.jdo.Query;
 
 
 
+
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -56,18 +58,17 @@ import com.google.appengine.api.users.User;
 @PersistenceCapable
 public class AdminProfileJdo {
 	
+	
+	/**
+	 * Variables
+	 */
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
-	
 	@Persistent
 	private String adminProfile;
-	
-	
 	@Persistent
 	private String loginId;
-	
-
 	@Persistent
 	private String name;
 	
@@ -83,12 +84,22 @@ public class AdminProfileJdo {
 		return matcher.find();
 	}
 	
+	/**
+	 * Constructor
+	 */
 	private AdminProfileJdo(String adminProfile, String name, String loginId) {
 		this.adminProfile = adminProfile;
 		this.name = name;
 		this.loginId = loginId;
 	}
 	
+	/**
+	 * Static method that creates an AdminProfileJdo object and 
+	 * returns it when it is finished
+	 * 
+	 * @param buildingName - A string the the building name, campusId - A string with the campus ID (a long)
+	 * @return the creates building object
+	 */
 	
 	public static AdminProfileJdo createAdminProfile(String id) {
 		AdminProfileJdo adminProfile = null;
@@ -118,23 +129,31 @@ public class AdminProfileJdo {
 	
 	public static AdminProfileJdo getAdminProfileWithLoginID(PersistenceManager pm, String id) {
 		AdminProfileJdo adminProfile = null;
-		Query q = pm.newQuery(AdminProfileJdo.class);
-		q.setFilter("loginId == id");	
-		q.declareParameters("String id");
+		Query query = pm.newQuery(AdminProfileJdo.class);
+		query.setFilter("loginId == id");	
+		query.declareParameters("String id");
 
 		try {
-			
-			adminProfile = (AdminProfileJdo) q.execute(id);		
-	
+			@SuppressWarnings("unchecked")
+			List<AdminProfileJdo> result = (List<AdminProfileJdo>)query.execute(id);		
+			if (result != null && result.size() > 0) {
+				adminProfile = result.get(0);
+			}
 	
 		} catch (Exception e) {
 			
 			System.out.println("exception: " + e);
 			
 		} finally {
-			q.closeAll();		
+			query.closeAll();		
 		}
 			
+		return adminProfile;
+	}
+	
+	public static AdminProfileJdo getAdminProfileWithKey(PersistenceManager pm, String sKey){
+		long k = Long.parseLong(sKey);
+		AdminProfileJdo adminProfile = pm.getObjectById(AdminProfileJdo.class, k);
 		return adminProfile;
 	}
 	
@@ -143,21 +162,33 @@ public class AdminProfileJdo {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			adminProfile = getAdminProfileWithLoginID(pm, id);
+			if (adminProfile == null){
+				System.out.print("it null");
+			}
+
 			adminProfile.name = name;
 			adminProfile.loginId = id;
 			adminProfile.adminProfile = aProfileID;
+			pm.makePersistent(adminProfile);
 		
 		} catch (Exception e) {
 			return false;
 		}
+		finally{
+			pm.close();
+		}
 		return true;
 	}
 	
-	public static boolean deleteAdminProfileCommand(String loginId) {
+	public static boolean deleteAdminProfileCommand(String key) {
+		AdminProfileJdo adminProfile = null;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
-			AdminProfileJdo adminProfile = getAdminProfileWithLoginID(pm, loginId);
-	        pm.deletePersistent(adminProfile);
+			adminProfile = getAdminProfileWithKey(pm, key);
+	        if (adminProfile == null){
+	        	System.out.print("It null");
+	        }
+			pm.deletePersistent(adminProfile);
 			
 		} catch (Exception e) {
 			return false;
@@ -180,15 +211,19 @@ public class AdminProfileJdo {
 	@SuppressWarnings("unchecked")
 	public static List<AdminProfileJdo> getFirstAdminProfiles(int number) {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Query q = pm.newQuery(AdminProfileJdo.class);
+		q.setOrdering("name asc");
+		
 		List<AdminProfileJdo> results = null;
 		try {
-			
-			Query q = pm.newQuery(AdminProfileJdo.class);
-			q.setOrdering("name asc");
 			
 			results = (List<AdminProfileJdo>)q.execute();
 		} catch (Exception e) {
 			
+		}
+		finally{
+			pm.close();
+			q.closeAll();
 		}
 		return results;
 	}

@@ -27,14 +27,18 @@ import com.google.appengine.api.datastore.Key;
  *	PARENT: Campus
  *	KEY: A building Id
  *	FEATURES:
- *		Name: "Id" Type: int
+ *		Name: "Id" Type: Key
  *		Name: "Name" Type: String
  *		Name: "Location" Type: String
+ *		Name: "Campus ID" Type: String
+ *		Name: "Map Figure" Type: MapFigureJdo
  *	Examples:
  *	Campus("Johnson Center")
- *		"Id" = 1003
+ *		"Id" = 1003AN78QOJD0892K
  *		"Location" =  "United States@38.826182,-77.308211"
  *		"Name" = "Johnson Center"
+ *		"Campus Id" = 837DK3JS80DLK2
+ *		"Map Figure" = MapFigureJdo object
  *
  *	Authors: Jeff, Drew Lorence, Alex Leone
  *  
@@ -102,16 +106,16 @@ public class BuildingJdo {
 		return b;
 	}
 	
-	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String name) {
+	public static BuildingJdo getBuildingWithName(PersistenceManager pm, String nameParam, String campusID) {
 		BuildingJdo building = null;
 		try {
 
 			Query query = pm.newQuery(BuildingJdo.class);
-			query.setFilter("name == nameParam");
+			query.setFilter("name == nameParam && campusId == campusID");
 			query.setOrdering("name asc");
-			query.declareParameters("String nameParam");
+			query.declareParameters("String nameParam, String campusID");
 			@SuppressWarnings("unchecked")
-			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(name);
+			List<BuildingJdo> result = (List<BuildingJdo>)query.execute(nameParam, campusID);
 			
 			if (result != null && result.size() > 0) {
 				building = result.get(0);
@@ -153,9 +157,8 @@ public class BuildingJdo {
 	 * @return the creates building object
 	 */
 	
-	public static BuildingJdo createBuilding(String buildingName, String campusId) {  
+	public static BuildingJdo createBuilding(String buildingName, String campusID) {  
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        
         BuildingJdo building = null;
         
         try {
@@ -164,14 +167,14 @@ public class BuildingJdo {
 				return null;
 			}
 			
-			building = getBuildingWithName(pm, buildingName);
+			building = getBuildingWithName(pm, buildingName, campusID);
 			if (building != null) {
 				return null;
 			}
 			
-			CampusJdo campus = CampusJdo.getCampus(pm, campusId);
+			CampusJdo campus = CampusJdo.getCampus(pm, campusID);
 			
-			building = new BuildingJdo(buildingName, "", campusId, campus.getGoogleMapFigure());
+			building = new BuildingJdo(buildingName, "", campusID, campus.getGoogleMapFigure());
 			pm.makePersistent(building);
 			return building;
 		} finally {

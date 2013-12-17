@@ -23,11 +23,10 @@ import parkingspot.jdo.db.BuildingJdo;
  */
 @SuppressWarnings("serial")
 public class DeleteBuildingServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String buildingID = req.getParameter("buildingID");
-		String campusId = req.getParameter("campusId");
+		String campusID = req.getParameter("campusID");
 		BuildingJdo.deleteBuildingCommand(buildingID);
-//		System.out.println("HERE");
-	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusId="+campusId+"PageRefresh=true");
+	    resp.sendRedirect("/jdo/admin/campusBuildings.jsp?campusId="+campusID);
 	}
 }
