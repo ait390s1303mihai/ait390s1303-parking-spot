@@ -28,10 +28,10 @@
 
 <script type="text/javascript">
 function campusSelect() {
-	var campusID = document.getElementById("campusSelect").value;
+	campusID = document.getElementById("campusSelect").value;
 	hideAllBuildingSelectors();
 	showBuildingTr(campusID);
-	$("#campusVal").val(campusID);
+	$("#campusID").val(campusID);
 }
 
 function hideAllBuildingSelectors() {
@@ -48,11 +48,34 @@ function showBuildingTr(campusID) {
 function buildingSelect(campusID) {
 	var buildingID = document
 			.getElementById("selectbuildingfor" + campusID).value;
-	$("#buildingVal").val(buildingID);
+	$("#buildingID").val(buildingID);
 	if (buildingID != null && buildingID != "NONE") {
 		$("#submitTr").show();
 	}
 }
+
+
+function showMap(campusID, campusName, lat, lng, zoom, mkLat, mkLng) {
+	
+	
+	var myLatlng = new google.maps.LatLng(lat,lng);
+    var map_canvas = document.getElementById('map_canvas_'+campusID);
+    var map_options = {
+            center: myLatlng,
+            zoom: zoom,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          }
+    edited_map = new google.maps.Map(map_canvas, map_options);
+    var markerLatlng = new google.maps.LatLng(mkLat,mkLng);
+    edited_marker = new google.maps.Marker({
+    	position: markerLatlng,
+    	title: campusName,
+    	draggable:true,
+    	icon: '/images/campus.png'
+    });
+    edited_marker.setMap(edited_map);
+}
+
 </script>
 </head>
 <body>
@@ -76,7 +99,7 @@ function buildingSelect(campusID) {
 				<option value="<%=campusID%>"><%=campusName%></option>
 				<%
 					}
-				%>
+				%> 
 			</select>
 		</td>
 	</tr>
@@ -110,15 +133,13 @@ function buildingSelect(campusID) {
 	%>
 	<tr id="submitTr" hidden="hidden">
 		<td colspan="2">
-			<form>
-				<input id="campusVal" type="hidden" value="">
-				<input id="buildingVal" type="hidden" value="">
-				<input id="submitBtn" type="button" value="SHOW MAP">
+			<form action="/gae/user/showmap.jsp">
+				<input id="campusID" name="campusID"  type="hidden" value="">
+				<input id="buildingID" name="buildingID" type="hidden" value="">
+				<input id="submitBtn" type="submit" value="SHOW MAP">
 			</form>
 		</td>
 	</tr>
 </table>
-<div 
-
 </body>
 </html>
