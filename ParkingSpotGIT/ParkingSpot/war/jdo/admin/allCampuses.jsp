@@ -1,6 +1,7 @@
 <%@ page import="parkingspot.jdo.db.MapFigureJdo"%>
 <%@ page import="parkingspot.jdo.db.CampusJdo"%>
 <%@ page import="parkingspot.jdo.db.LotJdo"%>
+<%@ page import="parkingspot.jdo.db.BuildingJdo"%>
 <%@ page import="javax.jdo.Query"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="java.util.List"%>
@@ -329,12 +330,22 @@ function cancelEditCampus(campusID) {
 						<button type="button" onclick="cancelEditCampus(<%=campusID%>)">Cancel</button>
 					</form>
 				</div>
-
+				<% 
+				List<LotJdo> allLots = LotJdo.getFirstLots(100, campusID);
+				List<BuildingJdo> allBuildings = BuildingJdo.getFirstBuildings(100, campusID);
+				if (allLots.isEmpty() && allBuildings.isEmpty()) {
+				%>
 				<div id="delete<%=campusID%>" style="display: none">
 					Do you want to delete this campus?
 					<button type="button" onclick="confirmDeleteCampus(<%=campusID%>)">Delete</button>
 					<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
 				</div></td>
+				<% } else { %>
+					<div id="delete<%=campusID%>" style="display: none">
+						Delete not possible: Lots and Buildings exist for this campus!
+						<button type="button" onclick="cancelDeleteCampus(<%=campusID%>)">Cancel</button>
+					</div></td>
+				<%} %>
 
 
 			<td>
